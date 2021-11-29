@@ -25,10 +25,12 @@ on:
         default: imsenthur@gmail.com
       wpa_ssid:
         description: "AP SSID"
-        required: false
+        required: true
+        default: NeuroPi
       wpa_passphrase:
         description: "AP Passphrase"
-        required: false
+        required: true
+        default: neurobionics
 
 jobs:
   build:
