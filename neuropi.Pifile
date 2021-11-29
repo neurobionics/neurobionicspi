@@ -1,0 +1,177 @@
+FROM https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-11-08/2021-10-30-raspios-bullseye-armhf-lite.zip
+
+PUMP 200M
+
+RUN touch /boot/ssh
+
+hostname="${BOOTSTRAP_HOSTNAME:-neuropi}"
+user="${BOOTSTRAP_USER:-pi}"
+password="${BOOTSTRAP_PASSWORD:-neurobionics}"
+email="${BOOTSTRAP_EMAIL:-imsenthur@gmail.com}"
+
+export email
+
+# Write hostname to /etc/hostname and /etc/hosts
+RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
+RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
+
+echo "Changing password:"
+
+RUN bash -c "echo ${user}:${password} | chpasswd"
+
+echo "Password has been changed."
+
+RUN bash -c "echo America/New_York > /etc/timezone"
+
+echo "Configuring WiFi network:"
+RUN apt-get install -y wpasupplicant
+
+RUN touch /boot/wpa_supplicant.conf
+
+RUN tee -a /boot/wpa_supplicant.conf <<EOF
+country=US
+update_config=1
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+
+network={
+        ssid="MWireless"
+        scan_ssid=1
+        key_mgmt=WPA-EAP
+        eap=PEAP
+        identity="me-rousewifi"
+        password="DoNotChange1!"
+        id_str="MWireless"
+}
+EOF
+
+RUN tee -a /etc/network/interfaces.d/wpa2enterprise <<EOF
+auto wlan0
+allow-hotplug wlan0
+
+iface wlan0 inet dhcp
+	pre-up wpa_supplicant -B -Dwext -i wlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf
+	post-down killall -q wpa_supplicant
+
+EOF
+
+RUN apt-get install -y lighttpd git hostapd dnsmasq vnstat qrencode php7.4-cgi
+RUN bash -c "sudo systemctl stop hostapd"
+RUN bash -c "sudo systemctl stop dnsmasq"
+RUN bash -c "sudo systemctl disable hostapd"
+RUN bash -c "sudo systemctl disable hostapd"
+
+RUN bash -c "echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections"
+RUN bash -c "echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections"
+RUN bash -c "sudo apt-get -y install iptables-persistent"
+
+RUN bash -c "sudo rm -rf /var/www/html"
+RUN bash -c "sudo git clone https://github.com/imsenthur/raspap-webgui.git /var/www/html"
+
+RUN bash -c "curl -L https://raw.githubusercontent.com/imsenthur/raspap-installer/main/install.sh -o /var/www/html/install.sh"
+
+echo "WiFi done."
+
+RUN bash -c "sudo rm -rf /etc/motd"
+RUN bash -c "curl -L https://raw.githubusercontent.com/imsenthur/neuropi-motd/main/motd -o /home/${user}/.bash_profile"
+
+RUN tee /home/${user}/startup_mailer.py << EOF
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# This code runs on boot through /etc/rc.local and emails the device's IP address to the email specified below. 
+import subprocess
+import smtplib
+import socket
+from email.mime.text import MIMEText
+import datetime
+import os
+
+######## Change to your own account information!######
+
+recipients = [] # To add multiple recipients, add email in quotes and separate with comma
+recipients.append(os.environ(["email"]))
+
+# recipients = ['neurobionicslab@gmail.com'] 
+
+#######################################################
+gmail_user = 'neurobionicslab@gmail.com'   # Who you will receive the email from
+gmail_password = 'jointimpedance'          # Password
+smtpserver = smtplib.SMTP('smtp.gmail.com', 587)
+smtpserver.ehlo()
+smtpserver.starttls()
+smtpserver.ehlo
+smtpserver.login(gmail_user, gmail_password)
+today = datetime.date.today()
+
+# get MAC address - individual ID for each RPi
+str_temp = open('/sys/class/net/wlan0/address').read()
+mac = str_temp[0:17]
+# Very Linux Specific
+arg='ip route list'
+p=subprocess.Popen(arg,shell=True,stdout=subprocess.PIPE)
+data = p.communicate()
+temp = str(data[0])
+split_data = temp.split()
+ipaddr = split_data[split_data.index('src')+1]
+my_ip = 'Neurobionics Wifi IP Emailer: The IP address for your Raspberry Pi is %s' % ipaddr + '\nfrom MAC address: %s' %mac + '\nTime and Date: '+today.strftime('%I %M %p %d %b %Y')
+
+msg = MIMEText(my_ip)
+msg['Subject'] = 'IP For RPi on %s' % today.strftime('%b %d %Y')
+msg['From'] = gmail_user
+msg['To'] = ",".join(str(x) for x in recipients) 
+
+smtpserver.sendmail(gmail_user, recipients, msg.as_string())
+smtpserver.quit()
+
+EOF
+
+RUN tee /etc/rc.local <<EOF
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+if [ ! -d "/etc/raspap" ] 
+then
+	echo "Snoozing"
+	sleep 20
+	rfkill unblock wlan
+	echo "Unblocked WLAN"
+	echo "Installing RaspAP"
+	sudo bash /var/www/html/install.sh
+	echo "RaspAP Installed."
+	sudo reboot now
+else
+	echo "Network configured."
+fi
+
+dhclient -r wlan0
+if dhclient -1 wlan0 > dev/null 2>&1
+then
+	echo "Connected to WiFi"
+	connected=true
+	#python /home/${user}/startup_mailer.py
+	break
+else
+	echo "DHCP server did not respond with an IP lease (DHCPOFFER)"
+	echo "Starting AP"
+	wpa_cli terminate >/dev/null 2>&1
+	ip addr flush wlan0
+	ip link set dev wlan0
+	rm -r /var/run/wpa_supplicant >/dev/null 2>&1
+	systemctl start hostapd
+	systemctl start dnsmasq
+fi
+
+exit 0
+EOF
+
+echo "DONE!"
+
