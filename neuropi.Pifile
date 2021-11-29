@@ -139,12 +139,11 @@ RUN tee /etc/rc.local <<EOF
 if [ ! -d "/etc/raspap" ] 
 then
 	echo "Snoozing"
-	sleep 40
-	rfkill unblock wlan
-	echo "Unblocked WLAN"
+	sleep 20
 	echo "Installing RaspAP"
 	sudo bash /var/www/html/install.sh
 	echo "RaspAP Installed."
+	rfkill unblock wlan
 	sudo reboot now
 else
 	echo "Network configured."
