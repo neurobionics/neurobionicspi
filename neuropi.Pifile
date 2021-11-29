@@ -86,7 +86,7 @@ import os
 ######## Change to your own account information!######
 
 recipients = [] # To add multiple recipients, add email in quotes and separate with comma
-recipients.append(os.environ(["email"]))
+recipients.append(os.environ["email"])
 
 # recipients = ['neurobionicslab@gmail.com'] 
 
