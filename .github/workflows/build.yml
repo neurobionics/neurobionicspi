@@ -5,7 +5,7 @@ on:
     inputs:
       pifile:
         description: "Config"
-        default: neuropi-config
+        default: neuropi
         required: true
       host_name:
         description: "Device"
@@ -67,7 +67,7 @@ jobs:
 
       - name: Make tarball
         run: |
-          tar -czvf bootstrap.tar.gz bootstrap.img
+          tar -czvf neuropi.tar.gz neuropi.img
   
       - name: Upload artifacts  
         uses: actions/upload-artifact@v2
