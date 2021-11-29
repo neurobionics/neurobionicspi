@@ -5,7 +5,7 @@ on:
     inputs:
       pifile:
         description: "Config"
-        default: bootstrap
+        default: neuropi-config
         required: true
       host_name:
         description: "Device"
