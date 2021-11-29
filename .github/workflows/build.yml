@@ -1,4 +1,4 @@
-name: Test
+name: Build
 
 on: 
   workflow_dispatch:
@@ -24,13 +24,10 @@ on:
         required: true
         default: imsenthur@gmail.com
       wpa_ssid:
-        description: "WiFi SSID"
+        description: "AP SSID"
         required: false
       wpa_passphrase:
-        description: "WiFi Passphrase"
-        required: false
-      wpa_country:
-        description: "WiFi alpha-2 country code (US, CA, GB, etc.)"
+        description: "AP Passphrase"
         required: false
 
 jobs:
@@ -49,7 +46,6 @@ jobs:
           BOOTSTRAP_PASSWORD: ${{ github.event.inputs.first_user_pass }}
           BOOTSTRAP_WPA_SSID: ${{ github.event.inputs.wpa_ssid }}
           BOOTSTRAP_WPA_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
-          BOOTSTRAP_WPA_COUNTRY: ${{ github.event.inputs.wpa_country }}
           BOOTSTRAP_EMAIL: ${{ github.event.inputs.email }}
           SECRETS: ${{ secrets.SECRETS_ENV }}
           PIFILE: ${{ github.event.inputs.pifile }}.Pifile
@@ -59,7 +55,6 @@ jobs:
           echo BOOTSTRAP_PASSWORD="${BOOTSTRAP_PASSWORD}">> $(dirname $PIFILE)/secrets.env
           echo BOOTSTRAP_WPA_SSID="${BOOTSTRAP_WPA_SSID}">> $(dirname $PIFILE)/secrets.env
           echo BOOTSTRAP_WPA_PASSPHRASE="${BOOTSTRAP_WPA_PASSPHRASE}">> $(dirname $PIFILE)/secrets.env
-          echo BOOTSTRAP_WPA_COUNTRY="${BOOTSTRAP_WPA_COUNTRY}">> $(dirname $PIFILE)/secrets.env
           echo BOOTSTRAP_EMAIL="${BOOTSTRAP_EMAIL}">> $(dirname $PIFILE)/secrets.env
       - name: Build image
         uses: Nature40/pimod@v0.2.2
