@@ -9,7 +9,7 @@ on:
         required: true
       host_name:
         description: "Device"
-        default: neuropi
+        default: neurobionics
         required: true
       first_user:
         description: "User"
@@ -22,11 +22,11 @@ on:
       email:
         description: "Email"
         required: true
-        default: imsenthur@gmail.com
+        default: ejrouse@umich.edu
       wpa_ssid:
         description: "AP SSID"
         required: true
-        default: NeuroPi
+        default: NeurobionicsRPi
       wpa_passphrase:
         description: "AP Passphrase"
         required: true
