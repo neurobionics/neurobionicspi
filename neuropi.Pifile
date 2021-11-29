@@ -4,11 +4,11 @@ PUMP 200M
 
 RUN touch /boot/ssh
 
-hostname="${BOOTSTRAP_HOSTNAME:-neuropi}"
+hostname="${BOOTSTRAP_HOSTNAME:-neurobionics}"
 user="${BOOTSTRAP_USER:-pi}"
 password="${BOOTSTRAP_PASSWORD:-neurobionics}"
-email="${BOOTSTRAP_EMAIL:-imsenthur@gmail.com}"
-apssid="${BOOTSTRAP_WPA_SSID:-NeuroPi}"
+email="${BOOTSTRAP_EMAIL:-ejrouse@umich.edu}"
+apssid="${BOOTSTRAP_WPA_SSID:-NeurobionicsRPi}"
 appsk="${BOOTSTRAP_WPA_PASSPHRASE:-neurobionics}"
 
 # Write hostname to /etc/hostname and /etc/hosts
@@ -151,7 +151,10 @@ then
 	sudo reboot now
 else
 	echo "Network configured."
+	rfkill unblock wlan
 fi
+
+sleep 10
 
 dhclient -r wlan0
 if dhclient -1 wlan0 > dev/null 2>&1
