@@ -9,6 +9,7 @@ on:
         required: true
       host_name:
         description: "Device"
+        default: neuropi
         required: true
       first_user:
         description: "User"
