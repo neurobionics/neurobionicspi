@@ -9,7 +9,7 @@ user="${BOOTSTRAP_USER:-pi}"
 password="${BOOTSTRAP_PASSWORD:-neurobionics}"
 email="${BOOTSTRAP_EMAIL:-imsenthur@gmail.com}"
 
-export email
+RUN bash -c "export email=${email}"
 
 # Write hostname to /etc/hostname and /etc/hosts
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
@@ -157,7 +157,7 @@ if dhclient -1 wlan0 > dev/null 2>&1
 then
 	echo "Connected to WiFi"
 	connected=true
-	#python /home/${user}/startup_mailer.py
+	python /home/${user}/startup_mailer.py
 	break
 else
 	echo "DHCP server did not respond with an IP lease (DHCPOFFER)"
