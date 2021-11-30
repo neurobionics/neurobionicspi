@@ -64,7 +64,7 @@ jobs:
 
       - name: Make tarball
         run: |
-          tar -czvf neuropi.tar.gz neuropi.img
+          tar -czvf ${{ github.event.inputs.pifile }}.tar.gz ${{ github.event.inputs.pifile }}.img
   
       - name: Upload artifacts  
         uses: actions/upload-artifact@v2
