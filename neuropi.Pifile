@@ -5,8 +5,6 @@ PUMP 200M
 RUN touch /boot/ssh
 
 source .env
-echo $BOOTSTRAP_HOSTNAME
-echo $BOOTSTRAP_EMAIL
 
 hostname="${BOOTSTRAP_HOSTNAME:-neurobionics}"
 user="${BOOTSTRAP_USER:-pi}"
