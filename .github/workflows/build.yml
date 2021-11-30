@@ -51,22 +51,14 @@ jobs:
           BOOTSTRAP_EMAIL: ${{ github.event.inputs.email }}
           PIFILE: ${{ github.event.inputs.pifile }}.Pifile
         run: |
-          echo BOOTSTRAP_HOSTNAME="${BOOTSTRAP_HOSTNAME}" > .env
-          echo BOOTSTRAP_USER="${BOOTSTRAP_USER}" >> .env
-          echo BOOTSTRAP_PASSWORD="${BOOTSTRAP_PASSWORD}" >> .env
-          echo BOOTSTRAP_WPA_SSID="${BOOTSTRAP_WPA_SSID}" >> .env
-          echo BOOTSTRAP_WPA_PASSPHRASE="${BOOTSTRAP_WPA_PASSPHRASE}" >> .env
-          echo BOOTSTRAP_EMAIL="${BOOTSTRAP_EMAIL}" >> .env
+          export BOOTSTRAP_HOSTNAME="${BOOTSTRAP_HOSTNAME}"
+          export BOOTSTRAP_USER="${BOOTSTRAP_USER}"
+          export BOOTSTRAP_PASSWORD="${BOOTSTRAP_PASSWORD}"
+          export BOOTSTRAP_WPA_SSID="${BOOTSTRAP_WPA_SSID}"
+          export BOOTSTRAP_WPA_PASSPHRASE="${BOOTSTRAP_WPA_PASSPHRASE}"
+          export BOOTSTRAP_EMAIL="${BOOTSTRAP_EMAIL}"
       - name: Build image
         uses: Nature40/pimod@v0.2.2
-        env:
-          BOOTSTRAP_HOSTNAME: ${{ github.event.inputs.host_name }}
-          BOOTSTRAP_USER: ${{ github.event.inputs.first_user }}
-          BOOTSTRAP_PASSWORD: ${{ github.event.inputs.first_user_pass }}
-          BOOTSTRAP_WPA_SSID: ${{ github.event.inputs.wpa_ssid }}
-          BOOTSTRAP_WPA_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
-          BOOTSTRAP_EMAIL: ${{ github.event.inputs.email }}
-          PIFILE: ${{ github.event.inputs.pifile }}.Pifile
         with:
           pifile: ${{ github.event.inputs.pifile }}.Pifile
 
