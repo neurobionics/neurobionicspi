@@ -5,7 +5,7 @@ on:
     inputs:
       pifile:
         description: "Config"
-        default: neuropi
+        default: neurobionicspi
         required: true
       host_name:
         description: "Device"
