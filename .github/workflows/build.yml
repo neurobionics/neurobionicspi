@@ -51,12 +51,13 @@ jobs:
 
       - name: Write env variables
         run: |
-          export BOOTSTRAP_HOSTNAME="${BOOTSTRAP_HOSTNAME}"
-          export BOOTSTRAP_USER="${BOOTSTRAP_USER}"
-          export BOOTSTRAP_PASSWORD="${BOOTSTRAP_PASSWORD}"
-          export BOOTSTRAP_WPA_SSID="${BOOTSTRAP_WPA_SSID}"
-          export BOOTSTRAP_WPA_PASSPHRASE="${BOOTSTRAP_WPA_PASSPHRASE}"
-          export BOOTSTRAP_EMAIL="${BOOTSTRAP_EMAIL}"
+          echo BOOTSTRAP_HOSTNAME="${BOOTSTRAP_HOSTNAME}" > $(dirname $PIFILE)/.env
+          echo BOOTSTRAP_USER="${BOOTSTRAP_USER}" >> $(dirname $PIFILE)/.env
+          echo BOOTSTRAP_PASSWORD="${BOOTSTRAP_PASSWORD}" >> $(dirname $PIFILE)/.env
+          echo BOOTSTRAP_WPA_SSID="${BOOTSTRAP_WPA_SSID}" >> $(dirname $PIFILE)/.env
+          echo BOOTSTRAP_WPA_PASSPHRASE="${BOOTSTRAP_WPA_PASSPHRASE}" >> $(dirname $PIFILE)/.env
+          echo BOOTSTRAP_EMAIL="${BOOTSTRAP_EMAIL}" >> $(dirname $PIFILE)/.env
+          cat $(dirname $PIFILE)/.env
       - name: Build image
         uses: Nature40/pimod@v0.2.2
         with:
