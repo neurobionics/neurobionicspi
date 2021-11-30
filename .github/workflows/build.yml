@@ -31,6 +31,14 @@ on:
         description: "AP Passphrase"
         required: true
         default: neurobionics
+env:
+  BOOTSTRAP_HOSTNAME: ${{ github.event.inputs.host_name }}
+  BOOTSTRAP_USER: ${{ github.event.inputs.first_user }}
+  BOOTSTRAP_PASSWORD: ${{ github.event.inputs.first_user_pass }}
+  BOOTSTRAP_WPA_SSID: ${{ github.event.inputs.wpa_ssid }}
+  BOOTSTRAP_WPA_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
+  BOOTSTRAP_EMAIL: ${{ github.event.inputs.email }}
+  PIFILE: ${{ github.event.inputs.pifile }}.Pifile
 
 jobs:
   build:
@@ -42,14 +50,6 @@ jobs:
           submodules: recursive
 
       - name: Write env variables
-        env:
-          BOOTSTRAP_HOSTNAME: ${{ github.event.inputs.host_name }}
-          BOOTSTRAP_USER: ${{ github.event.inputs.first_user }}
-          BOOTSTRAP_PASSWORD: ${{ github.event.inputs.first_user_pass }}
-          BOOTSTRAP_WPA_SSID: ${{ github.event.inputs.wpa_ssid }}
-          BOOTSTRAP_WPA_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
-          BOOTSTRAP_EMAIL: ${{ github.event.inputs.email }}
-          PIFILE: ${{ github.event.inputs.pifile }}.Pifile
         run: |
           export BOOTSTRAP_HOSTNAME="${BOOTSTRAP_HOSTNAME}"
           export BOOTSTRAP_USER="${BOOTSTRAP_USER}"
