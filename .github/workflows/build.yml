@@ -61,6 +61,7 @@ jobs:
         uses: Nature40/pimod@v0.2.2
         with:
           pifile: ${{ github.event.inputs.pifile }}.Pifile
+          BOOTSTRAP_HOSTNAME: ${{ github.event.inputs.host_name }}
 
       - name: Make tarball
         run: |
