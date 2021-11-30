@@ -41,7 +41,7 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Write secrets.env
+      - name: Write env variables
         env:
           BOOTSTRAP_HOSTNAME: ${{ github.event.inputs.host_name }}
           BOOTSTRAP_USER: ${{ github.event.inputs.first_user }}
@@ -49,15 +49,14 @@ jobs:
           BOOTSTRAP_WPA_SSID: ${{ github.event.inputs.wpa_ssid }}
           BOOTSTRAP_WPA_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
           BOOTSTRAP_EMAIL: ${{ github.event.inputs.email }}
-          SECRETS: ${{ secrets.SECRETS_ENV }}
           PIFILE: ${{ github.event.inputs.pifile }}.Pifile
         run: |
-          echo BOOTSTRAP_HOSTNAME="${BOOTSTRAP_HOSTNAME}" > $(dirname $PIFILE)/secrets.env
-          echo BOOTSTRAP_USER="${BOOTSTRAP_USER}" >> $(dirname $PIFILE)/secrets.env
-          echo BOOTSTRAP_PASSWORD="${BOOTSTRAP_PASSWORD}">> $(dirname $PIFILE)/secrets.env
-          echo BOOTSTRAP_WPA_SSID="${BOOTSTRAP_WPA_SSID}">> $(dirname $PIFILE)/secrets.env
-          echo BOOTSTRAP_WPA_PASSPHRASE="${BOOTSTRAP_WPA_PASSPHRASE}">> $(dirname $PIFILE)/secrets.env
-          echo BOOTSTRAP_EMAIL="${BOOTSTRAP_EMAIL}">> $(dirname $PIFILE)/secrets.env
+          echo BOOTSTRAP_HOSTNAME="${BOOTSTRAP_HOSTNAME}" > .env
+          echo BOOTSTRAP_USER="${BOOTSTRAP_USER}" >> .env
+          echo BOOTSTRAP_PASSWORD="${BOOTSTRAP_PASSWORD}" >> .env
+          echo BOOTSTRAP_WPA_SSID="${BOOTSTRAP_WPA_SSID}" >> .env
+          echo BOOTSTRAP_WPA_PASSPHRASE="${BOOTSTRAP_WPA_PASSPHRASE}" >> .env
+          echo BOOTSTRAP_EMAIL="${BOOTSTRAP_EMAIL}" >> .env
       - name: Build image
         uses: Nature40/pimod@v0.2.2
         with:
