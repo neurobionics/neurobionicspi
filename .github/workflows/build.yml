@@ -59,9 +59,16 @@ jobs:
           echo BOOTSTRAP_EMAIL="${BOOTSTRAP_EMAIL}" >> .env
       - name: Build image
         uses: Nature40/pimod@v0.2.2
+        env:
+          BOOTSTRAP_HOSTNAME: ${{ github.event.inputs.host_name }}
+          BOOTSTRAP_USER: ${{ github.event.inputs.first_user }}
+          BOOTSTRAP_PASSWORD: ${{ github.event.inputs.first_user_pass }}
+          BOOTSTRAP_WPA_SSID: ${{ github.event.inputs.wpa_ssid }}
+          BOOTSTRAP_WPA_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
+          BOOTSTRAP_EMAIL: ${{ github.event.inputs.email }}
+          PIFILE: ${{ github.event.inputs.pifile }}.Pifile
         with:
           pifile: ${{ github.event.inputs.pifile }}.Pifile
-          BOOTSTRAP_HOSTNAME: ${{ github.event.inputs.host_name }}
 
       - name: Make tarball
         run: |
