@@ -140,20 +140,24 @@ RUN tee /etc/rc.local <<EOF
 #
 # By default this script does nothing.
 
+sleep 10
+
+if rfkill list wlan | grep -q 'yes'; then
+	echo "Unblocking Wlan"
+	rfkill unblock wlan
+fi
+
 if [ ! -d "/etc/raspap" ] 
 then
 	echo "Snoozing"
-	sleep 30
+	sleep 20
 	echo "Installing RaspAP"
-	rfkill unblock wlan
 	sudo bash /var/www/html/install.sh
 	echo "RaspAP Installed."
 	sudo sed -i 's/NeuroPi/${apssid}/g' /etc/hostapd/hostapd.conf
 	sudo sed -i 's/neurobionics/${appsk}/g' /etc/hostapd/hostapd.conf
-	sudo reboot now
 else
 	echo "Network configured."
-	rfkill unblock wlan
 fi
 
 sleep 10
