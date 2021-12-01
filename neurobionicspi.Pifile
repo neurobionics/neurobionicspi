@@ -143,11 +143,11 @@ RUN tee /etc/rc.local <<EOF
 if [ ! -d "/etc/raspap" ] 
 then
 	echo "Snoozing"
-	sleep 20
+	sleep 30
 	echo "Installing RaspAP"
+	rfkill unblock wlan
 	sudo bash /var/www/html/install.sh
 	echo "RaspAP Installed."
-	rfkill unblock wlan
 	sudo sed -i 's/NeuroPi/${apssid}/g' /etc/hostapd/hostapd.conf
 	sudo sed -i 's/neurobionics/${appsk}/g' /etc/hostapd/hostapd.conf
 	sudo reboot now
