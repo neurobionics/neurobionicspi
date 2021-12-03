@@ -92,10 +92,7 @@ import os
 
 ######## Change to your own account information!######
 
-recipients = [] # To add multiple recipients, add email in quotes and separate with comma
-recipients.append(os.environ["email"])
-
-# recipients = ['neurobionicslab@gmail.com'] 
+recipients = os.environ["email"].split(", ")
 
 #######################################################
 gmail_user = 'neurobionicslab@gmail.com'   # Who you will receive the email from
@@ -169,7 +166,7 @@ dhclient -r wlan0
 if dhclient -1 wlan0 > dev/null 2>&1
 then
 	echo "Connected to WiFi"
-	connected=true
+	echo hostapd="False" > /etc/raspap/connectivity.txt
 	export email=${email}
 	python /home/${user}/startup_mailer.py
 	break
@@ -180,6 +177,7 @@ else
 	ip addr flush wlan0
 	ip link set dev wlan0
 	rm -r /var/run/wpa_supplicant >/dev/null 2>&1
+	echo hostapd="True" > /etc/raspap/connectivity.txt
 	sudo systemctl enable hostapd
 	sudo systemctl enable dnsmasq
 	sudo systemctl start hostapd
