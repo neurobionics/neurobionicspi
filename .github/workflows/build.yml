@@ -56,7 +56,7 @@ jobs:
           echo BOOTSTRAP_PASSWORD="${BOOTSTRAP_PASSWORD}" >> $(dirname $PIFILE)/.env
           echo BOOTSTRAP_WPA_SSID="${BOOTSTRAP_WPA_SSID}" >> $(dirname $PIFILE)/.env
           echo BOOTSTRAP_WPA_PASSPHRASE="${BOOTSTRAP_WPA_PASSPHRASE}" >> $(dirname $PIFILE)/.env
-          echo 'BOOTSTRAP_EMAIL="${BOOTSTRAP_EMAIL}"' >> $(dirname $PIFILE)/.env
+          echo 'BOOTSTRAP_EMAIL=\"${BOOTSTRAP_EMAIL}\"' >> $(dirname $PIFILE)/.env
           cat .env
       - name: Build image
         uses: Nature40/pimod@v0.2.2
