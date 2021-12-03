@@ -25,6 +25,9 @@ echo "Password has been changed."
 
 RUN bash -c "echo America/New_York > /etc/timezone"
 
+RUN apt-get update
+RUN apt-get upgrade
+
 echo "Configuring WiFi network:"
 RUN apt-get install -y wpasupplicant
 
