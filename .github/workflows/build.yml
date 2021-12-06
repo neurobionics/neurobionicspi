@@ -32,12 +32,12 @@ on:
         required: true
         default: neurobionics
 env:
-  BOOTSTRAP_HOSTNAME: ${{ github.event.inputs.host_name }}
-  BOOTSTRAP_USER: ${{ github.event.inputs.first_user }}
-  BOOTSTRAP_PASSWORD: ${{ github.event.inputs.first_user_pass }}
-  BOOTSTRAP_WPA_SSID: ${{ github.event.inputs.wpa_ssid }}
-  BOOTSTRAP_WPA_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
-  BOOTSTRAP_EMAIL: ${{ github.event.inputs.email }}
+  HOSTNAME: ${{ github.event.inputs.host_name }}
+  USER: ${{ github.event.inputs.first_user }}
+  PASSWORD: ${{ github.event.inputs.first_user_pass }}
+  WPA_SSID: ${{ github.event.inputs.wpa_ssid }}
+  WPA_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
+  EMAIL: ${{ github.event.inputs.email }}
   PIFILE: ${{ github.event.inputs.pifile }}.Pifile
 
 jobs:
@@ -51,12 +51,12 @@ jobs:
 
       - name: Write env variables
         run: |
-          echo BOOTSTRAP_HOSTNAME="${BOOTSTRAP_HOSTNAME}" > $(dirname $PIFILE)/.env
-          echo BOOTSTRAP_USER="${BOOTSTRAP_USER}" >> $(dirname $PIFILE)/.env
-          echo BOOTSTRAP_PASSWORD="${BOOTSTRAP_PASSWORD}" >> $(dirname $PIFILE)/.env
-          echo BOOTSTRAP_WPA_SSID="${BOOTSTRAP_WPA_SSID}" >> $(dirname $PIFILE)/.env
-          echo BOOTSTRAP_WPA_PASSPHRASE="${BOOTSTRAP_WPA_PASSPHRASE}" >> $(dirname $PIFILE)/.env
-          echo BOOTSTRAP_EMAIL=\"${BOOTSTRAP_EMAIL}\" >> $(dirname $PIFILE)/.env
+          echo HOSTNAME="${HOSTNAME}" > $(dirname $PIFILE)/.env
+          echo USER="${USER}" >> $(dirname $PIFILE)/.env
+          echo PASSWORD="${PASSWORD}" >> $(dirname $PIFILE)/.env
+          echo WPA_SSID="${WPA_SSID}" >> $(dirname $PIFILE)/.env
+          echo WPA_PASSPHRASE="${WPA_PASSPHRASE}" >> $(dirname $PIFILE)/.env
+          echo EMAIL=\"${EMAIL}\" >> $(dirname $PIFILE)/.env
           cat .env
       - name: Build image
         uses: Nature40/pimod@v0.2.2
