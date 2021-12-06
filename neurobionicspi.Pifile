@@ -6,12 +6,12 @@ RUN touch /boot/ssh
 
 source .env
 
-hostname="${BOOTSTRAP_HOSTNAME:-neurobionics}"
-user="${BOOTSTRAP_USER:-pi}"
-password="${BOOTSTRAP_PASSWORD:-neurobionics}"
-email="${BOOTSTRAP_EMAIL:-ejrouse@umich.edu}"
-apssid="${BOOTSTRAP_WPA_SSID:-NeurobionicsRPi}"
-appsk="${BOOTSTRAP_WPA_PASSPHRASE:-neurobionics}"
+hostname="${HOSTNAME:-neurobionics}"
+user="${USER:-pi}"
+password="${PASSWORD:-neurobionics}"
+email="${EMAIL:-ejrouse@umich.edu}"
+apssid="${WPA_SSID:-NeurobionicsRPi}"
+appsk="${WPA_PASSPHRASE:-neurobionics}"
 
 # Write hostname to /etc/hostname and /etc/hosts
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
