@@ -10,8 +10,8 @@ hostname="${HOSTNAME:-neurobionics}"
 user="${USER:-pi}"
 password="${PASSWORD:-neurobionics}"
 email="${EMAIL:-ejrouse@umich.edu}"
-apssid="${WPA_SSID:-NeurobionicsRPi}"
-appsk="${WPA_PASSPHRASE:-neurobionics}"
+apssid="${AP_SSID:-NeurobionicsRPi}"
+appsk="${AP_PASSPHRASE:-neurobionics}"
 
 # Write hostname to /etc/hostname and /etc/hosts
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
@@ -121,10 +121,10 @@ ipaddr = split_data[split_data.index('src')+1]
 #Generates an unique token for each session
 token = secrets.token_urlsafe(16)
 
-my_ip = 'Neurobionics Pi\n--------------- \nToken: %s' % token + '\nIP Address: %s' % ipaddr + '\nMAC Address: %s' %mac + '\nDate: '+today.strftime('%d %b %Y') + '\nTime: '+today.strftime('%I %M %p') + "\n---------------"
+my_ip = '\nNeurobionics Pi\n---------------- \n\nToken: %s' % token + '\nIP Address: %s' % ipaddr + '\nMAC Address: %s' %mac + '\nDate: '+today.strftime('%d %b %Y') + '\nTime: '+today.strftime('%I %M %p') + "\n\n----------------"
 
 msg = MIMEText(my_ip)
-msg['Subject'] = 'IP For RPi on %s' % today.strftime('%b %d %Y')
+msg['Subject'] = 'Session created for RPi on %s' % today.strftime('%b %d %Y')
 msg['From'] = gmail_user
 msg['To'] = ",".join(str(x) for x in recipients) 
 
@@ -176,7 +176,6 @@ then
 	echo hostapd="False" > /etc/raspap/connectivity.txt
 	export email="${email}"
 	python /home/${user}/startup_mailer.py
-	break
 else
 	echo "DHCP server did not respond with an IP lease (DHCPOFFER)"
 	echo "Starting AP"
