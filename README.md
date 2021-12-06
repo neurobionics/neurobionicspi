@@ -6,7 +6,7 @@
 
 Reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/operating-systems/) to include custom packages, connectivity to a wireless network, and to create a fallback access point when the configured wireless network can't be found, thereby automating the process of setting up a Raspberry Pi for Embedded Research.
 
-<img src="https://github.com/imsenthur/neurobionicspi/blob/main/neurobionicspi.PNG" width="1024">
+<img src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/neurobionicspi.PNG" width="1024">
 
 # Features
 * Uses [CI](https://docs.github.com/en/actions/automating-builds-and-tests/about-continuous-integration) (Github Actions) to build a stable Raspbian image that is always up to date.
@@ -14,7 +14,7 @@ Reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/
 * Provides a much easier way to build customized project-specific Raspbian images via Github Actions UI.
 
 \
-<img src="https://github.com/imsenthur/neurobionicspi/blob/main/interface.PNG">
+<img src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/interface.PNG">
 
 # Usage
 * `Fork` this repository to create your own private repository that shares the same default source code, which can then be customized.
@@ -25,7 +25,7 @@ Reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/
 * Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or other softwares like [Etcher](https://www.balena.io/etcher/), [Rufus](https://rufus.ie/en/), etc to flash the downloaded image to a SD card.
 
 # Environment Variables
-<img align="right" src="https://github.com/imsenthur/neurobionicspi/blob/main/UI.PNG">
+<img align="right" src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/UI.PNG">
 
 | Variable | Default Value |
 | -------- | ------------- |
