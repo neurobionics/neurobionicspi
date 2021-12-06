@@ -8,14 +8,23 @@ Reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/
 * Provides a much easier way to build customized project-specific Raspbian images via Github Actions UI.
 
 # Usage
-* Fork this repository to create your own private repository that shares the same default source code.
-* Navigate to the ```Actions``` tab in your forked repository.
-* Select the ```Build``` workflow and click on ```Run Workflow```
-* Use the Github Actions pop-Up UI to modify the ```hostname,username, password, AP SSID, AP passphrase and e-mail address(es)```.
-* After a successful run, your custom Raspbian image will be attached as an artifact. You can download it by selecting the current workflow run and clicking on the attached ```artifact```.
+* `Fork` this repository to create your own private repository that shares the same default source code, which can then be customized.
+* Navigate to the `Actions` tab in your forked repository.
+* Select the `Build` workflow and click on `Run Workflow`
+* Use the Github Actions pop-Up UI to modify the `hostname,username, password, AP SSID, AP passphrase and e-mail address(es)`.
+* After a successful run, your custom Raspbian image will be attached as an artifact. You can download it by selecting the current workflow run and clicking on the attached `artifact`.
 * Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or other softwares like [Etcher](https://www.balena.io/etcher/), [Rufus](https://rufus.ie/en/), etc to flash the downloaded image to a SD card.
 
 # Environment Variables
+
+| Variable | Default Value |
+| -------- | ------------- |
+| `HOSTNAME` | neurobionicspi |
+| `USER` | pi |
+| `PASSWORD` | neurobionics |
+| `AP_SSID` | NeurobionicsRPi |
+| `AP_PASSPHRASE` | neurobionics |
+| `EMAIL` | ejrouse@umich.edu |
 
 # References
 * [Pimod](https://github.com/marketplace/actions/run-pimod)
