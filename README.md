@@ -1,4 +1,8 @@
 # Neurobionics Pi
+[![U-M](https://img.shields.io/badge/-University%20of%20Michigan-ffcb05)](https://umich.edu/)
+[![Neurobionics](https://img.shields.io/badge/-Neurobionics-00274c)](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
+[![RPi4](https://img.shields.io/badge/Tested%20on-Raspberry%20Pi%204B-c51a4a)](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
+![Build](https://github.com/imsenthur/neurobionicspi/workflows/Build/badge.svg)
 
 Reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/operating-systems/) to include custom packages, connectivity to a wireless network, and to create a fallback access point when the configured wireless network can't be found, thereby automating the process of setting up a Raspberry Pi for Embedded Research.
 
