@@ -35,8 +35,8 @@ env:
   HOSTNAME: ${{ github.event.inputs.host_name }}
   USER: ${{ github.event.inputs.first_user }}
   PASSWORD: ${{ github.event.inputs.first_user_pass }}
-  WPA_SSID: ${{ github.event.inputs.wpa_ssid }}
-  WPA_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
+  AP_SSID: ${{ github.event.inputs.wpa_ssid }}
+  AP_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
   EMAIL: ${{ github.event.inputs.email }}
   PIFILE: ${{ github.event.inputs.pifile }}.Pifile
 
@@ -54,8 +54,8 @@ jobs:
           echo HOSTNAME="${HOSTNAME}" > $(dirname $PIFILE)/.env
           echo USER="${USER}" >> $(dirname $PIFILE)/.env
           echo PASSWORD="${PASSWORD}" >> $(dirname $PIFILE)/.env
-          echo WPA_SSID="${WPA_SSID}" >> $(dirname $PIFILE)/.env
-          echo WPA_PASSPHRASE="${WPA_PASSPHRASE}" >> $(dirname $PIFILE)/.env
+          echo AP_SSID="${AP_SSID}" >> $(dirname $PIFILE)/.env
+          echo AP_PASSPHRASE="${AP_PASSPHRASE}" >> $(dirname $PIFILE)/.env
           echo EMAIL=\"${EMAIL}\" >> $(dirname $PIFILE)/.env
           cat .env
       - name: Build image
