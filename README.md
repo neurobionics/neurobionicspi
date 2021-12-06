@@ -25,6 +25,7 @@ Reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/
 * Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or other softwares like [Etcher](https://www.balena.io/etcher/), [Rufus](https://rufus.ie/en/), etc to flash the downloaded image to a SD card.
 
 # Environment Variables
+<img align="right" src="https://github.com/imsenthur/neurobionicspi/blob/main/UI.PNG">
 
 | Variable | Default Value |
 | -------- | ------------- |
@@ -33,7 +34,8 @@ Reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/
 | `PASSWORD` | neurobionics |
 | `AP_SSID` | NeurobionicsRPi |
 | `AP_PASSPHRASE` | neurobionics |
-| `EMAIL` | ejrouse@umich.edu |
+| `EMAIL` | ejrouse@umich.edu | 
+
 
 # References
 * [Pimod](https://github.com/marketplace/actions/run-pimod)
