@@ -89,6 +89,7 @@ import socket
 from email.mime.text import MIMEText
 import datetime
 import os
+import secrets
 
 ######## Change to your own account information!######
 
@@ -102,7 +103,9 @@ smtpserver.ehlo()
 smtpserver.starttls()
 smtpserver.ehlo
 smtpserver.login(gmail_user, gmail_password)
-today = datetime.date.today()
+utctoday = datetime.datetime.utcnow() #UTC
+dt = datetime.timedelta(hours=5)
+today = utctoday - dt #EST
 
 # get MAC address - individual ID for each RPi
 str_temp = open('/sys/class/net/wlan0/address').read()
@@ -114,7 +117,11 @@ data = p.communicate()
 temp = str(data[0])
 split_data = temp.split()
 ipaddr = split_data[split_data.index('src')+1]
-my_ip = 'Neurobionics Wifi IP Emailer: The IP address for your Raspberry Pi is %s' % ipaddr + '\nfrom MAC address: %s' %mac + '\nTime and Date: '+today.strftime('%I %M %p %d %b %Y')
+
+#Generates an unique token for each session
+token = secrets.token_urlsafe(16)
+
+my_ip = 'Neurobionics Pi\n--------------- \nToken: %s' % token + '\nIP Address: %s' % ipaddr + '\nMAC Address: %s' %mac + '\nDate: '+today.strftime('%d %b %Y') + '\nTime: '+today.strftime('%I %M %p') + "\n---------------"
 
 msg = MIMEText(my_ip)
 msg['Subject'] = 'IP For RPi on %s' % today.strftime('%b %d %Y')
@@ -167,7 +174,7 @@ if dhclient -1 wlan0 > dev/null 2>&1
 then
 	echo "Connected to WiFi"
 	echo hostapd="False" > /etc/raspap/connectivity.txt
-	export email=${email}
+	export email="${email}"
 	python /home/${user}/startup_mailer.py
 	break
 else
