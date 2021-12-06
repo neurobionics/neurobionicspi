@@ -104,8 +104,8 @@ smtpserver.starttls()
 smtpserver.ehlo
 smtpserver.login(gmail_user, gmail_password)
 utctoday = datetime.datetime.utcnow() #UTC
-dt = datetime.timedelta(hours=5)
-today = utctoday - dt #EST
+utc2est = datetime.timedelta(hours=5)
+today = utctoday - utc2est #EST
 
 # get MAC address - individual ID for each RPi
 str_temp = open('/sys/class/net/wlan0/address').read()
