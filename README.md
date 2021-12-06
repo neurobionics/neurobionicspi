@@ -36,6 +36,8 @@ Reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/
 | `AP_PASSPHRASE` | neurobionics |
 | `EMAIL` | ejrouse@umich.edu | 
 
+# Issues
+Kindly report any issues [here](https://github.com/imsenthur/neurobionicspi/issues).
 
 # References
 * [Pimod](https://github.com/marketplace/actions/run-pimod)
