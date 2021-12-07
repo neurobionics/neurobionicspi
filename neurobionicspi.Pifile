@@ -146,6 +146,9 @@ RUN tee /etc/rc.local <<EOF
 # bits.
 #
 # By default this script does nothing.
+#
+# Created by Elliott Rouse and Senthur Raj
+# 2021 (c) University of Michigan Neurobionics Lab
 
 sleep 10
 
