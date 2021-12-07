@@ -123,7 +123,7 @@ ipaddr = split_data[split_data.index('src')+1]
 token = secrets.token_urlsafe(16)
 
 msg = EmailMessage()
-msg['Subject'] = 'Session RPi :: %s' % today.strftime('%b %d %Y')
+msg['Subject'] = 'Session created for RPi :: %s' % today.strftime('%b %d %Y')
 msg['From'] = gmail_user
 msg['To'] = ",".join(str(x) for x in recipients)
 msg.set_content('''
