@@ -17,6 +17,8 @@ Reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/
 <img src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/interface.PNG">
 
 # Usage
+<img align="right" src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/UI.PNG">
+
 * `Fork` this repository to create your own private repository that shares the same default source code, which can then be customized.
 * Navigate to the `Actions` tab in your forked repository.
 * Select the `Build` workflow and click on `Run Workflow`
@@ -25,7 +27,6 @@ Reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/
 * Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or other softwares like [Etcher](https://www.balena.io/etcher/), [Rufus](https://rufus.ie/en/), etc to flash the downloaded image to a SD card.
 
 # Environment Variables
-<img align="right" src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/UI.PNG">
 
 | Variable | Default Value |
 | -------- | ------------- |
