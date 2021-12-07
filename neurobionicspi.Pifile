@@ -163,6 +163,7 @@ then
 	echo "RaspAP Installed."
 	sudo sed -i 's/NeuroPi/${apssid}/g' /etc/hostapd/hostapd.conf
 	sudo sed -i 's/neurobionics/${appsk}/g' /etc/hostapd/hostapd.conf
+	sudo reboot now
 else
 	echo "Network configured."
 fi
