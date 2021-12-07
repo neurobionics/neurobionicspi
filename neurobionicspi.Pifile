@@ -87,6 +87,7 @@ import subprocess
 import smtplib
 import socket
 from email.mime.text import MIMEText
+from email.message import EmailMessage
 import datetime
 import os
 import secrets
@@ -121,14 +122,32 @@ ipaddr = split_data[split_data.index('src')+1]
 #Generates an unique token for each session
 token = secrets.token_urlsafe(16)
 
-my_ip = 'Wifi IP Address Emailer Utility v2.0 (c) University of Michigan Neurobionics Lab\n---------------- \nIP Address: %s' % ipaddr + '\nUnique Identifier: %s' % token + '\nMAC Address: %s' %mac + '\nDate: '+today.strftime('%d %b %Y') + '\nTime: '+today.strftime('%I %M %p') + "\n----------------"
-
-msg = MIMEText(my_ip)
-msg['Subject'] = 'Session created for RPi :: %s' % today.strftime('%b %d %Y')
+msg = EmailMessage()
+msg['Subject'] = 'Session RPi :: %s' % today.strftime('%b %d %Y')
 msg['From'] = gmail_user
-msg['To'] = ",".join(str(x) for x in recipients) 
+msg['To'] = ",".join(str(x) for x in recipients)
+msg.set_content('''
+<!DOCTYPE html>
+<html>
+    <body>
+        <div style="padding:5px 20px;">
+            <h1 style="font-size:20px;">Wifi IP Address Emailer Utility v2.0 <br>(c) University of Michigan Neurobionics Lab</h1>
+            <p style="font-size:15px;">
+            <b>IP Address:</b> {0} <br>
+            <b>Unique Identifier:</b> {1}<br>
+            <b>MAC Address:</b> {2}<br>
+            <b>Date:</b> {3}<br>
+            <b>Time:</b> {4}<br>
+            </p>
+            <div style="height: 500px;width:400px">
+                <img src="https://robotics.umich.edu/wp-content/uploads/2018/11/MRobotics_informal_outlines_digital.png" style="width: 230; height: 47px;">
+            </div>
+        </div>
+    </body>
+</html>
+'''.format(ipaddr, token, mac, today.strftime('%d %b %Y'), today.strftime('%I %M %p')), subtype='html')
 
-smtpserver.sendmail(gmail_user, recipients, msg.as_string())
+smtpserver.send_message(msg)
 smtpserver.quit()
 
 EOF
