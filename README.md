@@ -25,6 +25,12 @@ Reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/
 * Use the Github Actions pop-Up UI to modify the `hostname, username, password, AP SSID, AP passphrase and e-mail address(es)`.
 * After a successful run, your custom Raspbian image will be attached as an artifact. You can download it by selecting the current workflow run and clicking on the attached `artifact`.
 * Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or other softwares like [Etcher](https://www.balena.io/etcher/), [Rufus](https://rufus.ie/en/), etc to flash the downloaded image to a SD card.
+* You can access the Web interface by entering the IP address of your RPi in a browser.
+
+| Web Interface | Default Value |
+| -------- | ------------- |
+| Username | `admin` |
+| Password | `neurobionics` |
 
 # Environment Variables
 
