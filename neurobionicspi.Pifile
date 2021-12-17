@@ -131,7 +131,7 @@ msg.set_content('''
 <html>
     <body>
         <div style="padding:5px 20px;">
-            <h1 style="font-size:20px;">Wifi IP Address Emailer Utility v2.0 <br>(c) University of Michigan Neurobionics Lab</h1>
+            <h1 style="font-size:20px;">Wifi IP Address Emailer Utility v2.0 <br>&copy; University of Michigan Neurobionics Lab</h1>
             <p style="font-size:15px;">
             <b>IP Address:</b> {0} <br>
             <b>Unique Identifier:</b> {1}<br>
@@ -145,7 +145,7 @@ msg.set_content('''
         </div>
     </body>
 </html>
-'''.format(ipaddr, token, mac, today.strftime('%d %b %Y'), today.strftime('%I %M %p')), subtype='html')
+'''.format(ipaddr, token, mac, today.strftime('%d %b %Y'), today.strftime('%I:%M:%S %p')), subtype='html')
 
 smtpserver.send_message(msg)
 smtpserver.quit()
