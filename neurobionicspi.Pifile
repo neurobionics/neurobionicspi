@@ -190,7 +190,14 @@ else
 	echo "Network configured."
 fi
 
-sleep 10
+if systemctl status hostapd | grep -q 'running'; then
+        sudo systemctl disable hostapd
+        sudo systemctl disable dnsmasq
+        sudo systemctl stop hostapd
+	sudo systemctl stop dnsmasq
+fi
+
+sleep 20
 
 dhclient -r wlan0
 if dhclient -1 wlan0 > dev/null 2>&1
