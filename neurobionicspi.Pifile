@@ -200,6 +200,10 @@ then
 	sudo reboot now
 else
 	echo "Network configured."
+        sudo systemctl disable hostapd
+        sudo systemctl disable dnsmasq
+        sudo systemctl stop hostapd
+	sudo systemctl stop dnsmasq	
 fi
 
 sleep 20
