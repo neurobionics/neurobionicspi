@@ -51,6 +51,7 @@ network={
         id_str="MWireless"
 	priority=1
 }
+
 EOF
 
 RUN tee -a /etc/network/interfaces.d/wpa2enterprise <<EOF
