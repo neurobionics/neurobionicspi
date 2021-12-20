@@ -10,6 +10,9 @@ hostname="${HOSTNAME:-neurobionics}"
 user="${USER:-pi}"
 password="${PASSWORD:-neurobionics}"
 email="${EMAIL:-ejrouse@umich.edu}"
+mwpsk="${MW_PASSPHRASE:-password}"
+wifissid="${WIFI_SSID:-yourwifinetwork}"
+wifipsk="${WIFI_PASSPHRASE:-password}"
 apssid="${AP_SSID:-NeurobionicsRPi}"
 appsk="${AP_PASSPHRASE:-neurobionics}"
 
@@ -44,8 +47,15 @@ network={
         key_mgmt=WPA-EAP
         eap=PEAP
         identity="me-rousewifi"
-        password="DoNotChange1!"
+        password=hash:${mwpsk}
         id_str="MWireless"
+}
+
+network={
+        ssid="${wifissid}"
+        scan_ssid=1
+        key_mgmt=WPA-PSK
+        psk="${wifipsk}"
 }
 EOF
 
@@ -190,13 +200,6 @@ else
 	echo "Network configured."
 fi
 
-if systemctl status hostapd | grep -q 'running'; then
-        sudo systemctl disable hostapd
-        sudo systemctl disable dnsmasq
-        sudo systemctl stop hostapd
-	sudo systemctl stop dnsmasq
-fi
-
 sleep 20
 
 dhclient -r wlan0
@@ -206,6 +209,10 @@ then
 	echo hostapd="False" > /etc/raspap/connectivity.txt
 	export email="${email}"
 	python /home/${user}/startup_mailer.py
+        sudo systemctl disable hostapd
+        sudo systemctl disable dnsmasq
+        sudo systemctl stop hostapd
+	sudo systemctl stop dnsmasq	
 else
 	echo "DHCP server did not respond with an IP lease (DHCPOFFER)"
 	echo "Starting AP"
