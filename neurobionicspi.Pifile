@@ -11,7 +11,7 @@ user="${USER:-pi}"
 password="${PASSWORD:-neurobionics}"
 email="${EMAIL:-ejrouse@umich.edu}"
 mwpsk="${MW_PASSPHRASE:-password}"
-wifissid="${WIFI_SSID:-yourwifinetwork}"
+wifissid="${WIFI_SSID:-network}"
 wifipsk="${WIFI_PASSPHRASE:-password}"
 apssid="${AP_SSID:-NeurobionicsRPi}"
 appsk="${AP_PASSPHRASE:-neurobionics}"
@@ -50,14 +50,6 @@ network={
         password=hash:${mwpsk}
         id_str="MWireless"
 	priority=1
-}
-
-network={
-        ssid="${wifissid}"
-        scan_ssid=1
-        key_mgmt=WPA-PSK
-        psk="${wifipsk}"
-	priority=2
 }
 EOF
 
