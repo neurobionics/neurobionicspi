@@ -20,7 +20,7 @@ on:
         required: true
         default: neurobionics
       mwireless_pass:
-        description: "Get the MWireless passphrase [here](https://bit.ly/30zEzPCRPi)"
+        description: "[MWireless Passphrase](https://bit.ly/30zEzPCRPi)"
         required: true
       email:
         description: "Email"
