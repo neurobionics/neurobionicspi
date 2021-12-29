@@ -1,4 +1,4 @@
-# Neurobionics Pi
+# Raspbberry Pi Configuration for Embedded Research
 [![U-M](https://img.shields.io/badge/-University%20of%20Michigan-ffcb05)](https://umich.edu/)
 [![Neurobionics](https://img.shields.io/badge/-Neurobionics-00274c)](https://neurobionics.robotics.umich.edu/)
 [![RPi4](https://img.shields.io/badge/Tested%20on-Raspberry%20Pi%204B-c51a4a)](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
