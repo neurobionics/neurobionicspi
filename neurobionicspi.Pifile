@@ -54,31 +54,6 @@ network={
 
 EOF
 
-RUN tee -a /etc/network/interfaces.d/wpa2enterprise <<EOF
-auto wlan0
-allow-hotplug wlan0
-
-iface wlan0 inet dhcp
-	pre-up wpa_supplicant -B -Dwext -i wlan0 -c/etc/wpa_supplicant/wpa_supplicant.conf
-	post-down killall -q wpa_supplicant
-
-EOF
-
-RUN apt-get install -y lighttpd git hostapd dnsmasq vnstat qrencode php7.4-cgi
-RUN bash -c "sudo systemctl stop hostapd"
-RUN bash -c "sudo systemctl stop dnsmasq"
-RUN bash -c "sudo systemctl disable hostapd"
-RUN bash -c "sudo systemctl disable hostapd"
-
-RUN bash -c "echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections"
-RUN bash -c "echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections"
-RUN bash -c "sudo apt-get -y install iptables-persistent"
-
-RUN bash -c "sudo rm -rf /var/www/html"
-RUN bash -c "sudo git clone https://github.com/imsenthur/raspap-webgui.git /var/www/html"
-
-RUN bash -c "curl -L https://raw.githubusercontent.com/imsenthur/raspap-installer/main/install.sh -o /var/www/html/install.sh"
-
 echo "WiFi done."
 
 RUN bash -c "sudo rm -rf /etc/motd"
@@ -181,50 +156,9 @@ if rfkill list wlan | grep -q 'yes'; then
 	rfkill unblock wlan
 fi
 
-if [ ! -d "/etc/raspap" ] 
-then
-	echo "Snoozing"
-	sleep 20
-	echo "Installing RaspAP"
-	sudo bash /var/www/html/install.sh
-	echo "RaspAP Installed."
-	sudo sed -i 's/NeuroPi/${apssid}/g' /etc/hostapd/hostapd.conf
-	sudo sed -i 's/neurobionics/${appsk}/g' /etc/hostapd/hostapd.conf
-	sudo reboot now
-else
-	echo "Network configured."
-        sudo systemctl disable hostapd
-        sudo systemctl disable dnsmasq
-        sudo systemctl stop hostapd
-	sudo systemctl stop dnsmasq	
-fi
-
-sleep 20
-
 dhclient -r wlan0
-if dhclient -1 wlan0 > dev/null 2>&1
-then
-	echo "Connected to WiFi"
-	echo hostapd="False" > /etc/raspap/connectivity.txt
-	export email="${email}"
-	python /home/${user}/startup_mailer.py
-        sudo systemctl disable hostapd
-        sudo systemctl disable dnsmasq
-        sudo systemctl stop hostapd
-	sudo systemctl stop dnsmasq	
-else
-	echo "DHCP server did not respond with an IP lease (DHCPOFFER)"
-	echo "Starting AP"
-	wpa_cli terminate >/dev/null 2>&1
-	ip addr flush wlan0
-	ip link set dev wlan0
-	rm -r /var/run/wpa_supplicant >/dev/null 2>&1
-	echo hostapd="True" > /etc/raspap/connectivity.txt
-	sudo systemctl enable hostapd
-	sudo systemctl enable dnsmasq
-	sudo systemctl start hostapd
-	sudo systemctl start dnsmasq
-fi
+export email="${email}"
+python /home/${user}/startup_mailer.py
 
 exit 0
 EOF
