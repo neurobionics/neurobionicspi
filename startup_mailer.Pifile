@@ -90,7 +90,8 @@ def send_email(smtpserver, msg):
 if __name__ == '__main__':
 
   # Modify recipients via /etc/rc.local
-  recipients = [${email}]
+  recipient_str = "${email}"
+  recipients = recipient_str.split(", ")
 
   #######################################################
 
