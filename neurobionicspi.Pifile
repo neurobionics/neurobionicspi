@@ -59,7 +59,7 @@ EOF
 echo "WiFi done."
 
 RUN bash -c "sudo rm -rf /etc/motd"
-RUN bash -c "curl -L https://raw.githubusercontent.com/imsenthur/neuropi-motd/main/motd -o /home/${user}/.bash_profile"
+RUN bash -c "cp ./motd /home/${user}/.bash_profile"
 
 source ./startup_mailer.Pifile
 
