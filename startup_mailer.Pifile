@@ -1,5 +1,5 @@
 # Writes the startup_mailer script to the RPi.
-RUN tee /home/${user}/startup_mailer.py << EOF
+RUN tee /etc/startup_mailer.py << EOF
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import subprocess
