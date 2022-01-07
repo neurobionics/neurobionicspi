@@ -58,8 +58,7 @@ EOF
 
 echo "WiFi done."
 
-RUN bash -c "sudo rm -rf /etc/motd"
-RUN cp ./motd /home/${user}/.bash_profile
+source ./motd.Pifile
 
 source ./startup_mailer.Pifile
 
