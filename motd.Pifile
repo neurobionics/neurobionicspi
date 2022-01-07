@@ -1,3 +1,5 @@
+RUN bash -c "sudo rm -rf /etc/motd"
+
 RUN tee -a /home/${user}/.bash_profile <<EOF
 clear 
 echo "$(tput bold)$(tput setaf 3)"
