@@ -82,8 +82,8 @@ jobs:
         run: |
           tar -czvf ${{ github.event.inputs.pifile }}.tar.gz ${{ github.event.inputs.pifile }}.img
   
-      - name: Upload artifacts  
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ github.workflow }}-${{ github.sha }}.zip
-          path: ${{ github.event.inputs.pifile }}.img
+#       - name: Upload artifacts  
+#         uses: actions/upload-artifact@v2
+#         with:
+#           name: ${{ github.workflow }}-${{ github.sha }}.zip
+#           path: ${{ github.event.inputs.pifile }}.img
