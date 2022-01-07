@@ -29,7 +29,9 @@ echo "Password has been changed."
 RUN bash -c "echo America/New_York > /etc/timezone"
 
 RUN apt-get update
-RUN apt-get upgrade -y
+
+# Upgrade takes considerably more memory and time to build the image.
+# RUN apt-get upgrade -y
 
 echo "Configuring WiFi network:"
 RUN apt-get install -y wpasupplicant
