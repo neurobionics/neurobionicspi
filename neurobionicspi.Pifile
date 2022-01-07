@@ -57,8 +57,8 @@ RUN apt install -y libnss-resolve
 
 # Installing automagic-ap
 
-RUN bash -c "git clone https://github.com/imsenthur/automagic-ap.git /home/${user}/automagic-ap"
-RUN bash -c "sudo chown -R ${user} /home/${user}/automagic-ap"
+RUN bash -c "git clone https://github.com/imsenthur/automagic-ap.git /etc/automagic-ap"
+RUN bash -c "sudo chown -R ${user} /etc/automagic-ap"
 
 ##################################
 
