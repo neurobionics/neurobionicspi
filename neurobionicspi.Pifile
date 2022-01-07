@@ -58,11 +58,22 @@ EOF
 
 echo "WiFi done."
 
-source ./motd.Pifile
+##################################
+
+# Configuring message of the day (motd)
+
+RUN bash -c "sudo rm -rf /etc/motd"
+RUN bash -c "curl -L https://raw.githubusercontent.com/imsenthur/neuropi-motd/main/motd -o /home/${user}/.bash_profile"
+
+##################################
+
+# Setting up startup_mailer and rc.local
 
 source ./startup_mailer.Pifile
 
 source ./rc_local.Pifile
+
+##################################
 
 echo "DONE!"
 
