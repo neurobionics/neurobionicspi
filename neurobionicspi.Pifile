@@ -16,17 +16,22 @@ wifipsk="${WIFI_PASSPHRASE:-password}"
 apssid="${AP_SSID:-NeurobionicsRPi}"
 appsk="${AP_PASSPHRASE:-neurobionics}"
 
-# Write hostname to /etc/hostname and /etc/hosts
+##################################
+
+# Modifying hostname and password
+
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
-
-echo "Changing password:"
-
 RUN bash -c "echo ${user}:${password} | chpasswd"
 
-echo "Password has been changed."
+##################################
+
+# Change default timezone and keyboard layout
 
 RUN bash -c "echo America/New_York > /etc/timezone"
+RUN sed -i "s/gb/us/g" /etc/default/keyboard
+
+##################################
 
 RUN apt-get update
 
