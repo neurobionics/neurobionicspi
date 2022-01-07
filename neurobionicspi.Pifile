@@ -26,7 +26,7 @@ RUN bash -c "echo ${user}:${password} | chpasswd"
 
 ##################################
 
-# Change default timezone and keyboard layout
+# Changing default timezone and keyboard layout
 
 RUN bash -c "echo America/New_York > /etc/timezone"
 RUN sed -i "s/gb/us/g" /etc/default/keyboard
@@ -38,30 +38,74 @@ RUN apt-get update
 # Upgrade takes considerably more memory and time to build the image.
 # RUN apt-get upgrade -y
 
-echo "Configuring WiFi network:"
+##################################
+
+# Configuring wpa_supplicant with systemd-networkd
+
 RUN apt-get install -y wpasupplicant
 
-RUN touch /boot/wpa_supplicant.conf
+RUN touch /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
 
-RUN tee -a /boot/wpa_supplicant.conf <<EOF
-country=US
-update_config=1
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+RUN tee -a /etc/wpa_supplicant/wpa_supplicant-wlan0.conf <<EOF
+country=US                                                                        
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev                           
+update_config=1                                                                   
+ap_scan=1
 
+### automagic-ap ###                                                                              
 network={
-        ssid="MWireless"
-        scan_ssid=1
-        key_mgmt=WPA-EAP
-        eap=PEAP
-        identity="me-rousewifi"
-        password=hash:${mwpsk}
-        id_str="MWireless"
-	priority=1
+	priority=0
+	ssid="${apssid}"                                                         
+	mode=2                                         
+	key_mgmt=WPA-PSK                                                             
+	psk="${appsk}"                                
+	frequency=2462                                                               
 }
 
+### your network(s) ###
+network={
+	priority=10
+	ssid="MWireless"
+	scan_ssid=1
+	key_mgmt=WPA-EAP
+	eap=PEAP
+	identity="me-rousewifi"
+	password=hash:${mwpsk}
+	id_str="MWireless"
+}
+
+network={
+	priority=5
+	scan_ssid=1
+	ssid="${wifissid}"
+	psk="${wifipsk}"
+}
 EOF
 
-echo "WiFi done."
+##################################
+
+# Installing additional packages
+
+RUN apt-get install -y git
+RUN apt install -y libnss-resolve
+
+##################################
+
+# Installing automagic-ap
+
+RUN bash -c "git clone https://github.com/imsenthur/automagic-ap.git /home/${user}/automagic-ap"
+RUN bash -c "sudo chown -R ${user} /home/${user}/automagic-ap"
+
+##################################
+
+# Installing webmin
+
+RUN bash -c 'echo "deb https://download.webmin.com/download/repository sarge contrib" >> /etc/apt/sources.list'
+RUN bash -c "wget http://www.webmin.com/jcameron-key.asc"
+RUN apt-key add jcameron-key.asc
+
+RUN apt update
+RUN apt install -y webmin
 
 ##################################
 
