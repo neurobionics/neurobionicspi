@@ -12,7 +12,7 @@ While this image was originally configured for usage at the University of Michig
 
 # Features
 * Uses [CI](https://docs.github.com/en/actions/automating-builds-and-tests/about-continuous-integration) (Github Actions) to build a stable Raspbian image that is always up to date.
-* Has a feature-rich [web interface](https://docs.raspap.com/), which can be used to modify the networking setup and to run custom scripts.
+* Has a feature-rich [web interface](https://www.webmin.com), which can be used to modify the networking setup and to run custom scripts.
 * Provides a much easier way to build customized project-specific Raspbian images via Github Actions UI.
 
 \
@@ -27,12 +27,7 @@ While this image was originally configured for usage at the University of Michig
 * Use the Github Actions pop-Up UI to modify the `hostname, username, password, AP SSID, AP passphrase and e-mail address(es)`.
 * After a successful run, your custom Raspbian image will be attached as an artifact. You can download it by selecting the current workflow run and clicking on the attached `artifact`.
 * Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or other softwares like [Etcher](https://www.balena.io/etcher/), [Rufus](https://rufus.ie/en/), etc to flash the downloaded image to a SD card.
-* You can access the Web interface by entering the IP address of your RPi in a browser.
-
-| Web Interface | Default Value |
-| -------- | ------------- |
-| Username | `admin` |
-| Password | `neurobionics` |
+* You can access the web interface by entering the `IP address` of your RPi in a browser. **Login with your username and password**.
 
 # Environment Variables
 
@@ -50,4 +45,3 @@ Kindly report any issues [here](https://github.com/imsenthur/neurobionicspi/issu
 
 # References
 * [Pimod](https://github.com/marketplace/actions/run-pimod)
-* [RaspAP](https://github.com/RaspAP/raspap-webgui)
