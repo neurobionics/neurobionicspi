@@ -21,7 +21,7 @@ fi
 
 if [ ! -f "/etc/network.true" ]; then
 
-	cd /home/${user}/automagic-ap
+	cd /etc/automagic-ap
 	chmod +x automagic-ap install.sh
 	sudo ./install.sh
 
@@ -38,7 +38,7 @@ fi
 
 
 export email=${email}
-python /home/${user}/startup_mailer.py
+python /etc/startup_mailer.py
 
 exit 0
 EOF
