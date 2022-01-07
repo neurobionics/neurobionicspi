@@ -36,9 +36,5 @@ if [ ! -f "/etc/network.true" ]; then
 	sudo reboot now
 fi
 
-
-export email=${email}
-python /etc/startup_mailer.py
-
 exit 0
 EOF
