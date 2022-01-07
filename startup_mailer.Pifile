@@ -1,6 +1,6 @@
 # Writes the startup_mailer script to the RPi.
 RUN tee /home/${user}/startup_mailer.py << EOF
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import subprocess
 import smtplib
@@ -103,8 +103,8 @@ if __name__ == '__main__':
     smtpserver = initialize_smtp(gmail_user, gmail_password)
     print("Initialized SMTP server.")
   except smtplib.SMTPAuthenticationError:
-    print("Authentication error! Kindly retry after a few minutes. If the issue persists please contact Dr. Elliott Rouse (ejrouse@umich.edu).")
-    sys.exit(1)
+    print("Authentication error! Kindly retry after a few minutes. If the issue persists, please contact Dr. Elliott Rouse (ejrouse@umich.edu).")
+    sys.exit(0)
 
   except socket.gaierror:
     print("Unable to retrieve IP address of the host, waiting for 10 seconds.")
@@ -113,9 +113,9 @@ if __name__ == '__main__':
     try:
       smtpserver = initialize_smtp(gmail_user, gmail_password)
       print("Initialized SMTP server.")
-    except _:
+    except socket.gaierror:
       print("No internet connectivity. Kindly verify your network configuration (/etc/wpa_supplicant/wpa_supplicant-wlan0.conf).")
-      sys.exit(1)
+      sys.exit(0)
 
 
   #######################################################
@@ -148,6 +148,5 @@ if __name__ == '__main__':
   send_email(smtpserver, msg)
 
   print("A ticket for the current session has been mailed to the recipient(s).")
-
 
 EOF
