@@ -59,78 +59,7 @@ echo "WiFi done."
 RUN bash -c "sudo rm -rf /etc/motd"
 RUN bash -c "curl -L https://raw.githubusercontent.com/imsenthur/neuropi-motd/main/motd -o /home/${user}/.bash_profile"
 
-RUN tee /home/${user}/startup_mailer.py << EOF
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# This code runs on boot through /etc/rc.local and emails the device's IP address to the email specified below. 
-import subprocess
-import smtplib
-import socket
-from email.mime.text import MIMEText
-from email.message import EmailMessage
-import datetime
-import os
-import secrets
-
-######## Change to your own account information!######
-
-recipients = os.environ["email"].split(", ")
-
-#######################################################
-gmail_user = 'neurobionicslab@gmail.com'   # Who you will receive the email from
-gmail_password = 'jointimpedance'          # Password
-smtpserver = smtplib.SMTP('smtp.gmail.com', 587)
-smtpserver.ehlo()
-smtpserver.starttls()
-smtpserver.ehlo
-smtpserver.login(gmail_user, gmail_password)
-utctoday = datetime.datetime.utcnow() #UTC
-utc2est = datetime.timedelta(hours=5)
-today = utctoday - utc2est #EST
-
-# get MAC address - individual ID for each RPi
-str_temp = open('/sys/class/net/wlan0/address').read()
-mac = str_temp[0:17]
-# Very Linux Specific
-arg='ip route list'
-p=subprocess.Popen(arg,shell=True,stdout=subprocess.PIPE)
-data = p.communicate()
-temp = str(data[0])
-split_data = temp.split()
-ipaddr = split_data[split_data.index('src')+1]
-
-#Generates an unique token for each session
-token = secrets.token_urlsafe(16)
-
-msg = EmailMessage()
-msg['Subject'] = 'Session created for RPi :: %s' % today.strftime('%b %d %Y')
-msg['From'] = gmail_user
-msg['To'] = ",".join(str(x) for x in recipients)
-msg.set_content('''
-<!DOCTYPE html>
-<html>
-    <body>
-        <div style="padding:5px 20px;">
-            <h1 style="font-size:20px;">Wifi IP Address Emailer Utility v2.0 <br>&copy; University of Michigan Neurobionics Lab</h1>
-            <p style="font-size:15px;">
-            <b>IP Address:</b> {0} <br>
-            <b>Unique Identifier:</b> {1}<br>
-            <b>MAC Address:</b> {2}<br>
-            <b>Date:</b> {3}<br>
-            <b>Time:</b> {4}<br>
-            </p>
-            <div style="height: 500px;width:400px">
-                <img src="https://robotics.umich.edu/wp-content/uploads/2018/11/MRobotics_informal_outlines_digital.png" style="width: 230; height: 47px;">
-            </div>
-        </div>
-    </body>
-</html>
-'''.format(ipaddr, token, mac, today.strftime('%d %b %Y'), today.strftime('%I:%M:%S %p')), subtype='html')
-
-smtpserver.send_message(msg)
-smtpserver.quit()
-
-EOF
+source ./startup_mailer.Pifile
 
 RUN tee /etc/rc.local <<EOF
 #!/bin/sh -e
