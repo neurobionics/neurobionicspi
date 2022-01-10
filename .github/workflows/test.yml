@@ -72,7 +72,6 @@ jobs:
           echo AP_SSID="${AP_SSID}" >> $(dirname $PIFILE)/.env
           echo AP_PASSPHRASE="${AP_PASSPHRASE}" >> $(dirname $PIFILE)/.env
           echo EMAIL=\"${EMAIL}\" >> $(dirname $PIFILE)/.env
-          cat .env
       - name: Build image
         uses: Nature40/pimod@v0.2.2
         with:
