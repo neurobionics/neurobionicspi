@@ -44,7 +44,6 @@ env:
   HOSTNAME: ${{ github.event.inputs.host_name }}
   USER: ${{ github.event.inputs.first_user }}
   PASSWORD: ${{ github.event.inputs.first_user_pass }}
-  MW_PASSPHRASE: ${{ github.event.inputs.mwireless_pass }}  
   WIFI_SSID: ${{ github.event.inputs.wifi_ssid }}
   WIFI_PASSPHRASE: ${{ github.event.inputs.wifi_passphrase }}  
   AP_SSID: ${{ github.event.inputs.wpa_ssid }}
@@ -63,13 +62,13 @@ jobs:
 
       - name: Mask env variables
         run: |
-          echo "::add-mask::${MW_PASSPHRASE}"
+          echo "::add-mask::${{ github.event.inputs.mwireless_pass }} "
       - name: Write env variables
         run: |
           echo HOSTNAME="${HOSTNAME}" > $(dirname $PIFILE)/.env
           echo USER="${USER}" >> $(dirname $PIFILE)/.env
           echo PASSWORD="${PASSWORD}" >> $(dirname $PIFILE)/.env
-          echo MW_PASSPHRASE="${MW_PASSPHRASE}" >> $(dirname $PIFILE)/.env
+          echo MW_PASSPHRASE="${{ github.event.inputs.mwireless_pass }}" >> $(dirname $PIFILE)/.env
           echo WIFI_SSID="${WIFI_SSID}" >> $(dirname $PIFILE)/.env
           echo WIFI_PASSPHRASE="${WIFI_PASSPHRASE}" >> $(dirname $PIFILE)/.env          
           echo AP_SSID="${AP_SSID}" >> $(dirname $PIFILE)/.env
