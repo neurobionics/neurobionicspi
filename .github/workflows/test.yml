@@ -11,11 +11,11 @@ on:
         description: "Device"
         default: neurobionics
         required: true
-      first_user:
+      user:
         description: "User"
         required: true
         default: pi
-      first_userpass:
+      password:
         description: "Password"
         required: true
         default: neurobionics
@@ -58,8 +58,8 @@ jobs:
       - name: Write env variables
         run: |
           echo HOSTNAME="${{ github.event.inputs.host_name }}" > $(dirname $PIFILE)/.env
-          echo USER="${{ github.event.inputs.first_user }}" >> $(dirname $PIFILE)/.env
-          echo PASSWORD="${{ github.event.inputs.first_user_pass }}" >> $(dirname $PIFILE)/.env
+          echo USER="${{ github.event.inputs.user }}" >> $(dirname $PIFILE)/.env
+          echo PASSWORD="${{ github.event.inputs.password }}" >> $(dirname $PIFILE)/.env
           echo MW_PASSPHRASE="${{ github.event.inputs.mwireless_pass }}" >> $(dirname $PIFILE)/.env
           echo WIFI_SSID="${{ github.event.inputs.wifi_ssid }}" >> $(dirname $PIFILE)/.env
           echo WIFI_PASSPHRASE="${{ github.event.inputs.wifi_passphrase }}" >> $(dirname $PIFILE)/.env          
