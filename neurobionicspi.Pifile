@@ -73,6 +73,12 @@ RUN apt install -y webmin
 
 ##################################
 
+# Installing essential packages
+
+source ./packages.Pifile
+
+##################################
+
 # Configuring message of the day (motd)
 
 RUN bash -c "sudo rm -rf /etc/motd"
