@@ -61,6 +61,10 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Masking sensitive information
+        run: |
+          echo "::add-mask::${{ MW_PASSPHRASE }}"
+
       - name: Write env variables
         run: |
           echo HOSTNAME="${HOSTNAME}" > $(dirname $PIFILE)/.env
