@@ -48,10 +48,9 @@ source ./wpa_supplicant.Pifile
 
 ##################################
 
-# Installing additional packages
+# Installing essential packages
 
-RUN apt-get install -y git
-RUN apt install -y libnss-resolve
+source ./packages.Pifile
 
 ##################################
 
@@ -70,12 +69,6 @@ RUN apt-key add jcameron-key.asc
 
 RUN apt update
 RUN apt install -y webmin
-
-##################################
-
-# Installing essential packages
-
-source ./packages.Pifile
 
 ##################################
 
