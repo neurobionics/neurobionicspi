@@ -4,7 +4,7 @@ RUN apt-get install -y python3-pip --upgrade
 RUN apt-get install ufw -y
 
 # Dephy Actpack and Flexsea
-RUN bash -c "git clone https://github.com/imsenthur/Actuator-Package.git -o /home/${user}/Actuator-Package"
+RUN bash -c "git clone https://github.com/imsenthur/Actuator-Package.git /home/${user}/Actuator-Package"
 RUN bash -c "bash /home/${user}/Actuator-Package/install_python_deps.sh"
 RUN apt-get install libc6 libgcc-s1 -y
 RUN bash -c "python3 -m pip install flexsea"
