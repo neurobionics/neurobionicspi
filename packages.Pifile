@@ -19,3 +19,7 @@ RUN apt-get install gh
 
 # Python3-smbus (I2C Tools package is already installed)
 RUN apt-get install -y python3-smbus
+
+# Python plotting tool: rtplot
+RUN bash -c "git clone https://github.com/jmontp/rtplot.git /home/${user}/rtplot"
+RUN bash -c "python3 -m pip install /home/${user}/rtplot/"
