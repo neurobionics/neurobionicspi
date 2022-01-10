@@ -25,6 +25,11 @@ if [ ! -f "/etc/network.true" ]; then
 	chmod +x automagic-ap install.sh
 	sudo ./install.sh
 
+	# Dephy Actuator Package Installation
+	sudo ufw --force enable && sudo ufw allow 8988 && sudo ufw allow 22
+	sudo usermod -a -G dialout "$USER"
+
+	# Webmin Installation
 	sudo touch /etc/network.true
 	sudo sed -i 's/port=10000/port=80/g' /etc/webmin/miniserv.conf
 	sudo sed -i 's/listen=10000/listen=80/g' /etc/webmin/miniserv.conf
