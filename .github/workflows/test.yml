@@ -62,7 +62,7 @@ jobs:
 
       - name: Masking sensitive information
         run: |
-          echo "::add-mask::${{ MW_PASSPHRASE }}"
+          echo "::add-mask::${MW_PASSPHRASE}"
 
       - name: Write env variables
         run: |
