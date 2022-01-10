@@ -41,13 +41,6 @@ on:
         required: true
         default: neurobionics
 jobs:
-  mask:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Masking sensitive information
-        run: |
-          echo "::add-mask::${{ github.event.inputs.mwireless_pass }}"    
-    
   build:
     runs-on: ubuntu-latest
     env:
@@ -67,6 +60,10 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Masking sensitive information
+        run: |
+          echo "::add-mask::${{ github.event.inputs.mwireless_pass }}"
+          echo "::add-mask::${MW_PASSPHRASE}"
       - name: Write env variables
         run: |
           echo HOSTNAME="${HOSTNAME}" > $(dirname $PIFILE)/.env
@@ -86,4 +83,3 @@ jobs:
       - name: Make tarball
         run: |
           tar -czvf ${{ github.event.inputs.pifile }}.tar.gz ${{ github.event.inputs.pifile }}.img
-  
