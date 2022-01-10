@@ -1,0 +1,6 @@
+# Add bash commands to install required packages
+RUN apt-get install -y python3-pip --upgrade
+
+# Dephy Actpack and Flexsea
+RUN apt-get install libc6 libgcc-s1 -y
+RUN bash -c "python3 -m pip install flexsea"
