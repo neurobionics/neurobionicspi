@@ -40,21 +40,20 @@ on:
         description: "Access Point Passphrase"
         required: true
         default: neurobionics
-env:
-  HOSTNAME: ${{ github.event.inputs.host_name }}
-  USER: ${{ github.event.inputs.first_user }}
-  PASSWORD: ${{ github.event.inputs.first_user_pass }}
-  MW_PASSPHRASE: ${{ github.event.inputs.mwireless_pass }}  
-  WIFI_SSID: ${{ github.event.inputs.wifi_ssid }}
-  WIFI_PASSPHRASE: ${{ github.event.inputs.wifi_passphrase }}  
-  AP_SSID: ${{ github.event.inputs.wpa_ssid }}
-  AP_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
-  EMAIL: ${{ github.event.inputs.email }}
-  PIFILE: ${{ github.event.inputs.pifile }}.Pifile
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      HOSTNAME: ${{ github.event.inputs.host_name }}
+      USER: ${{ github.event.inputs.first_user }}
+      PASSWORD: ${{ github.event.inputs.first_user_pass }}
+      MW_PASSPHRASE: ${{ github.event.inputs.mwireless_pass }}  
+      WIFI_SSID: ${{ github.event.inputs.wifi_ssid }}
+      WIFI_PASSPHRASE: ${{ github.event.inputs.wifi_passphrase }}  
+      AP_SSID: ${{ github.event.inputs.wpa_ssid }}
+      AP_PASSPHRASE: ${{ github.event.inputs.wpa_passphrase }}
+      EMAIL: ${{ github.event.inputs.email }}
+      PIFILE: ${{ github.event.inputs.pifile }}.Pifile
 
     steps:
       - uses: actions/checkout@v2
@@ -63,7 +62,7 @@ jobs:
 
       - name: Masking sensitive information
         run: |
-          echo "::add-mask::${{ github.event.inputs.mwireless_pass }}"
+          echo "::add-mask::${{ MW_PASSPHRASE }}"
 
       - name: Write env variables
         run: |
