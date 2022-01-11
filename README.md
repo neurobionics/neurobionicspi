@@ -16,7 +16,7 @@ While this image was originally configured for usage at the University of Michig
 * Provides a much easier way to build customized project-specific Raspbian images via Github Actions UI.
 
 \
-<img src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/interface.PNG">
+<img src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/interface.png">
 
 # Usage
 <img align="right" src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/UI.PNG">
