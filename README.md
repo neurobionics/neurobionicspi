@@ -12,7 +12,7 @@ While this image was originally configured for usage at the University of Michig
 
 # Features
 * Uses [CI](https://docs.github.com/en/actions/automating-builds-and-tests/about-continuous-integration) (Github Actions) to build a stable Raspbian image that is always up to date.
-* Has a feature-rich [web interface](https://doxfer.webmin.com/Webmin/Main_Page), which can be used to modify the networking setup and to run custom scripts.
+* Has a feature-rich [web interface](https://doxfer.webmin.com/Webmin/Introduction), which can be used to modify the networking setup and to run custom scripts.
 * Provides a much easier way to build customized project-specific Raspbian images via Github Actions UI.
 
 \
@@ -27,7 +27,7 @@ While this image was originally configured for usage at the University of Michig
 * Use the Github Actions pop-Up UI to modify the `hostname, username, password, AP SSID, AP passphrase and e-mail address(es)`.
 * After a successful run, your custom Raspbian image will be attached as an artifact. You can download it by selecting the current workflow run and clicking on the attached `artifact`.
 * Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or other softwares like [Etcher](https://www.balena.io/etcher/), [Rufus](https://rufus.ie/en/), etc to flash the downloaded image to a SD card.
-* You can access the [web interface](https://doxfer.webmin.com/Webmin/Main_Page) by entering the `IP address` of your RPi in a browser. **Login with your username and password**.
+* You can access the [web interface](https://doxfer.webmin.com/Webmin/Introduction) by entering the `IP address` of your RPi in a browser. **Login with your username and password**.
 
 # Environment Variables
 
