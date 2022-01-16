@@ -3,10 +3,6 @@ name: Test
 on: 
   workflow_dispatch:
     inputs:
-      pifile:
-        description: "Config"
-        default: main
-        required: true
       host_name:
         description: "Device"
         default: neurobionics
@@ -26,6 +22,10 @@ on:
         description: "Email"
         required: true
         default: ejrouse@umich.edu
+      wifi_cc:
+        description: "WiFi Country Code"
+        required: true        
+        default: US
       wifi_ssid:
         description: "WiFi SSID"
         required: false
@@ -41,7 +41,7 @@ on:
         required: true
         default: neurobionics
 env:
-  PIFILE: ${{ github.event.inputs.pifile }}.Pifile
+  PIFILE: main.Pifile
 
 jobs:
   build:
@@ -57,6 +57,7 @@ jobs:
           echo USER="${{ github.event.inputs.user }}" >> $(dirname $PIFILE)/.env
           echo USERPASSWORD="${{ github.event.inputs.password }}" >> $(dirname $PIFILE)/.env
           echo PASSWORD="${{ github.event.inputs.mwireless_pass }}" >> $(dirname $PIFILE)/.env
+          echo WIFI_CC="${{ github.event.inputs.wifi_cc }}" >> $(dirname $PIFILE)/.env
           echo WIFI_SSID="${{ github.event.inputs.wifi_ssid }}" >> $(dirname $PIFILE)/.env
           echo WIFI_PASSPHRASE="${{ github.event.inputs.wifi_passphrase }}" >> $(dirname $PIFILE)/.env          
           echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname $PIFILE)/.env
@@ -69,5 +70,4 @@ jobs:
 
       - name: Make tarball
         run: |
-          tar -czvf ${{ github.event.inputs.pifile }}.tar.gz ${{ github.event.inputs.pifile }}.img
-  
+          tar -czvf $PIFILE.tar.gz $PIFILE.img
