@@ -70,9 +70,9 @@ jobs:
 
       - name: Make tarball
         run: |
-          tar -czvf ${PIFILE}.tar.gz ${PIFILE}.img
+          tar -czvf main.tar.gz main.img
       - name: Upload artifacts  
         uses: actions/upload-artifact@v2
         with:
           name: ${{ github.workflow }}-${{ github.sha }}.zip
-          path: ${PIFILE}.img
+          path: main.img
