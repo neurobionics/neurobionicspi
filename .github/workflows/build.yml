@@ -66,13 +66,13 @@ jobs:
       - name: Build image
         uses: Nature40/pimod@v0.2.2
         with:
-          pifile: $PIFILE.Pifile
+          pifile: ${PIFILE}.Pifile
 
       - name: Make tarball
         run: |
-          tar -czvf $PIFILE.tar.gz $PIFILE.img
+          tar -czvf ${PIFILE}.tar.gz ${PIFILE}.img
       - name: Upload artifacts  
         uses: actions/upload-artifact@v2
         with:
           name: ${{ github.workflow }}-${{ github.sha }}.zip
-          path: $PIFILE.img
+          path: ${PIFILE}.img
