@@ -3,10 +3,6 @@ name: Build
 on: 
   workflow_dispatch:
     inputs:
-      pifile:
-        description: "Config"
-        default: main
-        required: true
       host_name:
         description: "Device"
         default: neurobionics
@@ -45,7 +41,7 @@ on:
         required: true
         default: neurobionics
 env:
-  PIFILE: ${{ github.event.inputs.pifile }}.Pifile
+  PIFILE: main.Pifile
 
 jobs:
   build:
@@ -74,9 +70,9 @@ jobs:
 
       - name: Make tarball
         run: |
-          tar -czvf ${{ github.event.inputs.pifile }}.tar.gz ${{ github.event.inputs.pifile }}.img
+          tar -czvf $PIFILE.tar.gz $PIFILE.img
       - name: Upload artifacts  
         uses: actions/upload-artifact@v2
         with:
           name: ${{ github.workflow }}-${{ github.sha }}.zip
-          path: ${{ github.event.inputs.pifile }}.img
+          path: $PIFILE.img
