@@ -15,6 +15,7 @@ wifissid="${WIFI_SSID:-network}"
 wifipsk="${WIFI_PASSPHRASE:-password}"
 apssid="${AP_SSID:-NeurobionicsRPi}"
 appsk="${AP_PASSPHRASE:-neurobionics}"
+countrycode="${WIFI_CC:-US}"
 
 ##################################
 
