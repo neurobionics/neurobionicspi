@@ -25,3 +25,6 @@ RUN apt-get install -y python3-smbus
 RUN bash -c "python3 -m pip install pyzmq"
 RUN bash -c "git clone https://github.com/jmontp/rtplot.git /home/${user}/rtplot"
 RUN bash -c "python3 -m pip install /home/${user}/rtplot/"
+
+# Example code
+RUN bash -c "git clone https://github.com/erouse/RPi_example_code /home/${user}/RPi_example_code"
