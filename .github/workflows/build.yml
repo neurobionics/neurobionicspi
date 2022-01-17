@@ -27,10 +27,10 @@ on:
         required: true        
         default: US
       wifi_ssid:
-        description: "WiFi SSID"
+        description: "Additional WiFi SSID"
         required: false
       wifi_passphrase:
-        description: "WiFi Passphrase"
+        description: "Additional WiFi Passphrase"
         required: false
       wpa_ssid:
         description: "Access Point SSID"
