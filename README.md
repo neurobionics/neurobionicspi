@@ -38,6 +38,9 @@ While this image was originally configured for usage at the University of Michig
 | `PASSWORD` | neurobionics |
 | `AP_SSID` | NeurobionicsRPi |
 | `AP_PASSPHRASE` | neurobionics |
+| `WIFI_CC` | US |
+| `WIFI_SSID` | Network |
+| `WIFI_PASSPHRASE` | password |
 | `EMAIL` | ejrouse@umich.edu | 
 
 # Issues
