@@ -1,0 +1,92 @@
+FROM https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-11-08/2021-10-30-raspios-bullseye-armhf-lite.zip
+
+PUMP 800M
+
+RUN touch /boot/ssh
+
+source .env
+
+hostname="${HOSTNAME:-neurobionics}"
+user="${USER:-pi}"
+password="${USERPASSWORD:-neurobionics}"
+email="${EMAIL:-ejrouse@umich.edu}"
+mwpsk="${PASSWORD:-password}"
+wifissid="${WIFI_SSID:-network}"
+wifipsk="${WIFI_PASSPHRASE:-password}"
+apssid="${AP_SSID:-NeurobionicsRPi}"
+appsk="${AP_PASSPHRASE:-neurobionics}"
+countrycode="${WIFI_CC:-US}"
+
+##################################
+
+# Modifying hostname and password
+
+RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
+RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
+RUN bash -c "echo ${user}:${password} | chpasswd"
+
+##################################
+
+# Changing default timezone and keyboard layout
+
+RUN bash -c "echo America/New_York > /etc/timezone"
+RUN sed -i "s/gb/us/g" /etc/default/keyboard
+
+##################################
+
+RUN apt-get update
+
+# Upgrade takes considerably more memory and time to build the image.
+# RUN apt-get upgrade -y
+
+##################################
+
+# Configuring wpa_supplicant with systemd-networkd
+
+RUN apt-get install -y wpasupplicant
+
+source ./wpa_supplicant.Pifile
+
+##################################
+
+# Installing essential packages
+
+source ./packages.Pifile
+
+##################################
+
+# Installing automagic-ap
+
+RUN bash -c "git clone https://github.com/imsenthur/automagic-ap.git /etc/automagic-ap"
+RUN bash -c "sudo chown -R ${user} /etc/automagic-ap"
+
+##################################
+
+# Installing webmin
+
+RUN bash -c 'echo "deb https://download.webmin.com/download/repository sarge contrib" >> /etc/apt/sources.list'
+RUN bash -c "wget http://www.webmin.com/jcameron-key.asc"
+RUN apt-key add jcameron-key.asc
+
+RUN apt update
+RUN apt install -y webmin
+
+##################################
+
+# Configuring message of the day (motd)
+
+RUN bash -c "sudo rm -rf /etc/motd"
+RUN bash -c "curl -L https://raw.githubusercontent.com/imsenthur/neuropi-motd/main/motd -o /home/${user}/.bash_profile"
+
+##################################
+
+# Setting up startup_mailer and rc.local
+
+source ./startup_mailer.Pifile
+
+source ./rc_local.Pifile
+
+##################################
+
+echo "DONE!"
+

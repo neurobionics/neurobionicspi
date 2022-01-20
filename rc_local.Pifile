@@ -1,0 +1,47 @@
+# Writes rc.local to the RPi.
+RUN tee /etc/rc.local <<EOF
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+if rfkill list wlan | grep -q 'yes'; then
+	echo "Unblocking Wlan"
+	rfkill unblock wlan
+
+fi
+
+if [ ! -f "/etc/network.true" ]; then
+
+	cd /etc/automagic-ap
+	chmod +x automagic-ap install.sh
+	sudo ./install.sh
+
+	# Dephy Actuator Package Installation
+	# Enabling ufw (Uncomplicated Firewall) causes issues with Access Point connectivity and SSH ports
+	# sudo ufw --force enable && sudo ufw allow 8988 && sudo ufw allow 22 && sudo ufw allow 80/tcp
+	sudo usermod -a -G dialout "$USER"
+
+	# Webmin Installation
+	sudo touch /etc/network.true
+	sudo sed -i 's/port=10000/port=80/g' /etc/webmin/miniserv.conf
+	sudo sed -i 's/listen=10000/listen=80/g' /etc/webmin/miniserv.conf
+	sudo sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
+	sudo /etc/init.d/webmin restart
+
+	sudo systemctl disable systemd-networkd-wait-online.service
+	sudo systemctl mask systemd-networkd-wait-online.service
+
+	sudo reboot now
+fi
+
+exit 0
+EOF

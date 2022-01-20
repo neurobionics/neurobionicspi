@@ -1,0 +1,78 @@
+name: Build
+
+on: 
+  workflow_dispatch:
+    inputs:
+      host_name:
+        description: "Hostname"
+        default: neurobionics
+        required: true
+      user:
+        description: "Username"
+        required: true
+        default: pi
+      password:
+        description: "Password"
+        required: true
+        default: neurobionics
+      mwireless_pass:
+        description: "Get the MWireless Passphrase from: https://bit.ly/30zEzPCRPi"
+        required: false
+      email:
+        description: "Email"
+        required: true
+        default: ejrouse@umich.edu
+      wifi_cc:
+        description: "WiFi Country Code"
+        required: true        
+        default: US
+      wifi_ssid:
+        description: "Additional WiFi SSID"
+        required: false
+      wifi_passphrase:
+        description: "Additional WiFi Passphrase"
+        required: false
+      wpa_ssid:
+        description: "Access Point SSID"
+        required: true
+        default: NeurobionicsRPi
+      wpa_passphrase:
+        description: "Access Point Passphrase"
+        required: true
+        default: neurobionics
+env:
+  PIFILE: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Write env variables
+        run: |
+          echo HOSTNAME="${{ github.event.inputs.host_name }}" > $(dirname $PIFILE.Pifile)/.env
+          echo USER="${{ github.event.inputs.user }}" >> $(dirname $PIFILE.Pifile)/.env
+          echo USERPASSWORD="${{ github.event.inputs.password }}" >> $(dirname $PIFILE.Pifile)/.env
+          echo PASSWORD="${{ github.event.inputs.mwireless_pass }}" >> $(dirname $PIFILE.Pifile)/.env
+          echo WIFI_CC="${{ github.event.inputs.wifi_cc }}" >> $(dirname $PIFILE.Pifile)/.env
+          echo WIFI_SSID="${{ github.event.inputs.wifi_ssid }}" >> $(dirname $PIFILE.Pifile)/.env
+          echo WIFI_PASSPHRASE="${{ github.event.inputs.wifi_passphrase }}" >> $(dirname $PIFILE.Pifile)/.env          
+          echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname $PIFILE.Pifile)/.env
+          echo AP_PASSPHRASE="${{ github.event.inputs.wpa_passphrase }}" >> $(dirname $PIFILE.Pifile)/.env
+          echo EMAIL=\"${{ github.event.inputs.email }}\" >> $(dirname $PIFILE.Pifile)/.env
+      - name: Build image
+        uses: Nature40/pimod@v0.2.2
+        with:
+          pifile: ${PIFILE}.Pifile
+
+      - name: Make tarball
+        run: |
+          tar -czvf main.tar.gz main.img
+      - name: Upload artifacts  
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.workflow }}-${{ github.sha }}.zip
+          path: main.img
