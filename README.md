@@ -2,13 +2,13 @@
 [![U-M](https://img.shields.io/badge/-University%20of%20Michigan-ffcb05)](https://umich.edu/)
 [![Neurobionics](https://img.shields.io/badge/-Neurobionics-00274c)](https://neurobionics.robotics.umich.edu/)
 [![RPi4](https://img.shields.io/badge/Tested%20on-Raspberry%20Pi%204B-c51a4a)](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
-![Build](https://github.com/imsenthur/neurobionicspi/workflows/Build/badge.svg)
+![Build](https://github.com/neurobionics/neurobionicspi/workflows/Build/badge.svg)
 
 The purpose of this tool is to build an up-to-date image for a Raspberry Pi that can be used headless/GUI-less to control autonomous / remote robotic systems. The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/operating-systems/) to include custom packages for robotics and automation, wireless connectivity to a known and configurable WiFi network, and finally, it will create a fallback access point when the known wireless networks are not in range. This enables usage of the same process and hardware when not in known Wifi network range (e.g. demos and conferences). The process installs libraries for communication, drivers for common sensors and ICs, the API for working with [Dephy products](dephy.com/faster/), and other modifications. 
 
 While this image was originally configured for usage at the University of Michigan, it can be modified to connect to any set of known WiFi networks.  Hence, login in details for Michigan wireless must be obtained separately, through a document behind U-M login security. If you wish to use this image for locations/networks not at U-M, you can add your WiFi network details when running the workflow. 
 
-<img src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/neurobionicspi.PNG" width="1024">
+<img src="https://github.com/neurobionics/neurobionicspi/blob/main/assets/neurobionicspi.PNG" width="1024">
 
 # Features
 * Uses [CI](https://docs.github.com/en/actions/automating-builds-and-tests/about-continuous-integration) (Github Actions) to build a stable Raspbian image that is always up to date.
@@ -16,10 +16,10 @@ While this image was originally configured for usage at the University of Michig
 * Provides a much easier way to build customized project-specific Raspbian images via Github Actions UI.
 
 \
-<img src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/interface.png">
+<img src="https://github.com/neurobionics/neurobionicspi/blob/main/assets/interface.png">
 
 # Usage
-<img align="right" src="https://github.com/imsenthur/neurobionicspi/blob/main/assets/UI.PNG">
+<img align="right" src="https://github.com/neurobionics/neurobionicspi/blob/main/assets/UI.PNG" width="640">
 
 * `Fork` this repository to create your own private repository that shares the same default source code, which can then be customized.
 * Navigate to the `Actions` tab in your forked repository.
@@ -44,7 +44,7 @@ While this image was originally configured for usage at the University of Michig
 | `EMAIL` | ejrouse@umich.edu | 
 
 # Issues
-Kindly report any issues [here](https://github.com/imsenthur/neurobionicspi/issues).
+Kindly report any issues [here](https://github.com/neurobionics/neurobionicspi/issues).
 
 # References
 * [Pimod](https://github.com/marketplace/actions/run-pimod)
