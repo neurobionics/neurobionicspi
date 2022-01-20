@@ -19,7 +19,7 @@ While this image was originally configured for usage at the University of Michig
 <img src="https://github.com/neurobionics/neurobionicspi/blob/main/assets/interface.png">
 
 # Usage
-<img align="right" src="https://github.com/neurobionics/neurobionicspi/blob/main/assets/UI.PNG" width="640">
+<img align="right" src="https://github.com/neurobionics/neurobionicspi/blob/main/assets/UI.PNG" width="400">
 
 * `Fork` this repository to create your own private repository that shares the same default source code, which can then be customized.
 * Navigate to the `Actions` tab in your forked repository.
