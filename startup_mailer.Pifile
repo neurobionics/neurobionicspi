@@ -148,7 +148,7 @@ if __name__ == '__main__':
 
   # Compose and send an e-mail
 
-  msg = compose_email(gmail_user, recipients, ipaddr, mac, token, today)
+  msg = compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname)
   send_email(smtpserver, msg)
 
   print("A ticket for the current session has been mailed to the recipient(s).")
