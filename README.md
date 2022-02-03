@@ -4,9 +4,9 @@
 [![RPi4](https://img.shields.io/badge/Tested%20on-Raspberry%20Pi%204B-c51a4a)](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
 ![Build](https://github.com/neurobionics/neurobionicspi/workflows/Build/badge.svg)
 
-The purpose of this tool is to build an up-to-date image for a Raspberry Pi that can be used headless/GUI-less to control autonomous / remote robotic systems. The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/operating-systems/) to include custom packages for robotics and automation, wireless connectivity to a known and configurable WiFi network, and finally, it will create a fallback access point when the known wireless networks are not in range. This enables usage of the same process and hardware when not in known Wifi network range (e.g. demos and conferences). The process installs libraries for communication, drivers for common sensors and ICs, the API for working with [Dephy products](dephy.com/faster/), and other modifications. 
+The purpose of this tool is to build an up-to-date image for a Raspberry Pi that can be used headless/GUI-less to control autonomous / remote robotic systems. The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/operating-systems/) to include custom packages for robotics and automation, wireless connectivity to a known and configurable WiFi network, and finally, it will create a fallback access point when the known wireless networks are not in range (fixed IP: 10.0.0.200). This enables usage of the same process and hardware when not in known Wifi network range (e.g. demos and conferences). The process installs libraries for communication, drivers for common sensors and ICs, the API for working with [Dephy products](dephy.com/faster/), and other modifications. 
 
-While this image was originally configured for usage at the University of Michigan, it can be modified to connect to any set of known WiFi networks.  Hence, login in details for Michigan wireless must be obtained separately, through a document behind U-M login security. If you wish to use this image for locations/networks not at U-M, you can add your WiFi network details when running the workflow. 
+While this image was originally configured for usage at the University of Michigan, it can be modified to connect to any set of known WiFi networks.  Hence, login in details for Michigan wireless must be obtained separately, through a document behind U-M login security. If you wish to use this image for locations/networks not at U-M, you can add your WiFi network details set in the workflow settings. 
 
 <img src="https://github.com/neurobionics/neurobionicspi/blob/main/assets/neurobionicspi.PNG" width="1024">
 
@@ -27,7 +27,8 @@ While this image was originally configured for usage at the University of Michig
 * Use the Github Actions pop-Up UI to modify the `hostname, username, password, AP SSID, AP passphrase and e-mail address(es)`.
 * After a successful run, your custom Raspbian image will be attached as an artifact. You can download it by selecting the current workflow run and clicking on the attached `artifact`.
 * Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or other softwares like [Etcher](https://www.balena.io/etcher/), [Rufus](https://rufus.ie/en/), etc to flash the downloaded image to a SD card.
-* You can access the [web interface](https://doxfer.webmin.com/Webmin/Introduction) by entering the `IP address` of your RPi in a browser. **Login with your username and password**.
+* You can access the [web interface](https://doxfer.webmin.com/Webmin/Introduction) by entering the `IP address` of your RPi in a browser. **Login with your username and password from the workflow settings**.
+* The static IP for the access point is 10.0.0.200.  If it boots into access point mode, you must use this IP address to connect wirelessly.  If it's in access point mode, you will see the SSID broadcast (SSID entered in the workflow settings)
 
 # Environment Variables
 
