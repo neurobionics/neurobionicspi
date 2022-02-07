@@ -8,6 +8,8 @@ The purpose of this tool is to build an up-to-date image for a Raspberry Pi that
 
 While this image was originally configured for usage at the University of Michigan, it can be modified to connect to any set of known WiFi networks.  Hence, login in details for Michigan wireless must be obtained separately, through a document behind U-M login security. If you wish to use this image for locations/networks not at U-M, you can add your WiFi network details set in the workflow settings. 
 
+This image has only been tested on the Raspberry Pi v4.  It will not work on the Raspberry Pi Zero.
+
 <img src="https://github.com/neurobionics/neurobionicspi/blob/main/assets/neurobionicspi.PNG" width="1024">
 
 # Features
@@ -29,6 +31,10 @@ While this image was originally configured for usage at the University of Michig
 * Use [Raspberry Pi Imager](https://www.raspberrypi.com/software/) or other softwares like [Etcher](https://www.balena.io/etcher/), [Rufus](https://rufus.ie/en/), etc to flash the downloaded image to a SD card.
 * You can access the [web interface](https://doxfer.webmin.com/Webmin/Introduction) by entering the `IP address` of your RPi in a browser. **Login with your username and password from the workflow settings**.
 * The static IP for the access point is 10.0.0.200.  If it boots into access point mode, you must use this IP address to connect wirelessly.  If it's in access point mode, you will see the SSID broadcast (SSID entered in the workflow settings)
+* The location of the wpa supplicant file: ~/etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+* The location of the startup emailer script: ~/etc/startup_mailer.py
+* The location of the Neurobionics ASCII banner: ~/home/pi/.bash_profile
+* This image is meant for the Raspberry Pi 4.  It may work on other versions, but will not work on the Raspberry Pi Zero.
 
 # Environment Variables
 
