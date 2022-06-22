@@ -14,6 +14,9 @@ This image has only been tested on the Raspberry Pi v4.  It will not work on the
 
 # Features
 * Uses [CI](https://docs.github.com/en/actions/automating-builds-and-tests/about-continuous-integration) (Github Actions) to build a stable Raspbian image that is always up to date.
+* When booted, the system will try to connect automatically to desired/configured WiFi networks in the build settings.
+* Once connected to the network, it will email you its IP address from a U-M email account.
+* If no known WiFi networks are in range, it will default to an access point configuraiton (broadcasting its own SSID), which is also conifured in in the build settings.
 * Has a feature-rich [web interface](https://doxfer.webmin.com/Webmin/Introduction), which can be used to modify the networking setup and to run custom scripts.
 * Provides a much easier way to build customized project-specific Raspbian images via Github Actions UI.
 
