@@ -5,7 +5,7 @@ RUN apt install -y libnss-resolve
 
 RUN apt-get install ufw -y
 
-RUN apt-get install libatlas-base-dev
+RUN apt-get install -y libatlas-base-dev
 
 # Gh
 RUN bash -c "curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg"
