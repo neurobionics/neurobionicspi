@@ -6,7 +6,7 @@ RUN apt install -y libnss-resolve
 RUN apt-get install ufw -y
 
 RUN apt-get install -y libatlas-base-dev
-RUN apt-get install libopenblas-dev
+RUN apt-get install -y libopenblas-dev
 
 # Gh
 RUN bash -c "curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg"
