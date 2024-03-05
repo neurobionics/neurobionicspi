@@ -1,0 +1,106 @@
+#!/bin/bash
+
+############################################
+
+# Variables for connectivity routine
+
+wifi=wlan0
+ethernet=eth0
+timeout=30
+networkconf="/etc/systemd/network/08-${wifi}-CLI.network"
+
+############################################
+
+# Functions for connectivity routine, read more at https://raspberrypi.stackexchange.com/questions/100195
+# Configuring Access Point (AP) mode
+
+configure_ap () {
+	if [ -e $networkconf ]; then
+		mv $networkconf $networkconf~
+		systemctl restart systemd-networkd
+	fi
+}
+
+############################################
+
+# Configuring Client (CLI) mode
+
+configure_client () {
+	if [ -e $networkconf~ ] && wpa_cli -i$wifi status | grep -q "mode=station"; then
+		mv $networkconf~ $networkconf
+		systemctl restart systemd-networkd
+	fi
+}
+
+############################################
+
+# Searching for networks after a timeout
+
+reconfigure_wpa_supplicant () {
+	sleep "$1"
+	if [ "$(wpa_cli -i $wifi all_sta)" = "" ]; then
+		wpa_cli -i $wifi reconfigure
+	fi
+}
+
+############################################
+
+# Manual execution via command line
+
+case "$1" in
+
+	--start-ap)
+		wpa_cli -i$wifi select_network 0
+		configure_ap
+		exit 0
+		;;
+		
+	--start-ap-static)
+		wpa_cli -i$wifi select_network 0
+		configure_ap
+		sleep 1
+		systemctl stop wpa_cli@${wifi}.service
+		exit 0
+		;;
+
+	--stop-ap)
+		systemctl start wpa_cli@${wifi}.service
+		reconfigure_wpa_supplicant 0
+		exit 0
+		;;
+
+esac	
+
+############################################
+
+# Checking for Ethernet connection, if so the RPi behaves like a Wifi router
+
+if [ "$(cat /sys/class/net/${ethernet}/carrier)" = "1" ]; then
+	echo "Ethernet connection found, enabling Access Point (AP)."
+	if wpa_cli -i$wifi status | grep -q "mode=station"; then
+		wpa_cli -i$wifi select_network 0
+		configure_ap
+	fi	
+	exit 0
+fi
+
+############################################
+
+# Automated execution based on wpa_supplicant activity
+
+case "$2" in
+
+	AP-ENABLED)
+		configure_ap
+		reconfigure_wpa_supplicant "$timeout" &
+		;;
+
+	CONNECTED)
+		configure_client
+		python /etc/startup_mailer.py
+		;;
+
+	AP-STA-DISCONNECTED)
+		reconfigure_wpa_supplicant "$timeout" &
+		;;
+esac
