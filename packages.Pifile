@@ -2,20 +2,3 @@
 RUN apt-get install -y python3-pip --upgrade
 RUN apt-get install -y git
 RUN apt install -y libnss-resolve
-
-RUN apt-get install ufw -y
-
-RUN apt-get install -y libatlas-base-dev
-RUN apt-get install -y libopenblas-dev
-
-# Gh
-RUN bash -c "curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg"
-RUN bash -c 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null'
-RUN apt-get update
-RUN apt-get install gh
-
-# Python3-smbus (I2C Tools package is already installed)
-RUN apt-get install -y python3-smbus
-
-# opensourceleg
-RUN bash -c "python3 -m pip install opensourceleg"
