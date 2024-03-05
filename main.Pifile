@@ -56,6 +56,9 @@ source ./packages.Pifile
 
 ##################################
 
+RUN bash -c "git config --global --unset http.proxy"
+RUN bash -c "git config --global --unset https.proxy"
+
 # Installing automagic-ap
 
 RUN bash -c "git clone https://github.com/imsenthur/automagic-ap.git /etc/automagic-ap"
