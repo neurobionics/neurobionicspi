@@ -63,17 +63,6 @@ RUN bash -c "sudo chown -R ${user} /etc/automagic-ap"
 
 ##################################
 
-# Installing webmin
-
-RUN bash -c 'echo "deb https://download.webmin.com/download/repository sarge contrib" >> /etc/apt/sources.list'
-RUN bash -c "wget http://www.webmin.com/jcameron-key.asc"
-RUN apt-key add jcameron-key.asc
-
-RUN apt update
-RUN apt install -y webmin
-
-##################################
-
 # Configuring message of the day (motd)
 
 RUN bash -c "sudo rm -rf /etc/motd"
