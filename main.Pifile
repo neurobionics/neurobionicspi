@@ -56,10 +56,9 @@ source ./packages.Pifile
 
 ##################################
 
-RUN bash -c "git config --global --unset http.proxy"
-RUN bash -c "git config --global --unset https.proxy"
-
 # Installing automagic-ap
+
+RUN apt-get install ufw -y
 
 RUN bash -c "git clone https://github.com/imsenthur/automagic-ap.git /etc/automagic-ap"
 RUN bash -c "sudo chown -R ${user} /etc/automagic-ap"
