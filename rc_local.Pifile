@@ -24,18 +24,12 @@ if [ ! -f "/etc/network.true" ]; then
 	cd /etc/automagic-ap
 	chmod +x automagic-ap install.sh
 	sudo ./install.sh
+	sudo touch /etc/network.true
 
 	# Dephy Actuator Package Installation
 	# Enabling ufw (Uncomplicated Firewall) causes issues with Access Point connectivity and SSH ports
 	# sudo ufw --force enable && sudo ufw allow 8988 && sudo ufw allow 22 && sudo ufw allow 80/tcp
 	# sudo usermod -a -G dialout "$USER"
-
-	# Webmin Installation
-	# sudo touch /etc/network.true
-	# sudo sed -i 's/port=10000/port=80/g' /etc/webmin/miniserv.conf
-	# sudo sed -i 's/listen=10000/listen=80/g' /etc/webmin/miniserv.conf
-	# sudo sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
-	# sudo /etc/webmin/restart
 
 	sudo systemctl disable systemd-networkd-wait-online.service
 	sudo systemctl mask systemd-networkd-wait-online.service
