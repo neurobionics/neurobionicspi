@@ -85,7 +85,7 @@ RUN bash -c "echo 'dtparam=i2c1=on' >> /boot/config.txt"
 
 source ./startup_mailer.Pifile
 
-# source ./rc_local.Pifile
+source ./rc_local.Pifile
 
 ##################################
 
