@@ -66,7 +66,9 @@ RUN bash -c "sudo chown -R ${user} /etc/automagic-ap"
 # Configuring message of the day (motd)
 
 RUN bash -c "sudo rm -rf /etc/motd"
-RUN bash -c "curl -L https://raw.githubusercontent.com/imsenthur/neuropi-motd/main/motd -o /home/${user}/.bash_profile"
+INSTALL "motd" "/home/${user}/motd"
+
+RUN bash -c "cp /home/${user}/motd /home/${user}/.bash_profile"
 
 ##################################
 
