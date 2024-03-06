@@ -58,7 +58,7 @@ source ./packages.Pifile
 
 # Installing automagic-ap
 
-RUN bash -c "git clone https://github.com/imsenthur/automagic-ap.git /etc/automagic-ap"
+INSTALL "/automagic-ap" "/etc/automagic-ap"
 RUN bash -c "sudo chown -R ${user} /etc/automagic-ap"
 
 ##################################
