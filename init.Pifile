@@ -1,8 +1,36 @@
 # This file prevents Bookworm's interactive window from disrupting our headless setup
-RUN touch /boot/userconf.txt
+RUN touch /boot/firstrun.sh
 
 hashedpwd=$(echo '${password}' | openssl passwd -6 -stdin)
 
-RUN tee -a /boot/userconf.txt <<EOF
-${user}:${hashedpwd}
+RUN tee -a /boot/firstrun.sh <<EOF
+#!/bin/bash
+
+set +e
+
+if [ -f /usr/lib/userconf-pi/userconf ]; then
+   /usr/lib/userconf-pi/userconf '${user}' '${hashedpwd}'
+else
+   echo "${user}:"'${hashedpwd}' | chpasswd -e
+fi
+
+if [ -f /usr/lib/raspberrypi-sys-mods/imager_custom ]; then
+   /usr/lib/raspberrypi-sys-mods/imager_custom set_keymap 'us'
+   /usr/lib/raspberrypi-sys-mods/imager_custom set_timezone 'America/Detroit'
+else
+   rm -f /etc/localtime
+   echo "America/Detroit" >/etc/timezone
+   dpkg-reconfigure -f noninteractive tzdata
+cat >/etc/default/keyboard <<'KBEOF'
+XKBMODEL="pc105"
+XKBLAYOUT="us"
+XKBVARIANT=""
+XKBOPTIONS=""
+
+KBEOF
+   dpkg-reconfigure -f noninteractive keyboard-configuration
+fi
+rm -f /boot/firstrun.sh
+sed -i 's| systemd.run.*||g' /boot/cmdline.txt
+exit 0
 EOF
