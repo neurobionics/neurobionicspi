@@ -56,7 +56,7 @@ source ./packages.Pifile
 # Installing automagic-ap
 
 INSTALL "automagic-ap" "/etc/automagic-ap"
-RUN bash -c "sudo chown -R ${user} /etc/automagic-ap"
+# RUN bash -c "sudo chown -R ${user} /etc/automagic-ap"
 
 ##################################
 
