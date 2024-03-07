@@ -28,11 +28,6 @@ RUN sh -c "echo ${user}:${password} | chpasswd"
 
 ##################################
 
-RUN sh -c "systemctl disable userconfig > /dev/null 2&>1"
-RUN sh -c "systemctl enable getty@tty1"
-
-##################################
-
 RUN apt-get update
 
 # Upgrade takes considerably more memory and time to build the image.
