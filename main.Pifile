@@ -28,10 +28,7 @@ RUN bash -c "echo ${user}:${password} | chpasswd"
 
 ##################################
 
-# Changing default timezone and keyboard layout
-
-RUN bash -c "echo America/New_York > /etc/timezone"
-RUN sed -i "s/gb/us/g" /etc/default/keyboard
+source ./init.Pifile
 
 ##################################
 
