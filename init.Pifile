@@ -1,4 +1,5 @@
 # This file prevents Bookworm's interactive window from disrupting our headless setup
+hashedpwd=$(echo '${password}' | openssl passwd -6 -stdin)
 INSTALL "userconfig.sh" "/etc/userconfig.sh"
 RUN chmod +x /etc/userconfig.sh
 RUN bash /etc/userconfig.sh
