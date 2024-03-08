@@ -26,7 +26,7 @@ RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
 RUN sh -c "echo ${user}:${password} | chpasswd"
 
-source ./init.Pifile
+source ./locale.Pifile
 
 ##################################
 
@@ -61,9 +61,9 @@ RUN sh -c "sudo chown -R ${user} /etc/automagic-ap"
 # Configuring message of the day (motd)
 
 RUN bash -c "sudo rm -rf /etc/motd"
-INSTALL "motd" "/home/${user}/motd"
+INSTALL "motd" "/etc/motd"
 
-RUN sh -c "cp /home/${user}/motd /home/${user}/.bash_profile"
+RUN sh -c "cp /etc/motd /home/${user}/.bash_profile"
 
 ##################################
 
