@@ -1,12 +1,6 @@
 #!/bin/bash
 set +e
 
-if [ -f /usr/lib/userconf-pi/userconf ]; then
-   /usr/lib/userconf-pi/userconf '${user}' '${hashedpwd}'
-else
-   echo "${user}:"'${hashedpwd}' | chpasswd -e
-fi
-
 if [ -f /usr/lib/raspberrypi-sys-mods/imager_custom ]; then
    /usr/lib/raspberrypi-sys-mods/imager_custom set_keymap 'us'
    /usr/lib/raspberrypi-sys-mods/imager_custom set_timezone 'America/Detroit'
