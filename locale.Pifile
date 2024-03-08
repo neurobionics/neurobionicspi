@@ -2,7 +2,6 @@
 RUN bash -c "systemctl disable userconfig"
 RUN bash -c "systemctl enable getty@tty1"
 
-hashedpwd=$(echo '${password}' | openssl passwd -6 -stdin)
 INSTALL "locale.sh" "/etc/locale.sh"
 RUN chmod +x /etc/locale.sh
 RUN bash /etc/locale.sh
