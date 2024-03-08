@@ -1,5 +1,7 @@
 # This file prevents Bookworm's interactive window from disrupting our headless setup
-RUN bash -c "rm -rf /etc/systemd/system/multi-user.target.wants/userconfig.service"
+# RUN bash -c "rm -rf /etc/systemd/system/multi-user.target.wants/userconfig.service"
+RUN bash -c "systemctl disable userconfig > /dev/null 2&>1"
+RUN bash -c "systemctl enable getty@tty1"
 
 hashedpwd=$(echo '${password}' | openssl passwd -6 -stdin)
 INSTALL "userconfig.sh" "/etc/userconfig.sh"
