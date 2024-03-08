@@ -21,9 +21,6 @@ fi
 
 if [ ! -f "/etc/network.true" ]; then
 
-	sudo systemctl disable userconfig > /dev/null 2&>1
-	sudo systemctl enable getty@tty1
-
 	cd /etc/automagic-ap
 	chmod +x automagic-ap install.sh
 	sudo ./install.sh
