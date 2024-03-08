@@ -1,9 +1,9 @@
 # For 64-bit Raspbian OS
 FROM https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-12-11/2023-12-11-raspios-bookworm-armhf-lite.img.xz
 
-PUMP 800M
+PUMP 500M
 
-RUN touch /boot/ssh
+RUN bash -c "systemctl enable ssh"
 
 source .env
 
