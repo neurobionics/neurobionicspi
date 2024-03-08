@@ -26,6 +26,8 @@ RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
 RUN sh -c "echo ${user}:${password} | chpasswd"
 
+source ./init.Pifile
+
 ##################################
 
 RUN apt-get update
