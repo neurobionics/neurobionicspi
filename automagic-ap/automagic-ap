@@ -1,6 +1,9 @@
 #!/bin/bash
 
-############################################
+if [ "$(id -u)" != "0" ]; then
+   echo "This tool must be run as root. Please use sudo" 1>&2
+   exit 1
+fi
 
 # Variables for connectivity routine
 
@@ -8,8 +11,6 @@ wifi=wlan0
 ethernet=eth0
 timeout=60
 networkconf="/etc/systemd/network/08-${wifi}-CLI.network"
-
-############################################
 
 # Functions for connectivity routine, read more at https://raspberrypi.stackexchange.com/questions/100195
 # Configuring Access Point (AP) mode
@@ -21,8 +22,6 @@ configure_ap () {
     fi
 }
 
-############################################
-
 # Configuring Client (CLI) mode
 
 configure_client () {
@@ -31,8 +30,6 @@ configure_client () {
         systemctl restart systemd-networkd
     fi
 }
-
-############################################
 
 # Searching for networks after a timeout
 
@@ -43,11 +40,9 @@ reconfigure_wpa_supplicant () {
     fi
 }
 
-############################################
-
 # Function to find and update the BSSID in the configuration file
+
 update_bssid() {
-    
     if grep -q "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf; then
         echo "MWireless network block found in the configuration file."
 
@@ -65,15 +60,17 @@ update_bssid() {
 
         # Check if the BSSID tag already exists in the configuration file
         if awk "/ssid=\"MWireless\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -q "bssid="; then
-
-            bssid_line=$(awk "/ssid=\"MWireless\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -n "bssid=" | awk -F ":" 'NR==1{print $1}')
-            original_bssid=$(sed -n "${bssid_line}p" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F "=" '{print $2}' | tr -d ' ')
+            # Extract the first BSSID line from the MWireless network block
+            bssid_line=$(awk "/ssid=\"MWireless\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -m1 "bssid=")
+            # Split the line on the equal sign and print the second field to get the BSSID value
+            original_bssid=$(echo $bssid_line | awk -F "=" '{print $2}' | tr -d ' ')
             # Replace the existing BSSID tag with the new one
             sed -i '/ssid="MWireless"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1'"$best_bssid"'/}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
             echo "Updated BSSID tag in the configuration file."
 
             # Checking if a network restart is required because we want the best bssid network block to be active
             if [ "$original_bssid" != "$best_bssid" ]; then
+                echo "Updated BSSID differs from the original. Network restart required."
                 reconfigure_wpa_supplicant 1
             fi
         else
@@ -88,13 +85,10 @@ update_bssid() {
     else
         echo "MWireless network block not found in the configuration file. Skipping BSSID update."
     fi
+
 }
 
-
-
-############################################
-
-# Manual execution via command line
+# Manual execution via command line arguments
 
 case "$1" in
 
@@ -104,6 +98,7 @@ case "$1" in
         echo "  --start-ap          Enable Access Point (AP) mode. This will turn your device into a wireless access point."
         echo "  --stop-ap           Disable Access Point (AP) mode. This will turn off the wireless access point mode on your device."
         echo "  --show-networks     Show defined networks. This will display a list of all networks defined in the configuration file."
+        echo "  --add-network       Adds a network to the wpa_supplicant configuration file."
         echo "  --select-network    Select a network by index. This allows you to choose a network from the list of defined networks."
         echo "  --update-bssid      Update the BSSID in the configuration file. This will change the BSSID of the MWireless network."
         echo "  --send-ip           Send the IP address via email. This will send the device's current IP address to the specified email address(es)."
@@ -125,6 +120,19 @@ case "$1" in
 
     --select-network)
         wpa_cli -i $wifi select_network $2
+        exit 0
+        ;;
+
+    --add-network)
+        if [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ]; then
+            echo "Insufficient arguments provided. Please provide the SSID, PSK, and priority as arguments."
+            exit 1
+        fi
+        ssid=$2
+        psk=$3
+        priority=$4
+        echo -e "\nnetwork={\n\tpriority=${priority}\n\tscan_ssid=1\n\tssid=\"${ssid}\"\n\tpsk=\"${psk}\"\n}" >> /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+        echo "Network added successfully."
         exit 0
         ;;
     
@@ -154,9 +162,7 @@ case "$1" in
         exit 0
         ;;
 
-esac	
-
-############################################
+esac
 
 # Checking for Ethernet connection, if so the RPi behaves like a Wifi router
 
@@ -169,9 +175,8 @@ if [ "$(cat /sys/class/net/${ethernet}/carrier)" = "1" ]; then
     exit 0
 fi
 
-############################################
-
 # Automated execution based on wpa_supplicant activity
+
 case "$2" in
 
     AP-ENABLED)
@@ -183,7 +188,7 @@ case "$2" in
         sleep 5
         configure_client
 
-        max_attempts=20
+        max_attempts=10
         attempt=1
 
         while [ $attempt -le $max_attempts ]; do
