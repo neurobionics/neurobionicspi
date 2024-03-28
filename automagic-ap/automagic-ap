@@ -115,6 +115,7 @@ case "$1" in
     --stop-ap)
         systemctl start wpa_cli@${wifi}.service
         reconfigure_wpa_supplicant 0
+        echo "Please reboot now!"
         exit 0
         ;;
 
