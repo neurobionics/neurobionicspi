@@ -6,7 +6,7 @@
 
 wifi=wlan0
 ethernet=eth0
-timeout=30
+timeout=60
 networkconf="/etc/systemd/network/08-${wifi}-CLI.network"
 
 ############################################
@@ -15,10 +15,10 @@ networkconf="/etc/systemd/network/08-${wifi}-CLI.network"
 # Configuring Access Point (AP) mode
 
 configure_ap () {
-	if [ -e $networkconf ]; then
-		mv $networkconf $networkconf~
-		systemctl restart systemd-networkd
-	fi
+    if [ -e $networkconf ]; then
+        mv $networkconf $networkconf~
+        systemctl restart systemd-networkd
+    fi
 }
 
 ############################################
@@ -26,10 +26,10 @@ configure_ap () {
 # Configuring Client (CLI) mode
 
 configure_client () {
-	if [ -e $networkconf~ ] && wpa_cli -i$wifi status | grep -q "mode=station"; then
-		mv $networkconf~ $networkconf
-		systemctl restart systemd-networkd
-	fi
+    if [ -e $networkconf~ ] && wpa_cli -i $wifi status | grep -q "mode=station"; then
+        mv $networkconf~ $networkconf
+        systemctl restart systemd-networkd
+    fi
 }
 
 ############################################
@@ -37,10 +37,57 @@ configure_client () {
 # Searching for networks after a timeout
 
 reconfigure_wpa_supplicant () {
-	sleep "$1"
-	if [ "$(wpa_cli -i $wifi all_sta)" = "" ]; then
-		wpa_cli -i $wifi reconfigure
-	fi
+    sleep "$1"
+    if [ "$(wpa_cli -i $wifi all_sta)" = "" ]; then
+        wpa_cli -i $wifi reconfigure
+    fi
+}
+
+############################################
+
+# Function to find and update the BSSID in the configuration file
+update_bssid() {
+    
+    if grep -q "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf; then
+        echo "MWireless network block found in the configuration file."
+
+        # Perform a fresh scan to get all available BSSIDs
+        wpa_cli -i wlan0 scan
+        echo "Scanning for available networks..."
+
+        # Find the BSSID with the strongest signal
+        best_bssid=$(wpa_cli -i wlan0 scan_results | awk '/MWireless/ {print $1; exit}')
+
+        # Find the line number of the first occurrence of the MWireless network block
+        start_line=$(grep -n "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F ":" 'NR==1{print $1}')
+
+        # Check if the BSSID tag already exists in the configuration file
+        if grep -q "bssid=" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf; then
+
+            bssid_line=$(grep -n "bssid=" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F ":" 'NR==1{print $1}')
+            original_bssid=$(sed -n "${bssid_line}p" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F "=" '{print $2}' | tr -d ' ')
+
+            # Replace the existing BSSID tag with the new one
+            sed -i '/ssid="MWireless"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1'"$best_bssid"'/}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+            echo "Updated BSSID tag in the configuration file."
+
+            # Checking if a network restart is required because we want the best bssid network block to be active
+            if [ "$original_bssid" != "$best_bssid" ]; then
+                echo "Restarting the system now!"
+                reboot
+            fi
+        else
+            # Add the BSSID tag to the configuration file
+            sed -i "${start_line}s/$/\n	bssid=$best_bssid/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+            echo "Added BSSID tag to the configuration file."
+
+            echo "Restarting the system now!"
+            # restart the network because we want the best bssid network block to be active
+            reboot
+        fi
+    else
+        echo "MWireless network block not found in the configuration file. Skipping BSSID update."
+    fi
 }
 
 ############################################
@@ -49,25 +96,27 @@ reconfigure_wpa_supplicant () {
 
 case "$1" in
 
-	--start-ap)
-		wpa_cli -i$wifi select_network 0
-		configure_ap
-		exit 0
-		;;
-		
-	--start-ap-static)
-		wpa_cli -i$wifi select_network 0
-		configure_ap
-		sleep 1
-		systemctl stop wpa_cli@${wifi}.service
-		exit 0
-		;;
+    --start-ap)
+        wpa_cli -i $wifi select_network 0
+        configure_ap
+        exit 0
+        ;;
 
-	--stop-ap)
-		systemctl start wpa_cli@${wifi}.service
-		reconfigure_wpa_supplicant 0
-		exit 0
-		;;
+    --stop-ap)
+        systemctl start wpa_cli@${wifi}.service
+        reconfigure_wpa_supplicant 0
+        exit 0
+        ;;
+
+    --select-network)
+        wpa_cli -i $wifi select_network $2
+        exit 0
+        ;;
+
+    --update-bssid)
+        update_bssid
+        exit 0
+        ;;
 
 esac	
 
@@ -76,31 +125,50 @@ esac
 # Checking for Ethernet connection, if so the RPi behaves like a Wifi router
 
 if [ "$(cat /sys/class/net/${ethernet}/carrier)" = "1" ]; then
-	echo "Ethernet connection found, enabling Access Point (AP)."
-	if wpa_cli -i$wifi status | grep -q "mode=station"; then
-		wpa_cli -i$wifi select_network 0
-		configure_ap
-	fi	
-	exit 0
+    echo "Ethernet connection found, enabling Access Point (AP)."
+    if wpa_cli -i $wifi status | grep -q "mode=station"; then
+        wpa_cli -i $wifi select_network 0
+        configure_ap
+    fi	
+    exit 0
 fi
 
 ############################################
 
 # Automated execution based on wpa_supplicant activity
-
 case "$2" in
 
-	AP-ENABLED)
-		configure_ap
-		reconfigure_wpa_supplicant "$timeout" &
-		;;
+    AP-ENABLED)
+        configure_ap
+        ;;
 
-	CONNECTED)
-		configure_client
-		python /etc/startup_mailer.py
-		;;
+    CONNECTED)
+        update_bssid
+        sleep 5
+        configure_client
 
-	AP-STA-DISCONNECTED)
-		reconfigure_wpa_supplicant "$timeout" &
-		;;
+        max_attempts=10
+        attempt=1
+
+        while [ $attempt -le $max_attempts ]; do
+            python /etc/startup_mailer.py
+            if [ $? -eq 0 ]; then
+                echo "Python script executed successfully."
+                break
+            else
+                echo "Python script failed. Retrying in 5 seconds..."
+                sleep 1
+                attempt=$((attempt + 1))
+            fi
+        done
+
+        if [ $attempt -gt $max_attempts ]; then
+            echo "Switching to AP mode"
+            configure_ap
+        fi
+        ;;
+
+    AP-STA-DISCONNECTED)
+        reconfigure_wpa_supplicant 0
+        ;;
 esac

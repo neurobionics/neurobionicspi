@@ -68,7 +68,7 @@ chmod +x /usr/local/sbin/automagic-ap
 if [ ! -f /etc/systemd/system/wpa_cli@${wifi}.service ] ; then
 	cat > /etc/systemd/system/wpa_cli@${wifi}.service <<-EOF
 		[Unit]
-		Description=automagic-ap creates an wireless access point if known networks cannot be found.
+		Description=Creates an wireless access point if known networks are unreachable.
 		After=wpa_supplicant@%i.service
 		BindsTo=wpa_supplicant@%i.service
 		[Service]
@@ -83,6 +83,30 @@ else
 fi
 
 ############################################
+
+# Check if the MWireless network block exists in the configuration file
+if grep -q "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf; then
+	# Find the line number of the MWireless network block start
+	start_line=$(grep -n "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | cut -d ":" -f 1)
+
+	# Find the line number of the MWireless network block end
+	end_line=$(grep -n "}" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -v start=$start_line '$1 > start {print $1; exit}' | awk -F ":" '{print $1}')
+	duplicate_start_line=$((start_line - 2))
+	priority_line=$((start_line - 1))
+
+	# Add a newline at the beginning and end of the duplicated network block
+	sed -n "${duplicate_start_line},${end_line}p" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | sed '1s/^/\n/;$s/$/\n/' >> /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+
+	original_priority=$(sed -n "${priority_line}p" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F "=" '{print $2}' | tr -d ' ')
+
+	new_priority=$((original_priority + 1))
+	# Update the priority in the duplicated network block
+	sed -i "${duplicate_start_line},${end_line}s/priority=$original_priority/priority=$new_priority/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+
+	echo "Duplicated MWireless network block and appended it to the end of your network configuration."
+else
+	echo "MWireless network block not found in the configuration file. Skipping duplication."
+fi
 
 # Enabling systemd-service
 
