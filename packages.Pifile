@@ -3,5 +3,5 @@ RUN apt-get install -y git
 RUN apt-get install -y gh
 
 # Flexsea packages
-RUN apt install -y libnss-resolve
-RUN apt install -y libatlas-base-dev
+RUN apt-get install -y libnss-resolve
+RUN apt-get install -y libatlas-base-dev
