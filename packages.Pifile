@@ -1,3 +1,8 @@
 # Add bash commands to install required packages
 RUN apt-get install -y git
+RUN apt-get install -y gh
+
+# Flexsea packages
 RUN apt install -y libnss-resolve
+RUN apt install -y libusb-1.0-0 libusb-1.0-0-dev
+RUN apt install -y libatlas-base-dev
