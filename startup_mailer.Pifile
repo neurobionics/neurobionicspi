@@ -14,143 +14,131 @@ import time
 import sys
 
 def initialize_smtp(gmail_user, gmail_password):
-  """
-  Initializes an SMTP server with the provided login credentials.
+    """
+    Initializes an SMTP server with the provided login credentials.
 
-  Parameters:
-  -----------
-  gmail_user: Email address of the mailer
-  gmail_password: Passphrase for mailer's email
+    Parameters:
+    -----------
+    gmail_user: Email address of the mailer
+    gmail_password: Passphrase for mailer's email
 
-  Returns: smtlib.SMTP()
-  """
-  smtpserver = smtplib.SMTP('smtp.gmail.com', 587)
-  smtpserver.ehlo()
-  smtpserver.starttls()
-  smtpserver.ehlo
-  smtpserver.login(gmail_user, gmail_password)
+    Returns: smtlib.SMTP()
+    """
+    smtpserver = smtplib.SMTP('smtp.gmail.com', 587)
+    smtpserver.ehlo()
+    smtpserver.starttls()
+    smtpserver.ehlo
+    smtpserver.login(gmail_user, gmail_password)
 
-  return smtpserver
+    return smtpserver
 
 def compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname):
-  """
-  Composes an e-mail with html formatting.
+    """
+    Composes an e-mail with html formatting.
 
-  Parameters:
-  -----------
-  gmail_user: Email address of mailer
-  recipients: Email address(es) of recipient(s)
-  ipaddr: IP Address of the device
-  mac: MAC Address of the device
-  token: Unique token generated for each session
-  today: datetime formatted present date and time.
+    Parameters:
+    -----------
+    gmail_user: Email address of mailer
+    recipients: Email address(es) of recipient(s)
+    ipaddr: IP Address of the device
+    mac: MAC Address of the device
+    token: Unique token generated for each session
+    today: datetime formatted present date and time.
 
-  Returns: EmailMessage()
-  """
-  msg = EmailMessage()
-  msg['Subject'] = 'Session created for RPi :: %s' % today.strftime('%b %d %Y')
-  msg['From'] = gmail_user
-  msg['To'] = ",".join(str(x) for x in recipients)
-  msg.set_content('''
-  <!DOCTYPE html>
-  <html>
-      <body>
-          <div style="padding:5px 20px;">
-              <h1 style="font-size:20px;">Wifi IP Address Emailer Utility v2.0 <br>&copy; University of Michigan Neurobionics Lab</h1>
-              <p style="font-size:15px;">
-              <b>Hostname:</b> {5} <br>
-              <b>IP Address:</b> {0} <br>
-              <b>Unique Identifier:</b> {1}<br>
-              <b>MAC Address:</b> {2}<br>
-              <b>Date:</b> {3}<br>
-              <b>Time:</b> {4}<br>
-              </p>
-              <div style="height: 500px;width:400px">
-                  <img src="https://robotics.umich.edu/wp-content/uploads/2018/11/MRobotics_informal_outlines_digital.png" style="width: 230; height: 47px;">
-              </div>
-          </div>
-      </body>
-  </html>
-  '''.format(ipaddr, token, mac, today.strftime('%d %b %Y'), today.strftime('%I:%M:%S %p'), hostname), subtype='html')
+    Returns: EmailMessage()
+    """
+    msg = EmailMessage()
+    msg['Subject'] = 'Session created for RPi :: %s' % today.strftime('%b %d %Y')
+    msg['From'] = gmail_user
+    msg['To'] = ",".join(str(x) for x in recipients)
+    msg.set_content('''
+    <!DOCTYPE html>
+    <html>
+        <body>
+            <div style="padding:5px 20px;">
+                <h1 style="font-size:20px;">Wifi IP Address Emailer Utility v2.0 <br>&copy; University of Michigan Neurobionics Lab</h1>
+                <p style="font-size:15px;">
+                <b>Hostname:</b> {5} <br>
+                <b>IP Address:</b> {0} <br>
+                <b>Unique Identifier:</b> {1}<br>
+                <b>MAC Address:</b> {2}<br>
+                <b>Date:</b> {3}<br>
+                <b>Time:</b> {4}<br>
+                </p>
+                <div style="height: 500px;width:400px">
+                    <img src="https://robotics.umich.edu/wp-content/uploads/2018/11/MRobotics_informal_outlines_digital.png" style="width: 230; height: 47px;">
+                </div>
+            </div>
+        </body>
+    </html>
+    '''.format(ipaddr, token, mac, today.strftime('%d %b %Y'), today.strftime('%I:%M:%S %p'), hostname), subtype='html')
 
-  return msg
+    return msg
 
 def send_email(smtpserver, msg):
-  """
-  Sends an email
+    """
+    Sends an email
 
-  Parameters:
-  -----------
-  smtpserver: smtlib.SMTP()
-  msg: EmailMessage()
+    Parameters:
+    -----------
+    smtpserver: smtlib.SMTP()
+    msg: EmailMessage()
 
-  """
-  smtpserver.send_message(msg)
-  smtpserver.quit()
+    """
+    smtpserver.send_message(msg)
+    smtpserver.quit()
 
 if __name__ == '__main__':
 
-  # Modify recipients here!
-  recipient_str = "${email}"
-  recipients = recipient_str.split(", ")
+    # Modify recipients here!
+    recipient_str = "${email}"
+    recipients = recipient_str.split(", ")
 
-  #######################################################
+    #######################################################
 
-  # Initializing an SMTP server with mailer credentials
+    # Initializing an SMTP server with mailer credentials
 
-  gmail_user = 'neurobionics-rpi-emailer@umich.edu'
-  gmail_password = 'oIxS7gniIEDejPwa'
-
-  try:
-    smtpserver = initialize_smtp(gmail_user, gmail_password)
-    print("Initialized SMTP server.")
-  except smtplib.SMTPAuthenticationError:
-    print("Authentication error! Kindly retry after a few minutes. If the issue persists, please contact Dr. Elliott Rouse (ejrouse@umich.edu).")
-    sys.exit(0)
-
-  except socket.gaierror:
-    print("Unable to retrieve IP address of the host, waiting for 10 seconds.")
-    time.sleep(10)
+    gmail_user = 'neurobionics-rpi-emailer@umich.edu'
+    gmail_password = 'oIxS7gniIEDejPwa'
 
     try:
-      smtpserver = initialize_smtp(gmail_user, gmail_password)
-      print("Initialized SMTP server.")
-    except socket.gaierror:
-      print("No internet connectivity. Kindly verify your network configuration (/etc/wpa_supplicant/wpa_supplicant-wlan0.conf).")
-      sys.exit(0)
+        smtpserver = initialize_smtp(gmail_user, gmail_password)
 
+        #######################################################
 
-  #######################################################
+        # Retrieving information from the host
 
-  # Retrieving information from the host
+        utctoday = datetime.datetime.utcnow() #UTC
+        utc2est = datetime.timedelta(hours=5)
+        today = utctoday - utc2est #EST
 
-  utctoday = datetime.datetime.utcnow() #UTC
-  utc2est = datetime.timedelta(hours=5)
-  today = utctoday - utc2est #EST
-  
-  hostname = socket.gethostname()
+        hostname = socket.gethostname()
 
-  # Get MAC address - individual ID for each device
-  str_temp = open('/sys/class/net/wlan0/address').read()
-  mac = str_temp[0:17]
+        # Get MAC address - individual ID for each device
+        str_temp = open('/sys/class/net/wlan0/address').read()
+        mac = str_temp[0:17]
 
-  arg = 'ip route list'
-  p = subprocess.Popen(arg,shell=True,stdout=subprocess.PIPE)
-  data = p.communicate()
-  temp = str(data[0])
-  split_data = temp.split()
-  ipaddr = split_data[split_data.index('src')+1]
+        arg = 'ip route list'
+        p = subprocess.Popen(arg,shell=True,stdout=subprocess.PIPE)
+        data = p.communicate()
+        temp = str(data[0])
+        split_data = temp.split()
+        ipaddr = split_data[split_data.index('src')+1]
 
-  #Generates an unique token for each session
-  token = secrets.token_urlsafe(16)
+        #Generates an unique token for each session
+        token = secrets.token_urlsafe(16)
 
-  #######################################################
+        #######################################################
 
-  # Compose and send an e-mail
+        # Compose and send an e-mail
+        msg = compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname)
+        send_email(smtpserver, msg)
 
-  msg = compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname)
-  send_email(smtpserver, msg)
+        print("A ticket for the current session has been mailed to the recipient(s).")
+        sys.exit(0) # Success
 
-  print("A ticket for the current session has been mailed to the recipient(s).")
+    except Exception as e:
+        print("Mailer script failed:", str(e))
+        sys.exit(1)  # Exit with failure status
 
 EOF

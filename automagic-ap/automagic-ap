@@ -163,8 +163,9 @@ case "$2" in
         done
 
         if [ $attempt -gt $max_attempts ]; then
-            echo "Switching to AP mode"
-            configure_ap
+			echo "Switching to AP mode"
+			wpa_cli -i $wifi select_network 0
+			configure_ap
         fi
         ;;
 
