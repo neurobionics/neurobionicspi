@@ -57,44 +57,59 @@ update_bssid() {
 
         # Find the BSSID with the strongest signal
         best_bssid=$(wpa_cli -i wlan0 scan_results | awk '/MWireless/ {print $1; exit}')
-
         # Find the line number of the first occurrence of the MWireless network block
         start_line=$(grep -n "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F ":" 'NR==1{print $1}')
 
+        # Find the line number of the end of the MWireless network block
+        end_line=$(awk "/ssid=\"MWireless\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -n "}" | awk -F ":" 'NR==1{print $1}')
+
         # Check if the BSSID tag already exists in the configuration file
-        if grep -q "bssid=" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf; then
+        if awk "/ssid=\"MWireless\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -q "bssid="; then
 
-            bssid_line=$(grep -n "bssid=" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F ":" 'NR==1{print $1}')
+            bssid_line=$(awk "/ssid=\"MWireless\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -n "bssid=" | awk -F ":" 'NR==1{print $1}')
             original_bssid=$(sed -n "${bssid_line}p" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F "=" '{print $2}' | tr -d ' ')
-
             # Replace the existing BSSID tag with the new one
             sed -i '/ssid="MWireless"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1'"$best_bssid"'/}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
             echo "Updated BSSID tag in the configuration file."
 
             # Checking if a network restart is required because we want the best bssid network block to be active
             if [ "$original_bssid" != "$best_bssid" ]; then
-                echo "Restarting the system now!"
-                reboot
+                reconfigure_wpa_supplicant 1
             fi
         else
             # Add the BSSID tag to the configuration file
             sed -i "${start_line}s/$/\n	bssid=$best_bssid/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
             echo "Added BSSID tag to the configuration file."
 
-            echo "Restarting the system now!"
+            echo "Restarting the networking now!"
             # restart the network because we want the best bssid network block to be active
-            reboot
+            reconfigure_wpa_supplicant 1
         fi
     else
         echo "MWireless network block not found in the configuration file. Skipping BSSID update."
     fi
 }
 
+
+
 ############################################
 
 # Manual execution via command line
 
 case "$1" in
+
+    --help)
+        echo "Usage: automagic-ap [OPTION]"
+        echo "Options:"
+        echo "  --start-ap          Enable Access Point (AP) mode. This will turn your device into a wireless access point."
+        echo "  --stop-ap           Disable Access Point (AP) mode. This will turn off the wireless access point mode on your device."
+        echo "  --show-networks     Show defined networks. This will display a list of all networks defined in the configuration file."
+        echo "  --select-network    Select a network by index. This allows you to choose a network from the list of defined networks."
+        echo "  --update-bssid      Update the BSSID in the configuration file. This will change the BSSID of the MWireless network."
+        echo "  --send-ip           Send the IP address via email. This will send the device's current IP address to the specified email address(es)."
+        echo "  --add-email         Add an email address to the recipient list. This will add a new email address to the list of recipients for IP address notifications."
+        exit 0
+        ;;
 
     --start-ap)
         wpa_cli -i $wifi select_network 0
@@ -112,9 +127,30 @@ case "$1" in
         wpa_cli -i $wifi select_network $2
         exit 0
         ;;
+    
+    --show-networks)
+        awk -F= '/^[ \t]*ssid=/ {print count++ " " $2}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+        exit 0
+        ;;
 
     --update-bssid)
         update_bssid
+        exit 0
+        ;;
+
+    --send-ip)
+        python /etc/startup_mailer.py
+        exit 0
+        ;;
+
+    --add-email)
+        if [ -z "$2" ]; then
+            echo "No email address provided. Please provide an email address as an argument."
+            exit 1
+        fi
+        email=$2
+        sed -i "s/\(recipient_str = \"\)\([^\"]*\)\"/\1\2, ${email}\"/" /etc/startup_mailer.py
+        echo "Email address added successfully."
         exit 0
         ;;
 
@@ -147,16 +183,16 @@ case "$2" in
         sleep 5
         configure_client
 
-        max_attempts=10
+        max_attempts=20
         attempt=1
 
         while [ $attempt -le $max_attempts ]; do
             python /etc/startup_mailer.py
             if [ $? -eq 0 ]; then
-                echo "Python script executed successfully."
+                echo "A login ticket was emailed successfully."
                 break
             else
-                echo "Python script failed. Retrying in 5 seconds..."
+                echo "Python script failed. Retrying in a second."
                 sleep 1
                 attempt=$((attempt + 1))
             fi
