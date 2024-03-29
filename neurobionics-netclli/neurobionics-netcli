@@ -93,16 +93,20 @@ update_bssid() {
 case "$1" in
 
     --help)
-        echo "Usage: neurobionics-netcli [OPTION]"
-        echo "Options:"
-        echo "  --start-ap          Enable Access Point (AP) mode. This will turn your device into a wireless access point."
-        echo "  --stop-ap           Disable Access Point (AP) mode. This will turn off the wireless access point mode on your device."
-        echo "  --show-networks     Show defined networks. This will display a list of all networks defined in the configuration file."
-        echo "  --add-network       Adds a network to the wpa_supplicant configuration file."
-        echo "  --select-network    Select a network by index. This allows you to choose a network from the list of defined networks."
-        echo "  --update-bssid      Update the BSSID in the configuration file. This will change the BSSID of the MWireless network."
-        echo "  --send-ip           Send the IP address via email. This will send the device's current IP address to the specified email address(es)."
-        echo "  --add-email         Add an email address to the recipient list. This will add a new email address to the list of recipients for IP address notifications."
+        echo -e ""
+        echo -e "Usage: \e[1mneurobionics-netcli [OPTION]\e[0m"
+        echo -e ""
+        echo -e "\e[1mOptions:\e[0m"
+        echo -e ""
+        echo -e "  \e[1;36m--start-ap\e[0m          Enable Access Point (AP) mode. This will turn your device into a wireless access point."  # Cyan
+        echo -e "  \e[1;36m--stop-ap\e[0m           Disable Access Point (AP) mode. This will turn off the wireless access point mode and turn on client mode."
+        echo -e "  \e[1;36m--show-networks\e[0m     Show defined networks. This will display a list of all networks defined in the configuration file."
+        echo -e "  \e[1;36m--add-network\e[0m       Adds a network to the wpa_supplicant configuration file but does not connect to it. Please use --select-network to connect to the network."
+        echo -e "  \e[1;36m--select-network\e[0m    Select a network by index. This allows you to choose a network from the list of defined networks."
+        echo -e "  \e[1;36m--update-bssid\e[0m      Update the BSSID in the configuration file. This will change the BSSID of the MWireless network."
+        echo -e "  \e[1;36m--send-ip\e[0m           Send the IP address via email. This will send the device's current IP address to the specified email address(es)."
+        echo -e "  \e[1;36m--add-email\e[0m         Add an email address to the recipient list. This will add a new email address to the list of recipients for IP address notifications."
+        echo -e ""
         exit 0
         ;;
 
@@ -113,9 +117,11 @@ case "$1" in
         ;;
 
     --stop-ap)
-        systemctl start wpa_cli@${wifi}.service
-        reconfigure_wpa_supplicant 0
-        echo "Please reboot now!"
+        if [ -e $networkconf~ ]; then
+            mv $networkconf~ $networkconf
+            systemctl restart systemd-networkd
+            wpa_cli -i $wifi reconfigure
+        fi
         exit 0
         ;;
 
@@ -138,7 +144,7 @@ case "$1" in
         ;;
     
     --show-networks)
-        awk -F= '/^[ \t]*ssid=/ {print count++ " " $2}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+        awk -F= '/^[ \t]*ssid=/ {if (!seen[$2]++) print count++ " " $2}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
         exit 0
         ;;
 
