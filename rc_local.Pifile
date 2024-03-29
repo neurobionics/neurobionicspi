@@ -21,8 +21,8 @@ fi
 
 if [ ! -f "/etc/network.true" ]; then
 
-	cd /etc/automagic-ap
-	chmod +x automagic-ap install.sh
+	cd /etc/neurobionics-netcli
+	chmod +x neurobionics-netcli install.sh
 	sudo ./install.sh
 	sudo touch /etc/network.true
 

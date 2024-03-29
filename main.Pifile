@@ -51,10 +51,10 @@ source ./packages.Pifile
 
 ##################################
 
-# Installing automagic-ap
+# Installing neurobionics-netcli
 
-INSTALL "automagic-ap" "/etc/automagic-ap"
-RUN sh -c "sudo chown -R ${user} /etc/automagic-ap"
+INSTALL "neurobionics-netcli" "/etc/neurobionics-netcli"
+RUN sh -c "sudo chown -R ${user} /etc/neurobionics-netcli"
 
 ##################################
 

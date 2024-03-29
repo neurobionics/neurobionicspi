@@ -93,7 +93,7 @@ update_bssid() {
 case "$1" in
 
     --help)
-        echo "Usage: automagic-ap [OPTION]"
+        echo "Usage: neurobionics-netcli [OPTION]"
         echo "Options:"
         echo "  --start-ap          Enable Access Point (AP) mode. This will turn your device into a wireless access point."
         echo "  --stop-ap           Disable Access Point (AP) mode. This will turn off the wireless access point mode on your device."

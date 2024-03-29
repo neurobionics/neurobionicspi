@@ -3,18 +3,17 @@ RUN touch /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
 
 RUN tee -a /etc/wpa_supplicant/wpa_supplicant-wlan0.conf <<EOF
 country=${countrycode}
-ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev                           
-update_config=1                                                                   
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
 ap_scan=1
 
-### automagic-ap ###                                                                              
+### neurobionics-netcli ###
 network={
 	priority=0
-	ssid="${apssid}"                                                         
-	mode=2                                         
-	key_mgmt=WPA-PSK                                                             
-	psk="${appsk}"                                
-	frequency=2462                                                               
+	ssid="${apssid}"
+	mode=2
+	key_mgmt=WPA-PSK
+	psk="${appsk}"
 }
 
 ### your network(s) ###
