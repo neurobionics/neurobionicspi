@@ -5,6 +5,9 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
+# Comment this out if you want to log every boot cycle
+echo "neurobionics-netcli: $(date)" | tee /etc/neurobionics-netcli.log
+
 # Variables for connectivity routine
 
 wifi=wlan0
@@ -45,20 +48,19 @@ configure_client () {
 
 reconfigure_wpa_supplicant () {
     sleep "$1"
-    if [ "$(wpa_cli -i $wifi all_sta)" = "" ]; then
-        wpa_cli -i $wifi reconfigure
-    fi
+    systemctl restart systemd-networkd
+    wpa_cli -i $wifi reconfigure
 }
 
 # Function to find and update the BSSID in the configuration file
 
 update_bssid() {
     if grep -q "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf; then
-        echo "MWireless network block found in the configuration file."
+        echo "MWireless network block found in the configuration file." | tee -a /etc/neurobionics-netcli.log
 
         # Perform a fresh scan to get all available BSSIDs
         wpa_cli -i wlan0 scan
-        echo "Scanning for available networks..."
+        echo "Scanning for available networks..." | tee -a /etc/neurobionics-netcli.log
 
         # Find the BSSID with the strongest signal
         best_bssid=$(wpa_cli -i wlan0 scan_results | awk '/MWireless/ {print $1; exit}')
@@ -76,24 +78,24 @@ update_bssid() {
             original_bssid=$(echo $bssid_line | awk -F "=" '{print $2}' | tr -d ' ')
             # Replace the existing BSSID tag with the new one
             sed -i '/ssid="MWireless"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1'"$best_bssid"'/}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
-            echo "Updated BSSID tag in the configuration file."
+            echo "Updated BSSID tag in the configuration file." | tee -a /etc/neurobionics-netcli.log
 
             # Checking if a network restart is required because we want the best bssid network block to be active
             if [ "$original_bssid" != "$best_bssid" ]; then
-                echo "Updated BSSID differs from the original. Network restart required."
+                echo "Updated BSSID differs from the original. Network restart required." | tee -a /etc/neurobionics-netcli.log
                 reconfigure_wpa_supplicant 1
             fi
         else
             # Add the BSSID tag to the configuration file
             sed -i "${start_line}s/$/\n	bssid=$best_bssid/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
-            echo "Added BSSID tag to the configuration file."
+            echo "Added BSSID tag to the configuration file." | tee -a /etc/neurobionics-netcli.log
 
-            echo "Restarting the networking now!"
+            echo "Restarting the networking now!" | tee -a /etc/neurobionics-netcli.log
             # restart the network because we want the best bssid network block to be active
             reconfigure_wpa_supplicant 1
         fi
     else
-        echo "MWireless network block not found in the configuration file. Skipping BSSID update."
+        echo "MWireless network block not found in the configuration file. Skipping BSSID update." | tee -a /etc/neurobionics-netcli.log
     fi
 
 }
@@ -184,7 +186,7 @@ esac
 # Checking for Ethernet connection, if so the RPi behaves like a Wifi router
 
 if [ "$(cat /sys/class/net/${ethernet}/carrier)" = "1" ]; then
-    echo "Ethernet connection found, enabling Access Point (AP)."
+    echo "Ethernet connection found, enabling Access Point (AP)." | tee -a /etc/neurobionics-netcli.log
     if wpa_cli -i $wifi status | grep -q "mode=station"; then
         wpa_cli -i $wifi select_network 0
         configure_ap
@@ -210,7 +212,7 @@ case "$2" in
         while [ $attempt -le $max_attempts ]; do
             python /etc/startup_mailer.py
             if [ $? -eq 0 ]; then
-                echo "A login ticket was emailed successfully."
+                echo "A login ticket was emailed successfully." | tee -a /etc/neurobionics-netcli.log
 
                 ((SUCCESS_COUNT++))
 
@@ -218,15 +220,15 @@ case "$2" in
                 echo $SUCCESS_COUNT > $COUNT_FILE
                 break
             else
-                echo "Python script failed. Retrying in a second."
+                echo "Python script failed. Retrying in a second." | tee -a /etc/neurobionics-netcli.log
                 sleep 1
                 attempt=$((attempt + 1))
             fi
         done
 
         if [ $attempt -gt $max_attempts ]; then
-			echo "Switching to AP mode"
-            echo "FAIL: AP MODE ON" | tee /etc/neurobionics-netcli.log
+			echo "Switching to AP mode" | tee -a /etc/neurobionics-netcli.log
+            echo "FAIL: AP MODE ON" | tee -a /etc/neurobionics-netcli.log
 			wpa_cli -i $wifi select_network 0
 			configure_ap
         fi
