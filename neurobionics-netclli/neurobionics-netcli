@@ -12,6 +12,16 @@ ethernet=eth0
 timeout=60
 networkconf="/etc/systemd/network/08-${wifi}-CLI.network"
 
+# Email count file
+COUNT_FILE="/etc/neurobionics-netcli.count"
+
+# Read email count from file, or initialize to 0 if file does not exist
+if [ -f "$COUNT_FILE" ]; then
+    SUCCESS_COUNT=$(cat $COUNT_FILE)
+else
+    SUCCESS_COUNT=0
+fi
+
 # Functions for connectivity routine, read more at https://raspberrypi.stackexchange.com/questions/100195
 # Configuring Access Point (AP) mode
 
@@ -202,6 +212,11 @@ case "$2" in
             python /etc/startup_mailer.py
             if [ $? -eq 0 ]; then
                 echo "A login ticket was emailed successfully."
+
+                ((SUCCESS_COUNT++))
+
+                echo "SUCCESS: CLI MODE ON" | tee /etc/neurobionics-netcli.log
+                echo $SUCCESS_COUNT > $COUNT_FILE
                 break
             else
                 echo "Python script failed. Retrying in a second."
@@ -212,6 +227,7 @@ case "$2" in
 
         if [ $attempt -gt $max_attempts ]; then
 			echo "Switching to AP mode"
+            echo "FAIL: AP MODE ON" | tee /etc/neurobionics-netcli.log
 			wpa_cli -i $wifi select_network 0
 			configure_ap
         fi
