@@ -201,10 +201,9 @@ case "$2" in
         ;;
 
     CONNECTED)
-        update_bssid
-        sleep 5
         configure_client
-
+        update_bssid
+        
         max_attempts=10
         attempt=1
 
