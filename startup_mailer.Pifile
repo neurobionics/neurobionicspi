@@ -48,31 +48,62 @@ def compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname):
     Returns: EmailMessage()
     """
     msg = EmailMessage()
-    msg['Subject'] = 'Session created for RPi :: %s' % today.strftime('%b %d %Y')
+    msg['Subject'] = 'Raspberry Pi @%s' % ipaddr
     msg['From'] = gmail_user
     msg['To'] = ",".join(str(x) for x in recipients)
     msg.set_content('''
-    <!DOCTYPE html>
-    <html>
-        <body>
-            <div style="padding:5px 20px;">
-                <h1 style="font-size:20px;">Wifi IP Address Emailer Utility v2.0 <br>&copy; University of Michigan Neurobionics Lab</h1>
-                <p style="font-size:15px;">
-                <b>Hostname:</b> {5} <br>
-                <b>IP Address:</b> {0} <br>
-                <b>Unique Identifier:</b> {1}<br>
-                <b>MAC Address:</b> {2}<br>
-                <b>Date:</b> {3}<br>
-                <b>Time:</b> {4}<br>
-                </p>
-                <div style="height: 500px;width:400px">
-                    <img src="https://robotics.umich.edu/wp-content/uploads/2018/11/MRobotics_informal_outlines_digital.png" style="width: 230; height: 47px;">
-                </div>
-            </div>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html dir="ltr" lang="en">
+        <head>
+            <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+        </head>
+
+        <body style="background-color:rgb(0,0,0);margin-top:auto;margin-bottom:auto;margin-left:auto;margin-right:auto;font-family:ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Noto Color Emoji&quot;;padding:1rem">
+            <table align="center" width="100%" border="0" cellPadding="0" cellSpacing="0" role="presentation" style="max-width:700px;border-width:1px;border-style:solid;border-color:rgb(82, 82, 91);border-radius:0.375rem;margin-top:40px;margin-bottom:40px;margin-left:auto;margin-right:auto;padding:20px">
+                <tbody>
+                    <tr style="width:100%">
+                        <td>
+                            <h1 class="" style="font-weight:400;text-align:center;border-radius:0.375rem;padding:1rem;margin-bottom:12px;margin-left:0px;margin-right:0px;border-width:1px;border-style:solid;border-color:rgb(82, 82, 91)">
+                                <img alt="Michigan Robotics" height="auto" src="https://neurobionics.robotics.umich.edu/wp-content/themes/wp-tailwind-light-robotics-lab-child/mrobotics-reverse.png" style="display:block;outline:none;border:none;text-decoration:none;margin-left:auto;margin-right:auto;margin-top:12px" width="230"/>
+                                <p style="font-size:16px;line-height:28px;margin:16px 0;color:rgb(205, 205, 205);text-align:center;margin-bottom:12px"><strong style="font-size:24px">IP Address Emailer v3.0</strong></p>
+                            </h1>
+                            <table align="center" width="100%" border="1" cellPadding="0" cellSpacing="0" role="presentation" style="border-radius:0.375rem;padding:1rem;margin-left:auto;margin-right:auto;border-width:1px;border-style:solid;border-color:rgb(82, 82, 91)">
+                                <tbody align="center" width="100%" style="color:rgb(255,255,255);">
+                                    <tr style="border: 1px solid rgb(38, 38, 38);;border-radius:0.375rem;">
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">Hostname:</td>
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">{5}</td>
+                                    </tr>
+                                    <tr style="border: 1px solid rgb(38, 38, 38);">
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">IP Address:</td>
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;"><strong style="color:rgb(165,243,252)">{0}</strong></td>
+                                    </tr>
+                                    <tr style="border: 1px solid rgb(38, 38, 38);">
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">Unique Identifier:</td>
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">{1}</td>
+                                    </tr>
+                                    <tr style="border: 1px solid rgb(38, 38, 38);">
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">MAC Address:</td>
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">{2}</td>
+                                    </tr>
+                                    <tr style="border: 1px solid rgb(38, 38, 38);">
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">Date:</td>
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;"><strong>{3}</strong></td>
+                                    </tr>
+                                    <tr style="border: 1px solid rgb(38, 38, 38);">
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">Time:</td>
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;"><strong>{4}</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <hr style="width:100%;border:none;border-top:1px solid #eaeaea;border-width:1px;border-style:solid;border-color:rgb(39,39,41);margin-top:26px;margin-bottom:26px;margin-left:0px;margin-right:0px" />
+                            <p style="font-size:10px;line-height:12px;margin:16px 0;color:rgb(163, 163, 163)" align="center">© 2024 Neurobionics Lab, University of Michigan <br /></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </body>
     </html>
     '''.format(ipaddr, token, mac, today.strftime('%d %b %Y'), today.strftime('%I:%M:%S %p'), hostname), subtype='html')
-
     return msg
 
 def send_email(smtpserver, msg):
