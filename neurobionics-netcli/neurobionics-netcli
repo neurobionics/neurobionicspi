@@ -74,19 +74,10 @@ is_wpa_client() {
 
 configure_ap () {
     # only configure AP if not already in AP mode
-    if is_wpa_client && is_client; then
-        echo "Removing client network configuration and restarting networkd" | tee -a /etc/neurobionics-netcli.log
-        mv $networkconf $networkconf~
-        systemctl restart systemd-networkd
-    elif is_client; then
+    if is_client; then
         echo "Client network configuration exists but wpa_cli is not in client mode. Removing client network configuration and restarting networkd." | tee -a /etc/neurobionics-netcli.log
         mv $networkconf $networkconf~
         systemctl restart systemd-networkd
-    elif is_wpa_client; then
-        echo "Client network configuration is missing but wpa_cli is in client mode. Restarting wpa_supplicant." | tee -a /etc/neurobionics-netcli.log
-        systemctl restart systemd-networkd        
-    else
-        echo "AP mode is already active. Skipping configuration." | tee -a /etc/neurobionics-netcli.log
     fi
 }
 
@@ -267,10 +258,10 @@ case "$2" in
 
     CONNECTED)
         configure_client
+        update_bssid
 
         if is_wpa_client; then
             echo "Client mode is active so we will update the BSSID." | tee -a /etc/neurobionics-netcli.log
-            update_bssid
             
             max_attempts=10
             attempt=1
