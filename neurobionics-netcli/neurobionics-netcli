@@ -78,6 +78,11 @@ configure_ap () {
         echo "Client network configuration exists but wpa_cli is not in client mode. Removing client network configuration and restarting networkd." | tee -a /etc/neurobionics-netcli.log
         mv $networkconf $networkconf~
         systemctl restart systemd-networkd
+    elif is_wpa_client; then
+        echo "Client network configuration is missing but wpa_cli is in client mode. Restarting network." | tee -a /etc/neurobionics-netcli.log
+        systemctl restart systemd-networkd
+    else
+        echo "AP mode is already active. Skipping configuration." | tee -a /etc/neurobionics-netcli.log
     fi
 }
 
@@ -85,12 +90,8 @@ configure_ap () {
 
 configure_client () {
     # only configure client if not already in client mode
-    if is_wpa_ap && is_ap; then
+    if is_ap; then
         echo "Removing AP network configuration and restarting networkd" | tee -a /etc/neurobionics-netcli.log
-        mv $networkconf~ $networkconf
-        systemctl restart systemd-networkd
-    elif is_ap; then
-        echo "AP network configuration exists but wpa_cli is not in AP mode. Removing AP network configuration and restarting networkd." | tee -a /etc/neurobionics-netcli.log
         mv $networkconf~ $networkconf
         systemctl restart systemd-networkd
     elif is_wpa_ap; then
@@ -134,16 +135,18 @@ update_bssid() {
             bssid_line=$(awk "/ssid=\"MWireless\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -m1 "bssid=")
             # Split the line on the equal sign and print the second field to get the BSSID value
             original_bssid=$(echo $bssid_line | awk -F "=" '{print $2}' | tr -d ' ')
-            # Replace the existing BSSID tag with the new one
-            sed -i '/ssid="MWireless"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1'"$best_bssid"'/}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
-            echo "Updated BSSID tag in the configuration file." | tee -a /etc/neurobionics-netcli.log
 
             # Checking if a network restart is required because we want the best bssid network block to be active
             if [ "$original_bssid" != "$best_bssid" ]; then
+                # Replace the existing BSSID tag with the new one
+                sed -i '/ssid="MWireless"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1'"$best_bssid"'/}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
                 echo "Updated BSSID differs from the original. Network restart required." | tee -a /etc/neurobionics-netcli.log
                 reconfigure_wpa_supplicant 1
                 exit 0
+            else
+                echo "Best BSSID matches the original. No network restart required." | tee -a /etc/neurobionics-netcli.log
             fi
+
         else
             # Add the BSSID tag to the configuration file
             sed -i "${start_line}s/$/\n	bssid=$best_bssid/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
@@ -188,13 +191,13 @@ case "$1" in
 
     --stop-ap)
         configure_client
+        reconfigure_wpa_supplicant 1
         exit 0
         ;;
 
     --select-network)
         configure_client
         wpa_cli -i $wifi select_network $2
-        exit 0
         ;;
 
     --add-network)
@@ -217,7 +220,6 @@ case "$1" in
 
     --update-bssid)
         update_bssid
-        exit 0
         ;;
 
     --is-ap)
@@ -261,7 +263,7 @@ case "$2" in
         update_bssid
 
         if is_wpa_client; then
-            echo "Client mode is active so we will update the BSSID." | tee -a /etc/neurobionics-netcli.log
+            echo "Client mode is active; updating the BSSID." | tee -a /etc/neurobionics-netcli.log
             
             max_attempts=10
             attempt=1
@@ -287,7 +289,11 @@ case "$2" in
                 echo "Switching to AP mode" | tee -a /etc/neurobionics-netcli.log
                 echo "FAIL: AP MODE ON" | tee -a /etc/neurobionics-netcli.log
                 configure_ap
-            fi            
+            else
+                echo "Completed emailing routine in $attempt attempt(s)." | tee -a /etc/neurobionics-netcli.log
+            fi
+        else
+            echo "Client mode is not active; skipping emailing routine" | tee -a /etc/neurobionics-netcli.log         
         fi
         ;;
 
