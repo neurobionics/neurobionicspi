@@ -42,6 +42,7 @@ on:
         default: neurobionics
 env:
   PIFILE: main
+  PWD: ${{ secrets.MWIRELESS_PWD }}
 
 jobs:
   build:
@@ -63,3 +64,4 @@ jobs:
           echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname $PIFILE.Pifile)/.env
           echo AP_PASSPHRASE="${{ github.event.inputs.wpa_passphrase }}" >> $(dirname $PIFILE.Pifile)/.env
           echo EMAIL=\"${{ github.event.inputs.email }}\" >> $(dirname $PIFILE.Pifile)/.env
+          echo "$SUPER_SECRET" >> $(dirname $PIFILE.Pifile)/.env
