@@ -42,14 +42,13 @@ on:
         default: neurobionics
 env:
   PIFILE: test
-  PWD: ${{ secrets.MWIRELESS_PWD }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Write env variables
@@ -64,8 +63,17 @@ jobs:
           echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname $PIFILE.Pifile)/.env
           echo AP_PASSPHRASE="${{ github.event.inputs.wpa_passphrase }}" >> $(dirname $PIFILE.Pifile)/.env
           echo EMAIL=\"${{ github.event.inputs.email }}\" >> $(dirname $PIFILE.Pifile)/.env
-          echo "$PWD" >> $(dirname $PIFILE.Pifile)/.env
       - name: Build image
         uses: Nature40/pimod@master
         with:
-          pifile: $PIFILE.Pifile
+          pifile: ${PIFILE}.Pifile
+
+      - name: Make tarball
+        run: |
+          tar -czvf main.tar.gz main.img
+      - name: Upload artifacts  
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.workflow }}-${{ github.sha }}.zip
+          path: ${PIFILE}.img
+
