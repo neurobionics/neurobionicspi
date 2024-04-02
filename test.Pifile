@@ -1,3 +1,10 @@
+# For 64-bit Raspbian OS
+FROM https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-12-11/2023-12-11-raspios-bookworm-armhf-lite.img.xz
+
+PUMP 600M
+
+RUN bash -c "systemctl enable ssh"
+
 source .env
 
 hostname="${HOSTNAME:-neurobionics}"
