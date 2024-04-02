@@ -41,7 +41,7 @@ on:
         required: true
         default: neurobionics
 env:
-  PIFILE: main
+  PIFILE: test
   PWD: ${{ secrets.MWIRELESS_PWD }}
 
 jobs:
@@ -65,3 +65,7 @@ jobs:
           echo AP_PASSPHRASE="${{ github.event.inputs.wpa_passphrase }}" >> $(dirname $PIFILE.Pifile)/.env
           echo EMAIL=\"${{ github.event.inputs.email }}\" >> $(dirname $PIFILE.Pifile)/.env
           echo "$PWD" >> $(dirname $PIFILE.Pifile)/.env
+      - name: Build image
+        uses: Nature40/pimod@master
+        with:
+          pifile: ${PIFILE}.Pifile          
