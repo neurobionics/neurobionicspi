@@ -1,0 +1,17 @@
+source .env
+
+hostname="${HOSTNAME:-neurobionics}"
+user="${USER:-pi}"
+password="${USERPASSWORD:-neurobionics}"
+email="${EMAIL:-ejrouse@umich.edu}"
+mwpsk="${PASSWORD:-password}"
+wifissid="${WIFI_SSID:-network}"
+wifipsk="${WIFI_PASSPHRASE:-password}"
+apssid="${AP_SSID:-NeurobionicsRPi}"
+appsk="${AP_PASSPHRASE:-neurobionics}"
+countrycode="${WIFI_CC:-US}"
+mwirelesspwd="${PWD:-password}"
+
+##################################
+
+echo "DONE!"
