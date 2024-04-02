@@ -5,6 +5,8 @@ PUMP 600M
 
 RUN bash -c "systemctl enable ssh"
 
+source .env
+
 hostname="${HOSTNAME:-neurobionics}"
 user="${USER:-pi}"
 password="${USERPASSWORD:-neurobionics}"
