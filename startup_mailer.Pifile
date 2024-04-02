@@ -84,22 +84,22 @@ def compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname, s
                                     <tr style="border: 1px solid rgb(38, 38, 38);">
                                         <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">Hostname:</td>
                                         <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">{5}</td>
-                                    </tr>
-                                    <tr style="border: 1px solid rgb(38, 38, 38);">
-                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">From Network:</td>
-                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">{6}</td>
-                                    </tr>                                    
+                                    </tr>                                   
                                     <tr style="border: 1px solid rgb(38, 38, 38);">
                                         <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">IP Address:</td>
                                         <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;"><strong style="color:rgb(165,243,252)">{0}</strong></td>
                                     </tr>
                                     <tr style="border: 1px solid rgb(38, 38, 38);">
-                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">Unique Identifier:</td>
-                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">{1}</td>
-                                    </tr>
-                                    <tr style="border: 1px solid rgb(38, 38, 38);">
                                         <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">MAC Address:</td>
                                         <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">{2}</td>
+                                    </tr>                                    
+                                    <tr style="border: 1px solid rgb(38, 38, 38);">
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">From Network:</td>
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">{6}</td>
+                                    </tr>
+                                    <tr style="border: 1px solid rgb(38, 38, 38);">
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">Unique Identifier:</td>
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">{1}</td>
                                     </tr>
                                     <tr style="border: 1px solid rgb(38, 38, 38);">
                                         <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">Date:</td>
