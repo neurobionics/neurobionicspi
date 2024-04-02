@@ -1,4 +1,4 @@
-name: Test
+name: Raspberry Pi 4
 
 on:
     workflow_dispatch:
@@ -41,7 +41,7 @@ on:
                 required: true
                 default: neurobionics
 env:
-    PIFILE: test
+    PIFILE: main
 
 jobs:
     build:
@@ -75,4 +75,4 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: ${{ github.workflow }}-${{ github.sha }}.zip
-                  path: ${PIFILE}.img
+                  path: main.img

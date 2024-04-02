@@ -32,7 +32,20 @@ def initialize_smtp(gmail_user, gmail_password):
 
     return smtpserver
 
-def compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname):
+def get_ssid():
+    """
+    Retrieves the SSID of the current network.
+
+    Returns: str
+    """
+    try:
+        ssid = subprocess.check_output(["iwgetid", "-r"]).decode("utf-8").strip()
+    except subprocess.CalledProcessError:
+        ssid = "Could not get SSID"
+    return ssid
+
+
+def compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname, ssid):
     """
     Composes an e-mail with html formatting.
 
@@ -73,6 +86,10 @@ def compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname):
                                         <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">{5}</td>
                                     </tr>
                                     <tr style="border: 1px solid rgb(38, 38, 38);">
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">From Network:</td>
+                                        <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">{6}</td>
+                                    </tr>                                    
+                                    <tr style="border: 1px solid rgb(38, 38, 38);">
                                         <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;">IP Address:</td>
                                         <td style="border: 1px solid rgb(38, 38, 38); text-align: left; padding: 10px;"><strong style="color:rgb(165,243,252)">{0}</strong></td>
                                     </tr>
@@ -104,7 +121,7 @@ def compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname):
             </table>
         </body>
     </html>
-    '''.format(ipaddr, token, mac, today.strftime('%d %b %Y'), today.strftime('%I:%M:%S %p'), hostname), subtype='html')
+    '''.format(ipaddr, token, mac, today.strftime('%d %b %Y'), today.strftime('%I:%M:%S %p'), hostname, ssid), subtype='html')
     return msg
 
 def send_email(smtpserver, msg):
@@ -145,6 +162,7 @@ if __name__ == '__main__':
         today = utctoday - utc2est #EST
 
         hostname = socket.gethostname()
+        ssid = get_ssid()
 
         # Get MAC address - individual ID for each device
         str_temp = open('/sys/class/net/wlan0/address').read()
@@ -163,7 +181,7 @@ if __name__ == '__main__':
         #######################################################
 
         # Compose and send an e-mail
-        msg = compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname)
+        msg = compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname, ssid)
         send_email(smtpserver, msg)
 
         print("A ticket for the current session has been mailed to the recipient(s).")
