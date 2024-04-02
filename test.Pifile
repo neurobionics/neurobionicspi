@@ -17,12 +17,12 @@ wifipsk="${WIFI_PASSPHRASE:-password}"
 apssid="${AP_SSID:-NeurobionicsRPi}"
 appsk="${AP_PASSPHRASE:-neurobionics}"
 countrycode="${WIFI_CC:-US}"
-mwirelesspwd="${PWD:-password}"
+mwirelesspwd="${MWPWD:-password}"
 
 ##################################
 
 echo $hostname
 echo $mwirelesspwd
-echo $PWD
+echo $MWPWD
 
 echo "DONE!"
