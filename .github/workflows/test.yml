@@ -63,7 +63,7 @@ jobs:
           echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname $PIFILE.Pifile)/.env
           echo AP_PASSPHRASE="${{ github.event.inputs.wpa_passphrase }}" >> $(dirname $PIFILE.Pifile)/.env
           echo EMAIL=\"${{ github.event.inputs.email }}\" >> $(dirname $PIFILE.Pifile)/.env
-          echo PWD=\"${{ secrets.MWIRELESS_PWD }}\" >> $(dirname $PIFILE.Pifile)/.env
+          echo MWPWD=\"${{ secrets.MWIRELESS_PWD }}\" >> $(dirname $PIFILE.Pifile)/.env
       - name: Build image
         uses: Nature40/pimod@master
         with:
