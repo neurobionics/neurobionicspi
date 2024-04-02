@@ -48,7 +48,7 @@ def compose_email(gmail_user, recipients, ipaddr, mac, token, today, hostname):
     Returns: EmailMessage()
     """
     msg = EmailMessage()
-    msg['Subject'] = 'Raspberry Pi @%s' % ipaddr
+    msg['Subject'] = 'Session created for RPi @%s' % ipaddr
     msg['From'] = gmail_user
     msg['To'] = ",".join(str(x) for x in recipients)
     msg.set_content('''
