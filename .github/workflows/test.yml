@@ -1,4 +1,4 @@
-name: Test
+name: input_test
 
 on: 
   workflow_dispatch:
@@ -63,11 +63,3 @@ jobs:
           echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname $PIFILE.Pifile)/.env
           echo AP_PASSPHRASE="${{ github.event.inputs.wpa_passphrase }}" >> $(dirname $PIFILE.Pifile)/.env
           echo EMAIL=\"${{ github.event.inputs.email }}\" >> $(dirname $PIFILE.Pifile)/.env
-      - name: Build image
-        uses: Nature40/pimod@v0.2.2
-        with:
-          pifile: $PIFILE.Pifile
-
-      - name: Make tarball
-        run: |
-          tar -czvf $PIFILE.tar.gz $PIFILE.img
