@@ -19,4 +19,8 @@ mwirelesspwd="${PWD:-password}"
 
 ##################################
 
+echo $hostname
+echo $mwirelesspwd
+echo $PWD
+
 echo "DONE!"
