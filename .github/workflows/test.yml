@@ -41,7 +41,7 @@ on:
         required: true
         default: neurobionics
 env:
-  PIFILE: main
+  PIFILE: test
   PWD: ${{ secrets.MWIRELESS_PWD }}
 
 jobs:
@@ -68,4 +68,4 @@ jobs:
       - name: Build image
         uses: Nature40/pimod@master
         with:
-          pifile: $(dirname $PIFILE.Pifile)/test.Pifile          
+          pifile: $PIFILE.Pifile
