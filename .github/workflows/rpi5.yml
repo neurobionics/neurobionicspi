@@ -15,29 +15,22 @@ on:
                 description: "Password"
                 required: true
                 default: neurobionics
-            mwireless_pass:
-                description: "Get the MWireless Passphrase from: https://bit.ly/30zEzPCRPi"
-                required: false
-            email:
-                description: "Email"
-                required: true
-                default: ejrouse@umich.edu
             wifi_cc:
                 description: "WiFi Country Code"
                 required: true
                 default: US
             wifi_ssid:
-                description: "Additional WiFi SSID"
+                description: "Additional Network SSID"
                 required: false
             wifi_passphrase:
-                description: "Additional WiFi Passphrase"
+                description: "Additional Network Password"
                 required: false
             wpa_ssid:
                 description: "Access Point SSID"
                 required: true
                 default: NeurobionicsRPi
             wpa_passphrase:
-                description: "Access Point Passphrase"
+                description: "Access Point Password"
                 required: true
                 default: neurobionics
 env:
