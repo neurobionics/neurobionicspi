@@ -41,7 +41,7 @@ RUN apt-get update
 
 RUN apt-get install -y wpasupplicant
 
-source ./wpa_supplicant.Pifile
+source ./rpi5/wpa_supplicant.Pifile
 
 ##################################
 
