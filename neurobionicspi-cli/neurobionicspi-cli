@@ -11,7 +11,7 @@ echo "neurobionicspi-cli: $(date)" | tee -a /etc/neurobionicspi-cli.log
 # Variables for connectivity routine
 
 wifi=wlan0
-ssid="MWireless"
+entnetworkssid=""
 
 networkconf="/etc/systemd/network/08-${wifi}-CLI.network"
 conf_file="/etc/wpa_supplicant/wpa_supplicant-wlan0.conf"
@@ -113,8 +113,8 @@ reconfigure_wpa_supplicant () {
 
 update_bssid() {
     # Check if the SSID exists in the configuration
-    if grep -q "ssid=\"$ssid\"" "$conf_file"; then
-        echo "$ssid network block found in the configuration file." | tee -a /etc/neurobionicspi-cli.log
+    if grep -q "ssid=\"$entnetworkssid\"" "$conf_file"; then
+        echo "$entnetworkssid network block found in the configuration file." | tee -a /etc/neurobionicspi-cli.log
 
         # Perform a fresh scan to get all available BSSIDs
         wpa_cli -i wlan0 scan
@@ -122,24 +122,24 @@ update_bssid() {
         echo "Scanning for available networks..." | tee -a /etc/neurobionicspi-cli.log
 
         # Find the BSSID with the strongest signal
-        best_bssid=$(wpa_cli -i wlan0 scan_results | awk '/MWireless/ {print $1; exit}')
-        # Find the line number of the first occurrence of the MWireless network block
-        start_line=$(grep -n "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F ":" 'NR==1{print $1}')
+        best_bssid=$(wpa_cli -i wlan0 scan_results | awk '/$entnetworkssid/ {print $1; exit}')
+        # Find the line number of the first occurrence of the $entnetworkssid network block
+        start_line=$(grep -n "ssid=\"$entnetworkssid\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F ":" 'NR==1{print $1}')
 
-        # Find the line number of the end of the MWireless network block
-        end_line=$(awk "/ssid=\"MWireless\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -n "}" | awk -F ":" 'NR==1{print $1}')
+        # Find the line number of the end of the $entnetworkssid network block
+        end_line=$(awk "/ssid=\"$entnetworkssid\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -n "}" | awk -F ":" 'NR==1{print $1}')
 
         # Check if the BSSID tag already exists in the configuration file
-        if awk "/ssid=\"MWireless\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -q "bssid="; then
-            # Extract the first BSSID line from the MWireless network block
-            bssid_line=$(awk "/ssid=\"MWireless\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -m1 "bssid=")
+        if awk "/ssid=\"$entnetworkssid\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -q "bssid="; then
+            # Extract the first BSSID line from the $entnetworkssid network block
+            bssid_line=$(awk "/ssid=\"$entnetworkssid\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -m1 "bssid=")
             # Split the line on the equal sign and print the second field to get the BSSID value
             original_bssid=$(echo $bssid_line | awk -F "=" '{print $2}' | tr -d ' ')
 
             # Checking if a network restart is required because we want the best bssid network block to be active
             if [ "$original_bssid" != "$best_bssid" ]; then
                 # Replace the existing BSSID tag with the new one
-                sed -i '/ssid="MWireless"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1'"$best_bssid"'/}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+                sed -i '/ssid="$entnetworkssid"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1'"$best_bssid"'/}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
                 echo "Updated BSSID differs from the original. Network restart required." | tee -a /etc/neurobionicspi-cli.log
                 reconfigure_wpa_supplicant 1
                 exit 0
@@ -158,7 +158,7 @@ update_bssid() {
             exit 0
         fi
     else
-        echo "$ssid network block not found in the configuration file. Skipping BSSID update." | tee -a /etc/neurobionicspi-cli.log
+        echo "$entnetworkssid network block not found in the configuration file. Skipping BSSID update." | tee -a /etc/neurobionicspi-cli.log
     fi
 }
 
@@ -172,12 +172,12 @@ case "$1" in
         echo -e ""
         echo -e "\e[1mOptions:\e[0m"
         echo -e ""
-        echo -e "  \e[1;36m--start-ap\e[0m          Enable Access Point (AP) mode. This will turn your device into a wireless access point."  # Cyan
+        echo -e "  \e[1;36m--start-ap\e[0m          Enable Access Point (AP) mode. This will turn your device into a wireless access point."
         echo -e "  \e[1;36m--stop-ap\e[0m           Disable Access Point (AP) mode. This will turn off the wireless access point mode and turn on client mode."
         echo -e "  \e[1;36m--show-networks\e[0m     Show defined networks. This will display a list of all networks defined in the configuration file."
         echo -e "  \e[1;36m--add-network\e[0m       Adds a network to the wpa_supplicant configuration file but does not connect to it. Please use --select-network to connect to the network."
         echo -e "  \e[1;36m--select-network\e[0m    Select a network by index. This allows you to choose a network from the list of defined networks."
-        echo -e "  \e[1;36m--update-bssid\e[0m      Update the BSSID in the configuration file. This will change the BSSID of the MWireless network."
+        echo -e "  \e[1;36m--update-bssid\e[0m      Update the BSSID in the configuration file. This will change the BSSID of the enterprise network."
         echo -e "  \e[1;36m--send-ip\e[0m           Send the IP address via email. This will send the device's current IP address to the specified email address(es)."
         echo -e "  \e[1;36m--add-email\e[0m         Add an email address to the recipient list. This will add a new email address to the list of recipients for IP address notifications."
         echo -e ""

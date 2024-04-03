@@ -82,8 +82,6 @@ on:
                 description: "Access Point Password"
                 required: true
                 default: neurobionics
-env:
-    PIFILE: rpi5
 
 jobs:
     build:
@@ -92,8 +90,12 @@ jobs:
         steps:
             - name: Check secrets
               run: |
-                  if [[ -z "${{ secrets.MWIRELESS_PASSWORD }}" || -z "${{ secrets.EMAIL_ADDRESS }}" || -z "${{ secrets.MWIRELESS_IDENTITY }}" ]]; then
-                      echo "MWIRELESS_PASSWORD, EMAIL_ADDRESS, or MWIRELESS_IDENTITY secrets are empty"
+                  if [[ -z "${{ secrets.EMAIL_ADDRESS }}" ]]; then
+                      echo "EMAIL_ADDRESS secret is not set, please refer to the README.md for more information. Exiting."
+                      exit 1
+                  fi
+                  if [[ (-z "${{ github.event.inputs.wifi_ssid }}" || -z "${{ github.event.inputs.wifi_password }}") && ( -z "${{ secrets.ENTNETWORK_SSID }}" || -z "${{ secrets.ENTNETWORK_IDENTITY }}" || -z "${{ secrets.ENTNETWORK_PASSWORD }}" ) ]]; then
+                      echo "Please ensure that all required secrets (ENTNETWORK_SSID, ENTNETWORK_IDENTITY, and ENTNETWORK_PASSWORD) are set for the enterprise network. If you do not want to connect to an enterprise network, please provide information for the home network. Exiting."
                       exit 1
                   fi
             - uses: actions/checkout@v4
@@ -104,24 +106,26 @@ jobs:
                   echo HOSTNAME="${{ github.event.inputs.host_name }}" >> $GITHUB_ENV
                   echo USER="${{ github.event.inputs.user }}" >> $GITHUB_ENV
                   echo USERPASSWORD="${{ github.event.inputs.password }}" >> $GITHUB_ENV
-                  echo MWIRELESS_IDENTITY="${{ secrets.MWIRELESS_IDENTITY }}" >> $GITHUB_ENV
-                  echo MWIRELESS_PASSWORD="${{ secrets.MWIRELESS_PASSWORD }}" >> $GITHUB_ENV
+                  echo ENTNETWORK_SSID="${{ secrets.ENTNETWORK_SSID }}" >> $GITHUB_ENV
+                  echo ENTNETWORK_PRIORITY="${{ secrets.ENTNETWORK_PRIORITY }}" >> $GITHUB_ENV
+                  echo ENTNETWORK_IDENTITY="${{ secrets.ENTNETWORK_IDENTITY }}" >> $GITHUB_ENV
+                  echo ENTNETWORK_PASSWORD="${{ secrets.ENTNETWORK_PASSWORD }}" >> $GITHUB_ENV
                   echo WIFI_CC="${{ github.event.inputs.wifi_cc }}" >> $GITHUB_ENV
-                  echo WIFI_SSID="${{ github.event.inputs.wifi_ssid }}" >> $GITHUB_ENV
-                  echo WIFI_PASSWORD="${{ github.event.inputs.wifi_password }}" >> $GITHUB_ENV
+                  echo HOMENETWORK_SSID="${{ github.event.inputs.wifi_ssid }}" >> $GITHUB_ENV
+                  echo HOMENETWORK_PASSWORD="${{ github.event.inputs.wifi_password }}" >> $GITHUB_ENV
                   echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $GITHUB_ENV
                   echo AP_PASSWORD="${{ github.event.inputs.wpa_password }}" >> $GITHUB_ENV
                   echo EMAIL=\"${{ secrets.EMAIL_ADDRESS }}\" >> $GITHUB_ENV
             - name: Build image
               uses: Nature40/pimod@master
               with:
-                  pifile: ${PIFILE}.Pifile
+                  pifile: rpi5.Pifile
 
             - name: Make tarball
               run: |
-                  tar -czvf ${PIFILE}.tar.gz ${PIFILE}.img
+                  tar -czvf rpi5.tar.gz rpi5.img
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
                   name: ${{ github.workflow }}-${{ github.sha }}.zip
-                  path: ${PIFILE}.img
+                  path: rpi5.img

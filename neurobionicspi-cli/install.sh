@@ -7,6 +7,8 @@ wifi=wlan0
 ethernet=eth0
 ipaddress=10.0.0.200/24
 
+entnetworkssid=""
+
 ############################################
 
 # Switching to systemd-networkd, read more at https://raspberrypi.stackexchange.com/questions/108592
@@ -84,16 +86,16 @@ fi
 
 ############################################
 
-# Check if the MWireless network block exists in the configuration file
-if grep -q "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf; then
-    # Check if a duplicate MWireless block already exists
-    if [ $(grep -c "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf) -gt 1 ]; then
-        echo "A duplicate MWireless network block already exists. Skipping duplication."
+# Check if the $entnetworkssid network block exists in the configuration file
+if grep -q "ssid=\"$entnetworkssid\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf; then
+    # Check if a duplicate $entnetworkssid block already exists
+    if [ $(grep -c "ssid=\"$entnetworkssid\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf) -gt 1 ]; then
+        echo "A duplicate $entnetworkssid network block already exists. Skipping duplication."
     else
-		# Find the line number of the MWireless network block start
-		start_line=$(grep -n "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | cut -d ":" -f 1)
+		# Find the line number of the $entnetworkssid network block start
+		start_line=$(grep -n "ssid=\"$entnetworkssid\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | cut -d ":" -f 1)
 
-		# Find the line number of the MWireless network block end
+		# Find the line number of the $entnetworkssid network block end
 		end_line=$(grep -n "}" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -v start=$start_line '$1 > start {print $1; exit}' | awk -F ":" '{print $1}')
 		duplicate_start_line=$((start_line - 2))
 		priority_line=$((start_line - 1))
@@ -107,10 +109,10 @@ if grep -q "ssid=\"MWireless\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf; t
 		# Update the priority in the duplicated network block
 		sed -i "${duplicate_start_line},${end_line}s/priority=$original_priority/priority=$new_priority/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
 
-		echo "Duplicated MWireless network block and appended it to the end of your network configuration."
+		echo "Duplicated $entnetworkssid network block and appended it to the end of your network configuration."
 	fi
 else
-	echo "MWireless network block not found in the configuration file. Skipping duplication."
+	echo "$entnetworkssid network block not found in the configuration file. Skipping duplication."
 fi
 
 # Enabling systemd-service
