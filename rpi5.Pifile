@@ -61,7 +61,7 @@ RUN sh -c "sudo chown -R ${user} /etc/neurobionicspi-cli"
 # Configuring message of the day (motd)
 
 RUN bash -c "sudo rm -rf /etc/motd"
-INSTALL "/rpi5/motd" "/etc/motd"
+INSTALL "./rpi5/motd" "/etc/motd"
 
 RUN sh -c "cp /etc/motd /home/${user}/.bash_profile"
 

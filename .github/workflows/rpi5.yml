@@ -18,7 +18,56 @@ on:
             wifi_cc:
                 description: "WiFi Country Code"
                 required: true
-                default: US
+                default: "US"
+                type: choice
+                options:
+                    - US
+                    - GB
+                    - DE
+                    - FR
+                    - IT
+                    - ES
+                    - CA
+                    - AU
+                    - JP
+                    - CN
+                    - KR
+                    - TW
+                    - SG
+                    - IN
+                    - BR
+                    - RU
+                    - ZA
+                    - SA
+                    - AE
+                    - EG
+                    - IL
+                    - TR
+                    - ID
+                    - TH
+                    - VN
+                    - PH
+                    - MY
+                    - MX
+                    - AR
+                    - CL
+                    - CO
+                    - PE
+                    - UY
+                    - EC
+                    - BO
+                    - PY
+                    - CR
+                    - PA
+                    - GT
+                    - HN
+                    - SV
+                    - NI
+                    - DO
+                    - JM
+                    - HT
+                    - CU
+                    - VE
             wifi_ssid:
                 description: "Additional Network SSID"
                 required: false
