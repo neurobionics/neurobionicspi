@@ -58,8 +58,8 @@ cat > /etc/systemd/network/12-${wifi}-AP.network <<-EOF
 	DNS=1.1.1.1
 EOF
 
-cp $(pwd)/neurobionics-netcli /usr/local/sbin/
-chmod +x /usr/local/sbin/neurobionics-netcli
+cp $(pwd)/neurobionicspi-cli /usr/local/sbin/
+chmod +x /usr/local/sbin/neurobionicspi-cli
 
 ############################################
 
@@ -72,7 +72,7 @@ if [ ! -f /etc/systemd/system/wpa_cli@${wifi}.service ] ; then
 		After=wpa_supplicant@%i.service
 		BindsTo=wpa_supplicant@%i.service
 		[Service]
-		ExecStart=/sbin/wpa_cli -i %I -a /usr/local/sbin/neurobionics-netcli
+		ExecStart=/sbin/wpa_cli -i %I -a /usr/local/sbin/neurobionicspi-cli
 		Restart=on-failure
 		RestartSec=1
 		[Install]

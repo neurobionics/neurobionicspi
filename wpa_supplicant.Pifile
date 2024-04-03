@@ -7,7 +7,7 @@ ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 ap_scan=1
 
-### neurobionics-netcli ###
+### neurobionicspi-cli ###
 network={
 	priority=0
 	ssid="${apssid}"

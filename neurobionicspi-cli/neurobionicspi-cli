@@ -5,8 +5,8 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
-echo "=================================================" | tee -a /etc/neurobionics-netcli.log
-echo "neurobionics-netcli: $(date)" | tee -a /etc/neurobionics-netcli.log
+echo "=================================================" | tee -a /etc/neurobionicspi-cli.log
+echo "neurobionicspi-cli: $(date)" | tee -a /etc/neurobionicspi-cli.log
 
 # Variables for connectivity routine
 
@@ -18,7 +18,7 @@ conf_file="/etc/wpa_supplicant/wpa_supplicant-wlan0.conf"
 temp_file="${conf_file}.tmp"
 
 # Email count file
-COUNT_FILE="/etc/neurobionics-netcli.count"
+COUNT_FILE="/etc/neurobionicspi-cli.count"
 
 # Read email count from file, or initialize to 0 if file does not exist
 if [ -f "$COUNT_FILE" ]; then
@@ -30,20 +30,20 @@ fi
 is_ap () {
     # use wpa_cli to find if the current mode is AP
     if [ -e $networkconf~ ]; then
-        echo "is_ap: True" | tee -a /etc/neurobionics-netcli.log
+        echo "is_ap: True" | tee -a /etc/neurobionicspi-cli.log
         return 0
     else
-        echo "is_ap: False" | tee -a /etc/neurobionics-netcli.log
+        echo "is_ap: False" | tee -a /etc/neurobionicspi-cli.log
         return 1
     fi
 }
 
 is_wpa_ap() {
     if wpa_cli -i $wifi status | grep -q "mode=AP"; then
-        echo "is_wpa_cli_ap: True" | tee -a /etc/neurobionics-netcli.log
+        echo "is_wpa_cli_ap: True" | tee -a /etc/neurobionicspi-cli.log
         return 0
     else
-        echo "is_wpa_cli_ap: False" | tee -a /etc/neurobionics-netcli.log
+        echo "is_wpa_cli_ap: False" | tee -a /etc/neurobionicspi-cli.log
         return 1
     fi
 }
@@ -51,20 +51,20 @@ is_wpa_ap() {
 is_client () {
     # use wpa_cli to find if the current mode is client
     if [ -e $networkconf ]; then
-        echo "is_client: True" | tee -a /etc/neurobionics-netcli.log
+        echo "is_client: True" | tee -a /etc/neurobionicspi-cli.log
         return 0
     else
-        echo "is_client: False" | tee -a /etc/neurobionics-netcli.log
+        echo "is_client: False" | tee -a /etc/neurobionicspi-cli.log
         return 1
     fi
 }
 
 is_wpa_client() {
     if wpa_cli -i $wifi status | grep -q "mode=station"; then
-        echo "is_wpa_client: True" | tee -a /etc/neurobionics-netcli.log
+        echo "is_wpa_client: True" | tee -a /etc/neurobionicspi-cli.log
         return 0
     else
-        echo "is_wpa_client: False" | tee -a /etc/neurobionics-netcli.log
+        echo "is_wpa_client: False" | tee -a /etc/neurobionicspi-cli.log
         return 1
     fi
 }
@@ -75,14 +75,14 @@ is_wpa_client() {
 configure_ap () {
     # only configure AP if not already in AP mode
     if is_client; then
-        echo "Client network configuration exists but wpa_cli is not in client mode. Removing client network configuration and restarting networkd." | tee -a /etc/neurobionics-netcli.log
+        echo "Client network configuration exists but wpa_cli is not in client mode. Removing client network configuration and restarting networkd." | tee -a /etc/neurobionicspi-cli.log
         mv $networkconf $networkconf~
         systemctl restart systemd-networkd
     elif is_wpa_client; then
-        echo "Client network configuration is missing but wpa_cli is in client mode. Restarting network." | tee -a /etc/neurobionics-netcli.log
+        echo "Client network configuration is missing but wpa_cli is in client mode. Restarting network." | tee -a /etc/neurobionicspi-cli.log
         systemctl restart systemd-networkd
     else
-        echo "AP mode is already active. Skipping configuration." | tee -a /etc/neurobionics-netcli.log
+        echo "AP mode is already active. Skipping configuration." | tee -a /etc/neurobionicspi-cli.log
     fi
 }
 
@@ -91,14 +91,14 @@ configure_ap () {
 configure_client () {
     # only configure client if not already in client mode
     if is_ap; then
-        echo "Removing AP network configuration and restarting networkd" | tee -a /etc/neurobionics-netcli.log
+        echo "Removing AP network configuration and restarting networkd" | tee -a /etc/neurobionicspi-cli.log
         mv $networkconf~ $networkconf
         systemctl restart systemd-networkd
     elif is_wpa_ap; then
-        echo "AP network configuration is missing but wpa_cli is in AP mode. Restarting wpa_supplicant." | tee -a /etc/neurobionics-netcli.log
+        echo "AP network configuration is missing but wpa_cli is in AP mode. Restarting wpa_supplicant." | tee -a /etc/neurobionicspi-cli.log
         systemctl restart systemd-networkd
     else
-        echo "Client mode is already active. Skipping configuration." | tee -a /etc/neurobionics-netcli.log
+        echo "Client mode is already active. Skipping configuration." | tee -a /etc/neurobionicspi-cli.log
     fi
 }
 
@@ -114,12 +114,12 @@ reconfigure_wpa_supplicant () {
 update_bssid() {
     # Check if the SSID exists in the configuration
     if grep -q "ssid=\"$ssid\"" "$conf_file"; then
-        echo "$ssid network block found in the configuration file." | tee -a /etc/neurobionics-netcli.log
+        echo "$ssid network block found in the configuration file." | tee -a /etc/neurobionicspi-cli.log
 
         # Perform a fresh scan to get all available BSSIDs
         wpa_cli -i wlan0 scan
         sleep 1
-        echo "Scanning for available networks..." | tee -a /etc/neurobionics-netcli.log
+        echo "Scanning for available networks..." | tee -a /etc/neurobionicspi-cli.log
 
         # Find the BSSID with the strongest signal
         best_bssid=$(wpa_cli -i wlan0 scan_results | awk '/MWireless/ {print $1; exit}')
@@ -140,25 +140,25 @@ update_bssid() {
             if [ "$original_bssid" != "$best_bssid" ]; then
                 # Replace the existing BSSID tag with the new one
                 sed -i '/ssid="MWireless"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1'"$best_bssid"'/}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
-                echo "Updated BSSID differs from the original. Network restart required." | tee -a /etc/neurobionics-netcli.log
+                echo "Updated BSSID differs from the original. Network restart required." | tee -a /etc/neurobionicspi-cli.log
                 reconfigure_wpa_supplicant 1
                 exit 0
             else
-                echo "Best BSSID matches the original. No network restart required." | tee -a /etc/neurobionics-netcli.log
+                echo "Best BSSID matches the original. No network restart required." | tee -a /etc/neurobionicspi-cli.log
             fi
 
         else
             # Add the BSSID tag to the configuration file
             sed -i "${start_line}s/$/\n	bssid=$best_bssid/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
-            echo "Added BSSID tag to the configuration file." | tee -a /etc/neurobionics-netcli.log
+            echo "Added BSSID tag to the configuration file." | tee -a /etc/neurobionicspi-cli.log
 
-            echo "Restarting the networking now!" | tee -a /etc/neurobionics-netcli.log
+            echo "Restarting the networking now!" | tee -a /etc/neurobionicspi-cli.log
             # restart the network because we want the best bssid network block to be active
             reconfigure_wpa_supplicant 1
             exit 0
         fi
     else
-        echo "$ssid network block not found in the configuration file. Skipping BSSID update." | tee -a /etc/neurobionics-netcli.log
+        echo "$ssid network block not found in the configuration file. Skipping BSSID update." | tee -a /etc/neurobionicspi-cli.log
     fi
 }
 
@@ -168,7 +168,7 @@ case "$1" in
 
     --help)
         echo -e ""
-        echo -e "Usage: \e[1mneurobionics-netcli [OPTION]\e[0m"
+        echo -e "Usage: \e[1mneurobionicspi-cli [OPTION]\e[0m"
         echo -e ""
         echo -e "\e[1mOptions:\e[0m"
         echo -e ""
@@ -263,7 +263,7 @@ case "$2" in
         update_bssid
 
         if is_wpa_client; then
-            echo "Client mode is active; updating the BSSID." | tee -a /etc/neurobionics-netcli.log
+            echo "Client mode is active; updating the BSSID." | tee -a /etc/neurobionicspi-cli.log
             
             max_attempts=10
             attempt=1
@@ -271,29 +271,29 @@ case "$2" in
             while [ $attempt -le $max_attempts ]; do
                 python /etc/startup_mailer.py
                 if [ $? -eq 0 ]; then
-                    echo "A login ticket was emailed successfully." | tee -a /etc/neurobionics-netcli.log
+                    echo "A login ticket was emailed successfully." | tee -a /etc/neurobionicspi-cli.log
 
                     ((SUCCESS_COUNT++))
 
-                    echo "SUCCESS: CLI MODE ON" | tee -a /etc/neurobionics-netcli.log
+                    echo "SUCCESS: CLI MODE ON" | tee -a /etc/neurobionicspi-cli.log
                     echo $SUCCESS_COUNT > $COUNT_FILE
                     break
                 else
-                    echo "Python script failed. Retrying in a second." | tee -a /etc/neurobionics-netcli.log
+                    echo "Python script failed. Retrying in a second." | tee -a /etc/neurobionicspi-cli.log
                     sleep 1
                     attempt=$((attempt + 1))
                 fi
             done
 
             if [ $attempt -gt $max_attempts ]; then
-                echo "Switching to AP mode" | tee -a /etc/neurobionics-netcli.log
-                echo "FAIL: AP MODE ON" | tee -a /etc/neurobionics-netcli.log
+                echo "Switching to AP mode" | tee -a /etc/neurobionicspi-cli.log
+                echo "FAIL: AP MODE ON" | tee -a /etc/neurobionicspi-cli.log
                 configure_ap
             else
-                echo "Completed emailing routine in $attempt attempt(s)." | tee -a /etc/neurobionics-netcli.log
+                echo "Completed emailing routine in $attempt attempt(s)." | tee -a /etc/neurobionicspi-cli.log
             fi
         else
-            echo "Client mode is not active; skipping emailing routine" | tee -a /etc/neurobionics-netcli.log         
+            echo "Client mode is not active; skipping emailing routine" | tee -a /etc/neurobionicspi-cli.log         
         fi
         ;;
 

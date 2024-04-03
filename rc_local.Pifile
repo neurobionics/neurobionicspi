@@ -21,8 +21,8 @@ fi
 
 if [ ! -f "/etc/network.true" ]; then
 
-	cd /etc/neurobionics-netcli
-	chmod +x neurobionics-netcli install.sh
+	cd /etc/neurobionicspi-cli
+	chmod +x neurobionicspi-cli install.sh
 	sudo ./install.sh
 	sudo touch /etc/network.true
 

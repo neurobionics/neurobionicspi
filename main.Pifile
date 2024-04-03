@@ -51,10 +51,10 @@ source ./packages.Pifile
 
 ##################################
 
-# Installing neurobionics-netcli
+# Installing neurobionicspi-cli
 
-INSTALL "neurobionics-netcli" "/etc/neurobionics-netcli"
-RUN sh -c "sudo chown -R ${user} /etc/neurobionics-netcli"
+INSTALL "neurobionicspi-cli" "/etc/neurobionicspi-cli"
+RUN sh -c "sudo chown -R ${user} /etc/neurobionicspi-cli"
 
 ##################################
 
