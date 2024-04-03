@@ -1,0 +1,90 @@
+FROM https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-11-08/2021-10-30-raspios-bullseye-armhf-lite.zip
+
+PUMP 800M
+
+RUN touch /boot/ssh
+
+source .env
+
+hostname="${HOSTNAME:-neurobionics}"
+user="${USER:-pi}"
+password="${USERPASSWORD:-neurobionics}"
+email="${EMAIL:-ejrouse@umich.edu}"
+mwpsk="${PASSWORD:-password}"
+wifissid="${WIFI_SSID:-network}"
+wifipsk="${WIFI_PASSPHRASE:-password}"
+apssid="${AP_SSID:-NeurobionicsRPi}"
+appsk="${AP_PASSPHRASE:-neurobionics}"
+countrycode="${WIFI_CC:-US}"
+
+##################################
+
+# Modifying hostname and password
+
+RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
+RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
+RUN bash -c "echo ${user}:${password} | chpasswd"
+
+##################################
+
+# Changing default timezone and keyboard layout
+
+RUN bash -c "echo America/New_York > /etc/timezone"
+RUN sed -i "s/gb/us/g" /etc/default/keyboard
+
+##################################
+
+RUN apt-get update
+
+# Upgrade takes considerably more memory and time to build the image.
+# RUN apt-get upgrade -y
+
+##################################
+
+# Configuring wpa_supplicant with systemd-networkd
+
+RUN apt-get install -y wpasupplicant
+
+source ./rpi4/wpa_supplicant.Pifile
+
+##################################
+
+# Installing essential packages
+
+source ./rpi4/packages.Pifile
+
+##################################
+
+# Installing neurobionicspi-cli
+
+INSTALL "neurobionicspi-cli" "/etc/neurobionicspi-cli"
+RUN sh -c "sudo chown -R ${user} /etc/neurobionicspi-cli"
+
+##################################
+
+# Configuring message of the day (motd)
+
+RUN bash -c "sudo rm -rf /etc/motd"
+INSTALL "/rpi4/motd" "/etc/motd"
+
+RUN sh -c "cp /etc/motd /home/${user}/.bash_profile"
+##################################
+
+# Enable i2c and set baud rate
+RUN bash -c "touch /etc/modules"
+RUN bash -c "echo 'i2c-dev' >> /etc/modules"
+RUN bash -c "echo 'i2c-bcm2708' >> /etc/modules"
+RUN bash -c "echo 'dtparam=i2c_arm=on,i2c_arm_baudrate=400000' >> /boot/config.txt"
+RUN bash -c "echo 'dtparam=i2c1=on' >> /boot/config.txt"
+
+##################################
+
+# Setting up startup_mailer and rc.local
+
+source ./rpi4/startup_mailer.Pifile
+
+source ./rpi4/rc_local.Pifile
+
+##################################
+
+echo "DONE!"

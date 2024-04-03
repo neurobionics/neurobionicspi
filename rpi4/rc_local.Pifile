@@ -29,7 +29,7 @@ if [ ! -f "/etc/network.true" ]; then
 	# Dephy Actuator Package Installation
 	# Enabling ufw (Uncomplicated Firewall) causes issues with Access Point connectivity and SSH ports
 	# sudo ufw --force enable && sudo ufw allow 8988 && sudo ufw allow 22 && sudo ufw allow 80/tcp
-	# sudo usermod -a -G dialout "$USER"
+	sudo usermod -a -G dialout "$USER"
 
 	sudo systemctl disable systemd-networkd-wait-online.service
 	sudo systemctl mask systemd-networkd-wait-online.service

@@ -2,6 +2,6 @@
 RUN bash -c "systemctl disable userconfig"
 RUN bash -c "systemctl enable getty@tty1"
 
-INSTALL "locale.sh" "/etc/locale.sh"
+INSTALL "/rpi5/locale.sh" "/etc/locale.sh"
 RUN chmod +x /etc/locale.sh
 RUN bash /etc/locale.sh
