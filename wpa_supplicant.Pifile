@@ -20,7 +20,6 @@ network={
 network={
 	priority=10
 	ssid="MWireless"
-	scan_ssid=1
 	key_mgmt=WPA-EAP
 	eap=PEAP
 	identity="me-rousewifi"
@@ -30,7 +29,6 @@ network={
 
 network={
 	priority=5
-	scan_ssid=1
 	ssid="${wifissid}"
 	psk="${wifipsk}"
 }
