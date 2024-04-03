@@ -7,11 +7,12 @@ RUN bash -c "systemctl enable ssh"
 
 source .env
 
-hostname="${HOSTNAME:-neurobionics}"
-user="${USER:-pi}"
-password="${USERPASSWORD:-neurobionics}"
-email="${EMAIL:-ejrouse@umich.edu}"
-mwpsk="${PASSWORD:-password}"
+hostname="${HOSTNAME}"
+user="${USER}"
+password="${USERPASSWORD}"
+email="${EMAIL}"
+mwidentity="${MWIRELESS_IDENTITY}"
+mwpwd="${MWIRELESS_PASSWORD}"
 wifissid="${WIFI_SSID:-network}"
 wifipsk="${WIFI_PASSPHRASE:-password}"
 apssid="${AP_SSID:-NeurobionicsRPi}"

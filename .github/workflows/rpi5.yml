@@ -92,8 +92,8 @@ jobs:
         steps:
             - name: Check secrets
               run: |
-                  if [[ -z "${{ secrets.MWIRELESS_PASSWORD }}" || -z "${{ secrets.EMAIL_ADDRESS }}" ]]; then
-                      echo "Please set your secret variables, refer to the README.md for more information. Exiting."
+                  if [[ -z "${{ secrets.MWIRELESS_PASSWORD }}" || -z "${{ secrets.EMAIL_ADDRESS }}" || -z "${{ secrets.MWIRELESS_IDENTITY }}" ]]; then
+                      echo "MWIRELESS_PASSWORD, EMAIL_ADDRESS, or MWIRELESS_IDENTITY secrets are empty"
                       exit 1
                   fi
             - uses: actions/checkout@v4
@@ -101,16 +101,17 @@ jobs:
                   submodules: recursive
             - name: Write env variables
               run: |
-                  echo HOSTNAME="${{ github.event.inputs.host_name }}" > $(dirname $PIFILE.Pifile)/.env
-                  echo USER="${{ github.event.inputs.user }}" >> $(dirname $PIFILE.Pifile)/.env
-                  echo USERPASSWORD="${{ github.event.inputs.password }}" >> $(dirname $PIFILE.Pifile)/.env
-                  echo PASSWORD="${{ secrets.MWIRELESS_PASSWORD }}" >> $(dirname $PIFILE.Pifile)/.env
-                  echo WIFI_CC="${{ github.event.inputs.wifi_cc }}" >> $(dirname $PIFILE.Pifile)/.env
-                  echo WIFI_SSID="${{ github.event.inputs.wifi_ssid }}" >> $(dirname $PIFILE.Pifile)/.env
-                  echo WIFI_PASSWORD="${{ github.event.inputs.wifi_password }}" >> $(dirname $PIFILE.Pifile)/.env          
-                  echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname $PIFILE.Pifile)/.env
-                  echo AP_PASSWORD="${{ github.event.inputs.wpa_password }}" >> $(dirname $PIFILE.Pifile)/.env
-                  echo EMAIL=\"${{ secrets.EMAIL_ADDRESS }}\" >> $(dirname $PIFILE.Pifile)/.env
+                  echo HOSTNAME="${{ github.event.inputs.host_name }}" >> $GITHUB_ENV
+                  echo USER="${{ github.event.inputs.user }}" >> $GITHUB_ENV
+                  echo USERPASSWORD="${{ github.event.inputs.password }}" >> $GITHUB_ENV
+                  echo MWIRELESS_IDENTITY="${{ secrets.MWIRELESS_IDENTITY }}" >> $GITHUB_ENV
+                  echo MWIRELESS_PASSWORD="${{ secrets.MWIRELESS_PASSWORD }}" >> $GITHUB_ENV
+                  echo WIFI_CC="${{ github.event.inputs.wifi_cc }}" >> $GITHUB_ENV
+                  echo WIFI_SSID="${{ github.event.inputs.wifi_ssid }}" >> $GITHUB_ENV
+                  echo WIFI_PASSWORD="${{ github.event.inputs.wifi_password }}" >> $GITHUB_ENV
+                  echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $GITHUB_ENV
+                  echo AP_PASSWORD="${{ github.event.inputs.wpa_password }}" >> $GITHUB_ENV
+                  echo EMAIL=\"${{ secrets.EMAIL_ADDRESS }}\" >> $GITHUB_ENV
             - name: Build image
               uses: Nature40/pimod@master
               with:
