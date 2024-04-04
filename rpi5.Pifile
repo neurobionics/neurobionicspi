@@ -18,7 +18,7 @@ countrycode="${WIFI_CC:-US}"
 wifissid="${HOMENETWORK_SSID}"
 wifipsk="${HOMENETWORK_PASSWORD}"
 apssid="${AP_SSID}"
-appsk="${AP_PASSPHRASE}"
+appsk="${AP_PASSWORD}"
 email="${EMAIL}"
 
 ##################################
