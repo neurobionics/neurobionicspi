@@ -103,17 +103,19 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 # How this tool works
 
 <p align="center">
-  <img src="/assets/neurobionicspi-cli.PNG" width="800">
+  <img src="/assets/neurobionicspi-cli.png" width="800">
 </p>
 
 # Helpful File Locations
 
 <div align="center">
+
 | File Path                                       | Description                     |
 | ----------------------------------------------- | ------------------------------- |
 | `/etc/wpa_supplicant/wpa_supplicant-wlan0.conf` | WiFi network configuration file |
 | `/etc/startup_mailer.py`                        | IP address emailer script       |
 | `/home/pi/.bash_profile`                        | Welcome screen/ASCII banner     |
+
 </div>
 
 # Issues
