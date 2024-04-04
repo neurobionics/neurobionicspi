@@ -1,4 +1,4 @@
-name: Raspberry Pi 5
+name: Build a Raspberry Pi image
 
 on:
     workflow_dispatch:
@@ -21,7 +21,7 @@ on:
                     - 32-bit
             host_name:
                 description: "Hostname"
-                default: neurobionics
+                default: neurobionicspi
                 required: true
             user:
                 description: "Username"
