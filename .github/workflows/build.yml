@@ -1,4 +1,4 @@
-name: Build a Raspberry Pi image
+name: Build now!
 
 on:
     workflow_dispatch:
@@ -6,11 +6,11 @@ on:
             device:
                 description: "Device"
                 required: true
-                default: Raspberry Pi 5
+                default: rpi5
                 type: choice
                 options:
-                    - Raspberry Pi 5
-                    - Raspberry Pi 4
+                    - rpi5
+                    - rpi4
             architecture:
                 description: "Architecture"
                 required: true
@@ -135,13 +135,13 @@ jobs:
             - name: Build image
               uses: Nature40/pimod@master
               with:
-                  pifile: rpi5.Pifile
+                  pifile: ${{ github.event.inputs.device }}.Pifile
 
             - name: Make tarball
               run: |
-                  tar -czvf rpi5.tar.gz rpi5.img
+                  tar -czvf ${{ github.event.inputs.device }}.tar.gz ${{ github.event.inputs.device }}.img
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
                   name: ${{ github.workflow }}-${{ github.sha }}.zip
-                  path: rpi5.img
+                  path: ${{ github.event.inputs.device }}.img

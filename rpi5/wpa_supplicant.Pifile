@@ -24,12 +24,12 @@ EOF
 RUN bash -c "if [[ -n \"${entssid}\" ]]; then
 tee -a /etc/wpa_supplicant/wpa_supplicant-wlan0.conf <<EOF
 network={
-    priority=${entpriority}
-    ssid=\"${entssid}\"
-    key_mgmt=WPA-EAP
-    eap=PEAP
-    identity=\"${entidentity}\"
-    password=hash:${entpassword}
+	priority=${entpriority}
+	ssid=\"${entssid}\"
+	key_mgmt=WPA-EAP
+	eap=PEAP
+	identity=\"${entidentity}\"
+	password=hash:${entpassword}
 }
 
 EOF
