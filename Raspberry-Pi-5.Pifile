@@ -1,6 +1,6 @@
 source .env
 
-source ./rpi5/${ARCHITECTURE}.Pifile
+source ./Raspberry-Pi-5/${ARCHITECTURE}.Pifile
 
 PUMP 600M
 
@@ -28,7 +28,7 @@ RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
 RUN sh -c "echo ${user}:${password} | chpasswd"
 
-source ./rpi5/locale.Pifile
+source ./Raspberry-Pi-5/locale.Pifile
 
 ##################################
 
@@ -43,13 +43,13 @@ RUN apt-get update
 
 RUN apt-get install -y wpasupplicant
 
-source ./rpi5/wpa_supplicant.Pifile
+source ./Raspberry-Pi-5/wpa_supplicant.Pifile
 
 ##################################
 
 # Installing essential packages
 
-source ./rpi5/packages.Pifile
+source ./Raspberry-Pi-5/packages.Pifile
 
 ##################################
 
@@ -68,7 +68,7 @@ RUN sh -c "sudo chown -R ${user} /etc/neurobionicspi-cli"
 # Configuring message of the day (motd)
 
 RUN bash -c "sudo rm -rf /etc/motd"
-INSTALL "./rpi5/motd" "/etc/motd"
+INSTALL "./Raspberry-Pi-5/motd" "/etc/motd"
 
 RUN sh -c "cp /etc/motd /home/${user}/.bash_profile"
 
@@ -85,9 +85,9 @@ RUN bash -c "echo 'dtparam=i2c1=on' >> /boot/config.txt"
 
 # Setting up startup_mailer and rc.local
 
-source ./rpi5/startup_mailer.Pifile
+source ./Raspberry-Pi-5/startup_mailer.Pifile
 
-source ./rpi5/rc_local.Pifile
+source ./Raspberry-Pi-5/rc_local.Pifile
 
 ##################################
 

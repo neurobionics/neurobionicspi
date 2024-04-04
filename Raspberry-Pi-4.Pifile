@@ -1,6 +1,6 @@
 source .env
 
-source ./rpi4/${ARCHITECTURE}.Pifile
+source ./Raspberry-Pi-4/${ARCHITECTURE}.Pifile
 
 PUMP 800M
 
@@ -48,13 +48,13 @@ RUN apt-get update
 
 RUN apt-get install -y wpasupplicant
 
-source ./rpi4/wpa_supplicant.Pifile
+source ./Raspberry-Pi-4/wpa_supplicant.Pifile
 
 ##################################
 
 # Installing essential packages
 
-source ./rpi4/packages.Pifile
+source ./Raspberry-Pi-4/packages.Pifile
 
 ##################################
 
@@ -73,7 +73,7 @@ RUN sh -c "sudo chown -R ${user} /etc/neurobionicspi-cli"
 # Configuring message of the day (motd)
 
 RUN bash -c "sudo rm -rf /etc/motd"
-INSTALL "./rpi4/motd" "/etc/motd"
+INSTALL "./Raspberry-Pi-4/motd" "/etc/motd"
 
 RUN sh -c "cp /etc/motd /home/${user}/.bash_profile"
 ##################################
@@ -89,9 +89,9 @@ RUN bash -c "echo 'dtparam=i2c1=on' >> /boot/config.txt"
 
 # Setting up startup_mailer and rc.local
 
-source ./rpi4/startup_mailer.Pifile
+source ./Raspberry-Pi-4/startup_mailer.Pifile
 
-source ./rpi4/rc_local.Pifile
+source ./Raspberry-Pi-4/rc_local.Pifile
 
 ##################################
 
