@@ -26,7 +26,7 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 # How to use this tool
 
 <details>
-<summary><h3>Step 1: Creating Secrets for Your Raspberry Pi Image<h3></summary>
+<summary><h3 style="margin: 0;">Step 1: Creating Secrets for Your Raspberry Pi Image<h3></summary>
 
 <p align="center">
   <img src="/assets/secrets.gif" width="800">
@@ -47,12 +47,13 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 | `ENTNETWORK_PRIORITY` | This integer value determines the priority of the enterprise network. A higher value means higher priority. For example, if you have a home network and an enterprise network, and you want the Raspberry Pi to try connecting to the enterprise network first, you would give the enterprise network a higher priority number. If the enterprise network is not available, the Raspberry Pi will then attempt to connect to the network with the next highest priority. By default, the home network is assigned a priority of 5. If you want the Raspberry Pi to try connecting to the home network only if the enterprise network is not available, you would assign the enterprise network a priority higher than 5. |
 
 </div>
--   If you are affiliated with the University of Michigan, we have created an account specifically for Raspberry Pis. You can find the credentials for this account [here](https://docs.google.com/spreadsheets/d/1-5_XnRQyswqY__GGujOmiYS38mL0pdHBKm7O15xPWz4/edit?usp=sharing).
+-   If you are affiliated with the University of Michigan, we have created an account specifically for Raspberry Pis. You can find the credentials for this account <a href="https://bit.ly/30zEzPCRPi/" target="_blank">here</a>.
+
 -   If you are not affiliated with the University of Michigan and want your Raspberry Pi to connect to your university's WiFi network, please add your own enterprise network's information accordingly.
 
 </details>
 <details>
-<summary><h3>Step 2: Building Your Raspberry Pi Image</h3></summary>
+<summary><h3 style="margin: 0;">Step 2: Building Your Raspberry Pi Image</h3></summary>
 
 -   After setting up the secrets, the next step is to build your custom Raspberry Pi image. This process is automated using a GitHub Actions workflow.
 -   To start the build process, navigate to the `Actions` tab in your repository. This tab is located in the top menu of your repository page.
@@ -87,7 +88,7 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 
 </details>
 <details>
-<summary><h3>Step 3: Connecting to Your Raspberry Pi</h3></summary>
+<summary><h3 style="margin: 0;">Step 3: Connecting to Your Raspberry Pi</h3></summary>
 
 -   Once you've flashed the custom image onto the SD card, remove it from your computer and insert it into the SD card slot on your Raspberry Pi.
 -   Power on your Raspberry Pi. It will boot up using the custom image you've just flashed. This custom image includes the network configurations you've set up using the secret variables in the GitHub Actions workflow.
