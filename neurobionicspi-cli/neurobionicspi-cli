@@ -122,7 +122,7 @@ update_bssid() {
         echo "Scanning for available networks..." | tee -a /etc/neurobionicspi-cli.log
 
         # Find the BSSID with the strongest signal
-        best_bssid=$(wpa_cli -i wlan0 scan_results | awk '/$entnetworkssid/ {print $1; exit}')
+        best_bssid=$(wpa_cli -i wlan0 scan_results | awk "/$entnetworkssid/ {print \$1; exit}")
         # Find the line number of the first occurrence of the $entnetworkssid network block
         start_line=$(grep -n "ssid=\"$entnetworkssid\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F ":" 'NR==1{print $1}')
 
@@ -139,7 +139,7 @@ update_bssid() {
             # Checking if a network restart is required because we want the best bssid network block to be active
             if [ "$original_bssid" != "$best_bssid" ]; then
                 # Replace the existing BSSID tag with the new one
-                sed -i '/ssid="$entnetworkssid"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1'"$best_bssid"'/}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+                sed -i "/ssid=\"$entnetworkssid\"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1$best_bssid/}" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
                 echo "Updated BSSID differs from the original. Network restart required." | tee -a /etc/neurobionicspi-cli.log
                 reconfigure_wpa_supplicant 1
                 exit 0
