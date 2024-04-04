@@ -103,19 +103,19 @@ jobs:
                   submodules: recursive
             - name: Write env variables
               run: |
-                  echo HOSTNAME="${{ github.event.inputs.host_name }}" >> $GITHUB_ENV
-                  echo USER="${{ github.event.inputs.user }}" >> $GITHUB_ENV
-                  echo USERPASSWORD="${{ github.event.inputs.password }}" >> $GITHUB_ENV
-                  echo ENTNETWORK_SSID="${{ secrets.ENTNETWORK_SSID }}" >> $GITHUB_ENV
-                  echo ENTNETWORK_PRIORITY="${{ secrets.ENTNETWORK_PRIORITY }}" >> $GITHUB_ENV
-                  echo ENTNETWORK_IDENTITY="${{ secrets.ENTNETWORK_IDENTITY }}" >> $GITHUB_ENV
-                  echo ENTNETWORK_PASSWORD="${{ secrets.ENTNETWORK_PASSWORD }}" >> $GITHUB_ENV
-                  echo WIFI_CC="${{ github.event.inputs.wifi_cc }}" >> $GITHUB_ENV
-                  echo HOMENETWORK_SSID="${{ github.event.inputs.wifi_ssid }}" >> $GITHUB_ENV
-                  echo HOMENETWORK_PASSWORD="${{ github.event.inputs.wifi_password }}" >> $GITHUB_ENV
-                  echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $GITHUB_ENV
-                  echo AP_PASSWORD="${{ github.event.inputs.wpa_password }}" >> $GITHUB_ENV
-                  echo EMAIL=\"${{ secrets.EMAIL_ADDRESS }}\" >> $GITHUB_ENV
+                  echo HOSTNAME="${{ github.event.inputs.host_name }}" > $(dirname rpi5.Pifile)/.env
+                  echo USER="${{ github.event.inputs.user }}" >> $(dirname rpi5.Pifile)/.env
+                  echo USERPASSWORD="${{ github.event.inputs.password }}" >> $(dirname rpi5.Pifile)/.env
+                  echo ENTNETWORK_SSID="${{ secrets.ENTNETWORK_SSID }}" >> $(dirname rpi5.Pifile)/.env
+                  echo ENTNETWORK_PRIORITY="${{ secrets.ENTNETWORK_PRIORITY }}" >> $(dirname rpi5.Pifile)/.env
+                  echo ENTNETWORK_IDENTITY="${{ secrets.ENTNETWORK_IDENTITY }}" >> $(dirname rpi5.Pifile)/.env
+                  echo ENTNETWORK_PASSWORD="${{ secrets.ENTNETWORK_PASSWORD }}" >> $(dirname rpi5.Pifile)/.env
+                  echo WIFI_CC="${{ github.event.inputs.wifi_cc }}" >> $(dirname rpi5.Pifile)/.env
+                  echo HOMENETWORK_SSID="${{ github.event.inputs.wifi_ssid }}" >> $(dirname rpi5.Pifile)/.env
+                  echo HOMENETWORK_PASSWORD="${{ github.event.inputs.wifi_password }}" >> $(dirname rpi5.Pifile)/.env
+                  echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname rpi5.Pifile)/.env
+                  echo AP_PASSWORD="${{ github.event.inputs.wpa_password }}" >> $(dirname rpi5.Pifile)/.env
+                  echo EMAIL=\"${{ secrets.EMAIL_ADDRESS }}\" >> $(dirname rpi5.Pifile)/.env
             - name: Build image
               uses: Nature40/pimod@master
               with:
