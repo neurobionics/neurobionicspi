@@ -103,6 +103,10 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 # Networking Routine
 
 <p align="center">
+  <img src="/assets/neurobionicspi-network.png" width="800">
+</p>
+
+<p align="center">
   <img src="/assets/neurobionicspi-cli.png" width="800">
 </p>
 
