@@ -100,7 +100,7 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 
 </details>
 
-# Networking Routine
+# Networking
 
 <p align="center">
   <img src="/assets/neurobionicspi-network.png" width="800">
@@ -110,17 +110,38 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
   <img src="/assets/neurobionicspi-cli.png" width="800">
 </p>
 
-Our networking routine allows the Raspberry Pi to switch between two modes: Access Point (AP) and Client mode.
+## Automated Network Management
 
--   In Access Point (AP) Mode, the Raspberry Pi acts as a wireless access point, allowing other devices to connect to it as if it were a router.
+Our Raspberry Pi device uses a smart networking routine that can operate in two modes: Access Point (AP) and Client mode.
 
--   In Client Mode, the Raspberry Pi connects to a known WiFi network, allowing it to access the internet and communicate with other devices on the network.
+-   Access Point (AP) Mode: In this mode, the Raspberry Pi acts like a mini Wi-Fi router. Other devices can connect to it directly, just like they would connect to a regular Wi-Fi network.
 
-The Raspberry Pi will attempt to connect to the known WiFi network first. If it is unable to connect to the network, it will switch to Access Point mode, allowing you to connect to it directly. This routine also includes a function to reconfigure the network after a specified timeout. This is useful for refreshing the network configuration without a full restart. Another key feature of this routine is the ability to update the BSSID (Basic Service Set Identifier) in the configuration file. This is particularly useful when the device is connected to a network with multiple access points, as it allows the device to connect to the access point with the strongest signal.
+-   Client Mode: In this mode, the Raspberry Pi connects to an existing Wi-Fi network. This allows it to access the internet and interact with other devices on the same network.
 
-Our networking routine also includes a command-line interface (CLI) tool named `neurobionicspi-cli`. This tool allows for manual execution of the networking routine's functions. It provides options to start or stop the AP mode, show defined networks, add a network, select a network, update the BSSID, send the IP address via email, and add an email address to the recipient list. Please use the command `sudo neurobionicspi-cli --help` to see all available options.
+The Raspberry Pi tries to connect to a known Wi-Fi network first. If it can't connect, it switches to Access Point mode, so you can connect to it directly. The routine also has a feature to refresh the network settings after a certain period. This is handy for updating the network setup without needing to restart the device. Another useful feature is the ability to update the BSSID (the identifier for a Wi-Fi network). This is especially helpful when there are multiple Wi-Fi networks available, as it lets the device connect to the strongest one.
 
-In summary, our networking routine provides a flexible and robust way to manage the networking configuration of a Raspberry Pi device, with both manual and automated controls.
+## Manual Network Management
+
+We also provide a command-line interface (CLI) tool called neurobionicspi-cli. This tool lets you manually control the networking routine's functions. You can use it to start or stop the AP mode, display the defined networks, add a network, choose a network, update the BSSID, send the device's IP address via email, and add an email address to the recipient list. To see all the available options, use the command
+
+```
+sudo neurobionicspi-cli --help
+```
+
+<div align="center">
+
+| Command                                   | Description                                                                                                                                  |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--start-ap`                              | Enable Access Point (AP) mode. This will turn your device into a wireless access point.                                                      |
+| `--stop-ap`                               | Disable Access Point (AP) mode. This will turn off the wireless access point mode and turn on client mode.                                   |
+| `--show-networks`                         | Show defined networks. This will display a list of all networks defined in the configuration file.                                           |
+| `--add-network $ssid $password $priority` | Adds a network to the wpa_supplicant configuration file but does not connect to it. Please use `--select-network` to connect to the network. |
+| `--select-network $index`                 | Select a network by index. This allows you to choose a network from the list of defined networks.                                            |
+| `--update-bssid`                          | Update the BSSID in the configuration file. This will change the BSSID of the enterprise network.                                            |
+| `--send-ip`                               | Send the IP address via email. This will send the device's current IP address to the specified email address(es).                            |
+| `--add-email $email_address`              | Add an email address to the recipient list. This will add a new email address to the list of recipients for IP address notifications.        |
+
+</div>
 
 # Helpful File Locations
 
