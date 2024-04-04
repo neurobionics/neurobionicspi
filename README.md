@@ -9,17 +9,20 @@
 
 The purpose of this tool is to build an up-to-date operating system/image for a Raspberry Pi that can be used headless/GUI-less to control autonomous / remote robotic systems. It was built by the Neurobionics Lab at the University of Michigan to solve two major challenges:
 
-Maintaining a stable, consistent, working image for Raspberry Pis that fosters robotics research
-
-Ease connectivity with local and enterprise networks to prevent use of internal lab networks
+* Maintaining a stable, consistent, working image for Raspberry Pis that fosters robotics research
+* Ease connectivity with local and enterprise networks to prevent use of internal lab networks
 
 It is meant for developers or roboticists who wish to use a Raspberry Pi to control an intelligent / robotic system, where development is done remotely on a PC, and execution is run from the Raspberry Pi. In other words, this setup uses the Raspberry Pi like a microprocessor, and makes use of its networking, communications, and GPIO abilities. To access and program on the Raspberry Pi remotely, we use [VSCode](https://code.visualstudio.com) or [WinSCP](https://winscp.net/eng); these programs also enable shared file transfer.
 
-The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/operating-systems/) to include custom packages for robotics and automation, wireless connectivity to a known and configurable WiFi network, and it will create a fallback access point when the known wireless networks are not in range (fixed IP: 10.0.0.200). This enables usage of the same process and hardware when not in known Wifi network range (e.g. demos and conferences). The process installs libraries for communication, drivers for common sensors and ICs, the API for working with [Dephy products](dephy.com/faster/), and other modifications.
+<p align="center">
+  <img src="/assets/neurobionicspi.PNG" width="800">
+</p>
 
-This image has only been tested on the Raspberry Pi 5 and 4. It may not work on the Raspberry Pi Zero.
+The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/operating-systems/) to include custom packages for robotics and automation, wireless connectivity to a known and configurable WiFi network, and it will create a fallback access point when the known wireless networks are not in range (fixed IP: 10.0.0.200). This enables usage of the same process and hardware when not in known Wifi network range (e.g. demos and conferences). The process also installs libraries for communication, drivers for common sensors and ICs, APIs for working with [Dephy actuators](dephy.com/faster/) and other motors.
 
-<img src="/assets/neurobionicspi.png" width="1024">
+> [!NOTE]
+> This image has only been tested on the Raspberry Pi 5 and 4. It may not work on the Raspberry Pi Zero.
+
 
 # How to use this tool
 
