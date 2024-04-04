@@ -26,7 +26,7 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 # How to use this tool
 
 <details>
-<summary><span style="font-size: 1.23em;">Step 1: Creating Secrets for Your Raspberry Pi Image</span></summary>
+<summary><span style="font-size: 1.25rem; font-weight: bold;">Step 1: Creating Secrets for Your Raspberry Pi Image</span></summary>
 
 <p align="center">
   <img src="/assets/secrets.gif" width="800">
@@ -51,7 +51,7 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 
 </details>
 <details>
-<summary><span style="font-size: 1.23em;">Step 2: Building Your Raspberry Pi Image</span></summary>
+<summary><span style="font-size: 1.25rem; font-weight: bold;">Step 2: Building Your Raspberry Pi Image</span></summary>
 
 -   After setting up the secrets, the next step is to build your custom Raspberry Pi image. This process is automated using a GitHub Actions workflow.
 -   To start the build process, navigate to the `Actions` tab in your repository. This tab is located in the top menu of your repository page.
@@ -86,7 +86,7 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 
 </details>
 <details>
-<summary><span style="font-size: 1.23em;">Step 3: Connecting to Your Raspberry Pi</span></summary>
+<summary><span style="font-size: 1.25rem; font-weight: bold;">Step 3: Connecting to Your Raspberry Pi</span></summary>
 
 -   Once you've flashed the custom image onto the SD card, remove it from your computer and insert it into the SD card slot on your Raspberry Pi.
 -   Power on your Raspberry Pi. It will boot up using the custom image you've just flashed. This custom image includes the network configurations you've set up using the secret variables in the GitHub Actions workflow.
