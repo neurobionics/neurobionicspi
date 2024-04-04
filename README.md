@@ -100,11 +100,23 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 
 </details>
 
-# How this tool works
+# Networking Routine
 
 <p align="center">
   <img src="/assets/neurobionicspi-cli.png" width="800">
 </p>
+
+Our networking routine allows the Raspberry Pi to switch between two modes: Access Point (AP) and Client mode.
+
+-   In Access Point (AP) Mode, the Raspberry Pi acts as a wireless access point, allowing other devices to connect to it as if it were a router.
+
+-   In Client Mode, the Raspberry Pi connects to a known WiFi network, allowing it to access the internet and communicate with other devices on the network.
+
+The Raspberry Pi will attempt to connect to the known WiFi network first. If it is unable to connect to the network, it will switch to Access Point mode, allowing you to connect to it directly. This routine also includes a function to reconfigure the network after a specified timeout. This is useful for refreshing the network configuration without a full restart. Another key feature of this routine is the ability to update the BSSID (Basic Service Set Identifier) in the configuration file. This is particularly useful when the device is connected to a network with multiple access points, as it allows the device to connect to the access point with the strongest signal.
+
+Our networking routine also includes a command-line interface (CLI) tool named `neurobionicspi-cli`. This tool allows for manual execution of the networking routine's functions. It provides options to start or stop the AP mode, show defined networks, add a network, select a network, update the BSSID, send the IP address via email, and add an email address to the recipient list. Please use the command `sudo neurobionicspi-cli --help` to see all available options.
+
+In summary, our networking routine provides a flexible and robust way to manage the networking configuration of a Raspberry Pi device, with both manual and automated controls.
 
 # Helpful File Locations
 
