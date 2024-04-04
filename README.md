@@ -25,7 +25,8 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 
 # How to use this tool
 
-## Step 1: Creating Secrets for Your Raspberry Pi Image
+<details>
+<summary>## Step 1: Creating Secrets for Your Raspberry Pi Image</summary>
 
 -   Start by creating your own copy of this repository. You can do this by clicking the `Fork` button. This will create a private repository in your GitHub account with the same default source code, which you can then customize to suit your needs.
 -   Next, you need to create a few secrets in your repository. These secrets will be used to configure your Raspberry Pi image. To do this, navigate to the `Settings` tab in your repository, click on the `Secrets and Variables` dropdown link in the left sidebar, and then click on the `Actions` link.
@@ -42,8 +43,9 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 | `ENTNETWORK_PRIORITY` | This integer value determines the priority of the enterprise network. A higher value means higher priority. For example, if you have a home network and an enterprise network, and you want the Raspberry Pi to try connecting to the enterprise network first, you would give the enterprise network a higher priority number. If the enterprise network is not available, the Raspberry Pi will then attempt to connect to the network with the next highest priority. By default, the home network is assigned a priority of 5. If you want the Raspberry Pi to try connecting to the home network only if the enterprise network is not available, you would assign the enterprise network a priority higher than 5. |
 
 </div>
--   If you are affiliated with the University of Michigan, we have created an account specifically for Raspberry Pis. You can find the credentials for this account [here](link-to-credentials).
+-   If you are affiliated with the University of Michigan, we have created an account specifically for Raspberry Pis. You can find the credentials for this account [here](https://docs.google.com/spreadsheets/d/1-5_XnRQyswqY__GGujOmiYS38mL0pdHBKm7O15xPWz4/edit?usp=sharing).
 -   If you are not affiliated with the University of Michigan and want your Raspberry Pi to connect to your university's WiFi network, please add your own enterprise network's information accordingly.
+</details>
 
 ## Step 2: Building Your Raspberry Pi Image
 
