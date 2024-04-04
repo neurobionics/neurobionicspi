@@ -3,6 +3,22 @@ name: Raspberry Pi 5
 on:
     workflow_dispatch:
         inputs:
+            device:
+                description: "Device"
+                required: true
+                default: Raspberry Pi 5
+                type: choice
+                options:
+                    - Raspberry Pi 5
+                    - Raspberry Pi 4
+            architecture:
+                description: "Architecture"
+                required: true
+                default: 32-bit
+                type: choice
+                options:
+                    - 64-bit
+                    - 32-bit
             host_name:
                 description: "Hostname"
                 default: neurobionics
