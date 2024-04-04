@@ -120,7 +120,7 @@ jobs:
             - name: Write env variables
               run: |
                   echo ARCHITECTURE="${{ github.event.inputs.architecture }}" > $(dirname rpi5.Pifile)/.env
-                  echo HOSTNAME="${{ github.event.inputs.host_name }}" > $(dirname rpi5.Pifile)/.env
+                  echo HOSTNAME="${{ github.event.inputs.host_name }}" >> $(dirname rpi5.Pifile)/.env
                   echo USER="${{ github.event.inputs.user }}" >> $(dirname rpi5.Pifile)/.env
                   echo USERPASSWORD="${{ github.event.inputs.password }}" >> $(dirname rpi5.Pifile)/.env
                   echo ENTNETWORK_SSID="${{ secrets.ENTNETWORK_SSID }}" >> $(dirname rpi5.Pifile)/.env
