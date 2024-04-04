@@ -145,7 +145,7 @@ sudo neurobionicspi-cli --help
 
 # Networking Tests
 
-We tested the image's networking capabilities by rebooting the Raspberry Pi 100 times in various scenarios--in a stable environment with less interference, in a crowded environment, and roaming between networks. The Raspberry Pi was able to connect to the known network and send an email reliably. Here is a plot of the results:
+We evaluated the networking capabilities of our Raspberry Pi image by conducting a series of tests in diverse environments. We rebooted the Raspberry Pi 100 times under different conditions - in stable environments with minimal interference such as research labs and workshops, in crowded settings like lobbies and atriums, and while roaming between networks. The Raspberry Pi consistently demonstrated its ability to connect to known networks and reliably send emails. The following plot illustrates the results of our tests:
 
 <p align="center">
   <img src="/assets/neurobionicspi-network-test.png" width="800">
@@ -166,10 +166,15 @@ We tested the image's networking capabilities by rebooting the Raspberry Pi 100 
 
 </div>
 
+# Helpful Tools
+
+-   [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
+-   [Etcher](https://www.balena.io/etcher/)
+-   [VSCode](https://code.visualstudio.com)
+-   [VSCode Remote Explorer](https://code.visualstudio.com/docs/remote/remote-overview)
+-   [Putty](https://www.putty.org)
+-   [Pimod](https://github.com/marketplace/actions/run-pimod)
+
 # Issues
 
 Kindly report any issues [here](https://github.com/neurobionics/neurobionicspi/issues).
-
-# References
-
--   [Pimod](https://github.com/marketplace/actions/run-pimod)
