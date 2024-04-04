@@ -6,11 +6,11 @@ on:
             device:
                 description: "Device"
                 required: true
-                default: rpi5
+                default: Raspberry-Pi-5
                 type: choice
                 options:
-                    - rpi5
-                    - rpi4
+                    - Raspberry-Pi-5
+                    - Raspberry-Pi-4
             architecture:
                 description: "Architecture"
                 required: true
@@ -119,6 +119,7 @@ jobs:
                   submodules: recursive
             - name: Write env variables
               run: |
+                  echo ARCHITECTURE="${{ github.event.inputs.architecture }}" > $(dirname rpi5.Pifile)/.env
                   echo HOSTNAME="${{ github.event.inputs.host_name }}" > $(dirname rpi5.Pifile)/.env
                   echo USER="${{ github.event.inputs.user }}" >> $(dirname rpi5.Pifile)/.env
                   echo USERPASSWORD="${{ github.event.inputs.password }}" >> $(dirname rpi5.Pifile)/.env
