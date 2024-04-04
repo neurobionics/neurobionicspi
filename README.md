@@ -53,6 +53,10 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 <details>
 <summary><span style="font-size: 1.25rem; font-weight: bold;">Step 2: Building Your Raspberry Pi Image</span></summary>
 
+<p align="center">
+  <img src="/assets/secrets.gif" width="800">
+</p>
+
 -   After setting up the secrets, the next step is to build your custom Raspberry Pi image. This process is automated using a GitHub Actions workflow.
 -   To start the build process, navigate to the `Actions` tab in your repository. This tab is located in the top menu of your repository page.
 -   In the `Actions` tab, you'll see a single workflow named `Build Now!` in the left sidebar. This workflow is responsible for building your custom Raspbian image. Click on it to view more details.
