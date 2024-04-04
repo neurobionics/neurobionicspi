@@ -85,7 +85,6 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 -   To download the image, go back to the `Actions` tab and click on the completed workflow run. You'll see a section labeled `Artifacts` on the bottom of the page. Click on the artifact to download your custom Raspbian image.
 -   Once you've downloaded the image, you'll need to flash it onto an SD card. You can use software like [Raspberry Pi Imager](https://www.raspberrypi.com/software/), [Etcher](https://www.balena.io/etcher/), or [Rufus](https://rufus.ie/en/) to do this. Follow the instructions provided by the software to flash the image onto the SD card.
 
-> [!IMPORTANT]
 > If you're using the latest version of Raspberry Pi Imager, you'll be asked if you want to customize the OS. Please select 'No' to this option. The image you've built already contains the necessary customizations.
 
 </details>
@@ -101,11 +100,21 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 
 </details>
 
+# How this tool works
+
+<p align="center">
+  <img src="/assets/neurobionicspi-cli.PNG" width="800">
+</p>
+
 # Helpful File Locations
 
--   WiFi network configuration file: `/etc/wpa_supplicant/wpa_supplicant-wlan0.conf`
--   IP address emailer script: `/etc/startup_mailer.py`
--   Welcome ASCII banner: `/home/pi/.bash_profile`
+<div align="center">
+| File Path                                       | Description                     |
+| ----------------------------------------------- | ------------------------------- |
+| `/etc/wpa_supplicant/wpa_supplicant-wlan0.conf` | WiFi network configuration file |
+| `/etc/startup_mailer.py`                        | IP address emailer script       |
+| `/home/pi/.bash_profile`                        | Welcome screen/ASCII banner     |
+</div>
 
 # Issues
 
