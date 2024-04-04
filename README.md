@@ -18,7 +18,7 @@ It is meant for developers or roboticists who wish to use a Raspberry Pi to cont
   <img src="/assets/neurobionicspi.PNG" width="800">
 </p>
 
-The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/operating-systems/) to include custom packages for robotics and automation, wireless connectivity to a known and configurable WiFi network, and it will create a fallback access point when the known wireless networks are not in range (fixed IP: 10.0.0.200). This enables usage of the same process and hardware when not in known Wifi network range (e.g. demos and conferences). The process also installs libraries for communication, drivers for common sensors and ICs, APIs for working with [Dephy actuators](dephy.com/faster/) and other motors.
+The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/operating-systems/) to include custom packages for robotics and automation, wireless connectivity to a known and configurable WiFi network, and it will create a fallback access point when the known wireless networks are not in range (static IP: 10.0.0.200). This enables usage of the same process and hardware when not in known Wifi network range (e.g. demos and conferences). The process also installs libraries for communication, drivers for common sensors and ICs, APIs for working with [Dephy actuators](dephy.com/faster/) and other motors.
 
 > [!NOTE]
 > This image has only been tested on the Raspberry Pi 5 and 4. It may not work on the Raspberry Pi Zero.
@@ -112,7 +112,7 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 
 ## Automated Network Management
 
-Our Raspberry Pi device uses a smart networking routine that can operate in two modes: Access Point (AP) and Client mode.
+Our Raspberry Pi image uses a networking structure that can operate in two modes: Access Point (AP) and Client mode.
 
 -   Access Point (AP) Mode: In this mode, the Raspberry Pi acts like a mini Wi-Fi router. Other devices can connect to it directly, just like they would connect to a regular Wi-Fi network.
 
@@ -122,7 +122,7 @@ The Raspberry Pi tries to connect to a known Wi-Fi network first. If it can't co
 
 ## Manual Network Management
 
-We also provide a command-line interface (CLI) tool called neurobionicspi-cli. This tool lets you manually control the networking routine's functions. You can use it to start or stop the AP mode, display the defined networks, add a network, choose a network, update the BSSID, send the device's IP address via email, and add an email address to the recipient list. To see all the available options, use the command
+We also provide a command-line interface (CLI) tool called `neurobionicspi-cli`. This tool lets you manually control the networking routine's functions. You can use it to start or stop the AP mode, display the defined networks, add a network, choose a network, update the BSSID, send the device's IP address via email, and add an email address to the recipient list. To see all the available options, use the command
 
 ```
 sudo neurobionicspi-cli --help
@@ -143,15 +143,26 @@ sudo neurobionicspi-cli --help
 
 </div>
 
+# Networking Tests
+
+We tested the image's networking capabilities by rebooting the Raspberry Pi 100 times in various scenarios--in a stable environment with less interference, in a crowded environment, and roaming between networks. The Raspberry Pi was able to connect to the known network and send an email reliably. Here is a plot of the results:
+
+<p align="center">
+  <img src="/assets/neurobionicspi-network-test.png" width="800">
+</p>
+
 # Helpful File Locations
 
 <div align="center">
 
-| File Path                                       | Description                     |
-| ----------------------------------------------- | ------------------------------- |
-| `/etc/wpa_supplicant/wpa_supplicant-wlan0.conf` | WiFi network configuration file |
-| `/etc/startup_mailer.py`                        | IP address emailer script       |
-| `/home/pi/.bash_profile`                        | Welcome screen/ASCII banner     |
+| File Path                                       | Description                                |
+| ----------------------------------------------- | ------------------------------------------ |
+| `/etc/wpa_supplicant/wpa_supplicant-wlan0.conf` | WiFi network configuration file            |
+| `/etc/startup_mailer.py`                        | IP address emailer script                  |
+| `/home/pi/.bash_profile`                        | Welcome screen/ASCII banner                |
+| `/etc/neurobionicspi-cli.log`                   | Networking log file                        |
+| `/etc/neurobionicspi-cli.count`                 | Total number of emails sent                |
+| `/etc/neurobionicspi-cli`                       | Setup files for neurobionicspi-cli service |
 
 </div>
 
