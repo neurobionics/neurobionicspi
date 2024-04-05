@@ -1,21 +1,24 @@
-FROM https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-11-08/2021-10-30-raspios-bullseye-armhf-lite.zip
+source .env
+
+source ./Raspberry-Pi-4/${ARCHITECTURE}.Pifile
 
 PUMP 800M
 
 RUN touch /boot/ssh
 
-source .env
-
-hostname="${HOSTNAME:-neurobionics}"
-user="${USER:-pi}"
-password="${USERPASSWORD:-neurobionics}"
-email="${EMAIL:-ejrouse@umich.edu}"
-mwpsk="${PASSWORD:-password}"
-wifissid="${WIFI_SSID:-network}"
-wifipsk="${WIFI_PASSPHRASE:-password}"
-apssid="${AP_SSID:-NeurobionicsRPi}"
-appsk="${AP_PASSPHRASE:-neurobionics}"
-countrycode="${WIFI_CC:-US}"
+hostname="${HOSTNAME}"
+user="${USER}"
+password="${USERPASSWORD}"
+entssid="${ENTNETWORK_SSID}"
+entpriority="${ENTNETWORK_PRIORITY:-10}"
+entidentity="${ENTNETWORK_IDENTITY}"
+entpassword="${ENTNETWORK_PASSWORD}"
+countrycode="${WIFI_CC}"
+wifissid="${HOMENETWORK_SSID}"
+wifipsk="${HOMENETWORK_PASSWORD}"
+apssid="${AP_SSID}"
+appsk="${AP_PASSWORD}"
+email="${EMAIL}"
 
 ##################################
 
@@ -45,39 +48,34 @@ RUN apt-get update
 
 RUN apt-get install -y wpasupplicant
 
-source ./wpa_supplicant.Pifile
+source ./Raspberry-Pi-4/wpa_supplicant.Pifile
 
 ##################################
 
 # Installing essential packages
 
-source ./packages.Pifile
+source ./Raspberry-Pi-4/packages.Pifile
 
 ##################################
 
-# Installing automagic-ap
+# Installing neurobionicspi-cli
 
-RUN bash -c "git clone https://github.com/imsenthur/automagic-ap.git /etc/automagic-ap"
-RUN bash -c "sudo chown -R ${user} /etc/automagic-ap"
+INSTALL "neurobionicspi-cli" "/etc/neurobionicspi-cli"
 
-##################################
+# Adding the right enterprise network information
+RUN sed -i "s/entnetworkssid=\"\"/entnetworkssid=\"${entssid}\"/g" /etc/neurobionicspi-cli/install.sh
+RUN sed -i "s/entnetworkssid=\"\"/entnetworkssid=\"${entssid}\"/g" /etc/neurobionicspi-cli/neurobionicspi-cli
 
-# Installing webmin
-
-RUN bash -c 'echo "deb https://download.webmin.com/download/repository sarge contrib" >> /etc/apt/sources.list'
-RUN bash -c "wget http://www.webmin.com/jcameron-key.asc"
-RUN apt-key add jcameron-key.asc
-
-RUN apt update
-RUN apt install -y webmin
+RUN sh -c "sudo chown -R ${user} /etc/neurobionicspi-cli"
 
 ##################################
 
 # Configuring message of the day (motd)
 
 RUN bash -c "sudo rm -rf /etc/motd"
-RUN bash -c "curl -L https://raw.githubusercontent.com/imsenthur/neuropi-motd/main/motd -o /home/${user}/.bash_profile"
+INSTALL "./Raspberry-Pi-4/motd" "/etc/motd"
 
+RUN sh -c "cp /etc/motd /home/${user}/.bash_profile"
 ##################################
 
 # Enable i2c and set baud rate
@@ -91,11 +89,10 @@ RUN bash -c "echo 'dtparam=i2c1=on' >> /boot/config.txt"
 
 # Setting up startup_mailer and rc.local
 
-source ./startup_mailer.Pifile
+source ./Raspberry-Pi-4/startup_mailer.Pifile
 
-source ./rc_local.Pifile
+source ./Raspberry-Pi-4/rc_local.Pifile
 
 ##################################
 
 echo "DONE!"
-

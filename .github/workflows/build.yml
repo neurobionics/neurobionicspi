@@ -1,78 +1,148 @@
-name: Build
+name: Build now!
 
-on: 
-  workflow_dispatch:
-    inputs:
-      host_name:
-        description: "Hostname"
-        default: neurobionics
-        required: true
-      user:
-        description: "Username"
-        required: true
-        default: pi
-      password:
-        description: "Password"
-        required: true
-        default: neurobionics
-      mwireless_pass:
-        description: "Get the MWireless Passphrase from: https://bit.ly/30zEzPCRPi"
-        required: false
-      email:
-        description: "Email"
-        required: true
-        default: ejrouse@umich.edu
-      wifi_cc:
-        description: "WiFi Country Code"
-        required: true        
-        default: US
-      wifi_ssid:
-        description: "Additional WiFi SSID"
-        required: false
-      wifi_passphrase:
-        description: "Additional WiFi Passphrase"
-        required: false
-      wpa_ssid:
-        description: "Access Point SSID"
-        required: true
-        default: NeurobionicsRPi
-      wpa_passphrase:
-        description: "Access Point Passphrase"
-        required: true
-        default: neurobionics
-env:
-  PIFILE: main
+on:
+    workflow_dispatch:
+        inputs:
+            device:
+                description: "Device"
+                required: true
+                default: Raspberry-Pi-5
+                type: choice
+                options:
+                    - Raspberry-Pi-5
+                    - Raspberry-Pi-4
+            architecture:
+                description: "Architecture"
+                required: true
+                default: 32-bit
+                type: choice
+                options:
+                    - 64-bit
+                    - 32-bit
+            host_name:
+                description: "Hostname"
+                default: neurobionicspi
+                required: true
+            user:
+                description: "Username"
+                required: true
+                default: pi
+            password:
+                description: "Password"
+                required: true
+                default: neurobionics
+            wifi_cc:
+                description: "WiFi Country Code"
+                required: true
+                default: "US"
+                type: choice
+                options:
+                    - US
+                    - GB
+                    - DE
+                    - FR
+                    - IT
+                    - ES
+                    - CA
+                    - AU
+                    - JP
+                    - CN
+                    - KR
+                    - TW
+                    - SG
+                    - IN
+                    - BR
+                    - RU
+                    - ZA
+                    - SA
+                    - AE
+                    - EG
+                    - IL
+                    - TR
+                    - ID
+                    - TH
+                    - VN
+                    - PH
+                    - MY
+                    - MX
+                    - AR
+                    - CL
+                    - CO
+                    - PE
+                    - UY
+                    - EC
+                    - BO
+                    - PY
+                    - CR
+                    - PA
+                    - GT
+                    - HN
+                    - SV
+                    - NI
+                    - DO
+                    - JM
+                    - HT
+                    - CU
+                    - VE
+            wifi_ssid:
+                description: "Additional Network SSID"
+                required: false
+            wifi_password:
+                description: "Additional Network Password"
+                required: false
+            wpa_ssid:
+                description: "Access Point SSID"
+                required: true
+                default: NeurobionicsRPi
+            wpa_password:
+                description: "Access Point Password"
+                required: true
+                default: neurobionics
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-      - name: Write env variables
-        run: |
-          echo HOSTNAME="${{ github.event.inputs.host_name }}" > $(dirname $PIFILE.Pifile)/.env
-          echo USER="${{ github.event.inputs.user }}" >> $(dirname $PIFILE.Pifile)/.env
-          echo USERPASSWORD="${{ github.event.inputs.password }}" >> $(dirname $PIFILE.Pifile)/.env
-          echo PASSWORD="${{ github.event.inputs.mwireless_pass }}" >> $(dirname $PIFILE.Pifile)/.env
-          echo WIFI_CC="${{ github.event.inputs.wifi_cc }}" >> $(dirname $PIFILE.Pifile)/.env
-          echo WIFI_SSID="${{ github.event.inputs.wifi_ssid }}" >> $(dirname $PIFILE.Pifile)/.env
-          echo WIFI_PASSPHRASE="${{ github.event.inputs.wifi_passphrase }}" >> $(dirname $PIFILE.Pifile)/.env          
-          echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname $PIFILE.Pifile)/.env
-          echo AP_PASSPHRASE="${{ github.event.inputs.wpa_passphrase }}" >> $(dirname $PIFILE.Pifile)/.env
-          echo EMAIL=\"${{ github.event.inputs.email }}\" >> $(dirname $PIFILE.Pifile)/.env
-      - name: Build image
-        uses: Nature40/pimod@v0.2.2
-        with:
-          pifile: ${PIFILE}.Pifile
+        steps:
+            - name: Check secrets
+              run: |
+                  if [[ -z "${{ secrets.EMAIL_ADDRESS }}" ]]; then
+                      echo "EMAIL_ADDRESS secret is not set, please refer to the README.md for more information. Exiting."
+                      exit 1
+                  fi
+                  if [[ (-z "${{ github.event.inputs.wifi_ssid }}" || -z "${{ github.event.inputs.wifi_password }}") && ( -z "${{ secrets.ENTNETWORK_SSID }}" || -z "${{ secrets.ENTNETWORK_IDENTITY }}" || -z "${{ secrets.ENTNETWORK_PASSWORD }}" ) ]]; then
+                      echo "Please ensure that all required secrets (ENTNETWORK_SSID, ENTNETWORK_IDENTITY, and ENTNETWORK_PASSWORD) are set for the enterprise network. If you do not want to connect to an enterprise network, please provide information for the home network. Exiting."
+                      exit 1
+                  fi
+            - uses: actions/checkout@v4
+              with:
+                  submodules: recursive
+            - name: Write env variables
+              run: |
+                  echo ARCHITECTURE="${{ github.event.inputs.architecture }}" > $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo HOSTNAME="${{ github.event.inputs.host_name }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo USER="${{ github.event.inputs.user }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo USERPASSWORD="${{ github.event.inputs.password }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo ENTNETWORK_SSID="${{ secrets.ENTNETWORK_SSID }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo ENTNETWORK_PRIORITY="${{ secrets.ENTNETWORK_PRIORITY }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo ENTNETWORK_IDENTITY="${{ secrets.ENTNETWORK_IDENTITY }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo ENTNETWORK_PASSWORD="${{ secrets.ENTNETWORK_PASSWORD }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo WIFI_CC="${{ github.event.inputs.wifi_cc }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo HOMENETWORK_SSID="${{ github.event.inputs.wifi_ssid }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo HOMENETWORK_PASSWORD="${{ github.event.inputs.wifi_password }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo AP_PASSWORD="${{ github.event.inputs.wpa_password }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo EMAIL=\"${{ secrets.EMAIL_ADDRESS }}\" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+            - name: Build image
+              uses: Nature40/pimod@master
+              with:
+                  pifile: ${{ github.event.inputs.device }}.Pifile
 
-      - name: Make tarball
-        run: |
-          tar -czvf main.tar.gz main.img
-      - name: Upload artifacts  
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ github.workflow }}-${{ github.sha }}.zip
-          path: main.img
+            - name: Make tarball
+              run: |
+                  tar -czvf ${{ github.event.inputs.device }}.tar.gz ${{ github.event.inputs.device }}.img
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: ${{ github.workflow }}-${{ github.sha }}.zip
+                  path: ${{ github.event.inputs.device }}.img
