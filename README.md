@@ -54,7 +54,7 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 <summary><span style="font-size:1.25rem;font-weight:200;">Step 2: Building Your Raspberry Pi Image</span></summary>
 
 <p align="center">
-  <img src="/assets/secrets.gif" width="800">
+  <img src="/assets/build.gif" width="800">
 </p>
 
 -   After setting up the secrets, the next step is to build your custom Raspberry Pi image. This process is automated using a GitHub Actions workflow.
