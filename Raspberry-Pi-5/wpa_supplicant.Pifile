@@ -40,8 +40,8 @@ RUN bash -c "if [[ -n \"${wifissid}\" ]]; then
 tee -a /etc/wpa_supplicant/wpa_supplicant-wlan0.conf <<EOF
 network={
 	priority=5
-	ssid="${wifissid}"
-	psk="${wifipsk}"
+	ssid=\"${wifissid}\"
+	psk=\"${wifipsk}\"
 }
 
 EOF
