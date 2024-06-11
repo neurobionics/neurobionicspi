@@ -14,6 +14,9 @@ check_command stress-ng
 check_command gnuplot
 
 dur=$1
+if [ -z "$dur" ]; then
+    dur=1
+fi
 echo "Running cyclictest for $dur minute"
 cyclictest -D"$dur"m -m -Sp90 -i200 -h400 -q >output
 
