@@ -60,7 +60,14 @@ done
 # 6. Create plot command header
 echo -n -e "set title \"Worst Case Latency Test \"\n\
 set terminal png\n\
-set xlabel \"Latency (ns)\"\n\
+set xlabel \"Latency (ns) [Max Latencies:"
+
+for i in "${!max[@]}"; do
+    index=$((i+1))
+    echo -n " $index: ${max[$i]} ns,"
+done
+
+echo -n "\"\"\n"
 set logscale y\n\
 set xrange [0:350000]\n\
 set yrange [0.8:*]\n\
