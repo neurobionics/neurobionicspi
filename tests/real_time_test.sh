@@ -18,23 +18,28 @@ if [ -z "$dur" ]; then
     dur=1
 fi
 echo "Running cyclictest for $dur minute"
-cyclictest --nsecs -D"$dur"m -m -Sp90 -i200 -h300000 -q > data/raw/output
+cyclictest --nsecs -D"$dur"m -m -Sp90 -i200 -h350000 -q > data/raw/output
 
 # 2. Get maximum latency
-max=`grep "Max Latencies" data/raw/output | tr " " "\n" | sort -n | tail -1 | sed s/^0*//`
-min=`grep "Min Latencies" data/raw/output | tr " " "\n" | sort -n | head -1 | sed s/^0*//`
+# max=`grep "Max Latencies" data/raw/output | tr " " "\n" | sort -n | tail -1 | sed s/^0*//`
+# min=`grep "Min Latencies" data/raw/output | tr " " "\n" | sort -n | head -1 | sed s/^0*//`
 
 # 3. Grep data lines, remove empty lines and create a common field separator
 grep -v -e "^#" -e "^$" data/raw/output | tr " " "\t" >data/histograms/histogram 
 
 # 4. Set the number of cores
 cores=$(nproc)
+read -r -a max <<< $(grep "Max Latencies" data/raw/output | awk -F: '{print $2}')
+read -r -a min <<< $(grep "Min Latencies" data/raw/output | awk -F: '{print $2}')
 
 # 5. Create two-column data sets with latency classes and frequency values for each core, for example
 for i in `seq 1 $cores`
 do
     column=`expr $i + 1`
     cut -f1,$column data/histograms/histogram >data/histograms/histogram$i
+
+    echo "Max: ${max[$i-1]}" > data/analysis/statistics$i
+    echo "Min: ${min[$i-1]}" >> data/analysis/statistics$i
 
     # create a new file called statistics that has a third row in addition to the histogram1 file that
     # is just the multiplication of the first and second row of the histogram1 file
