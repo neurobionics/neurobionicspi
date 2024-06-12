@@ -18,7 +18,7 @@ if [ -z "$dur" ]; then
     dur=1
 fi
 echo "Running cyclictest for $dur minute"
-cyclictest -D"$dur"m -m -Sp90 -i200 -h400 -q > data/raw/output
+cyclictest --nsecs -D"$dur"m -m -Sp90 -i200 -h300000 -q > data/raw/output
 
 # 2. Get maximum latency
 max=`grep "Max Latencies" data/raw/output | tr " " "\n" | sort -n | tail -1 | sed s/^0*//`
