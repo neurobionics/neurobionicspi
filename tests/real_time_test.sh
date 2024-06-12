@@ -21,11 +21,11 @@ echo "Running cyclictest for $dur minute"
 cyclictest -D"$dur"m -m -Sp90 -i200 -h400 -q > data/raw/output
 
 # 2. Get maximum latency
-max=`grep "Max Latencies" output | tr " " "\n" | sort -n | tail -1 | sed s/^0*//`
-min=`grep "Min Latencies" output | tr " " "\n" | sort -n | head -1 | sed s/^0*//`
+max=`grep "Max Latencies" data/raw/output | tr " " "\n" | sort -n | tail -1 | sed s/^0*//`
+min=`grep "Min Latencies" data/raw/output | tr " " "\n" | sort -n | head -1 | sed s/^0*//`
 
 # 3. Grep data lines, remove empty lines and create a common field separator
-grep -v -e "^#" -e "^$" output | tr " " "\t" >data/histograms/histogram 
+grep -v -e "^#" -e "^$" data/raw/output | tr " " "\t" >data/histograms/histogram 
 
 # 4. Set the number of cores
 cores=$(nproc)
