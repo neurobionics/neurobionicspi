@@ -65,8 +65,8 @@ set logscale y\n\
 set xrange [0:350000]\n\
 set yrange [0.8:*]\n\
 set ylabel \"Number of latency samples\"\n\
-set output \"plot.png\"\n\
-plot " >plotcmd
+set output \"$PWD/data/plots/plot.png\"\n\
+plot " >$PWD/data/plots/plotcmd
 
 # 7. Append plot command data references
 for i in `seq 1 $cores`
