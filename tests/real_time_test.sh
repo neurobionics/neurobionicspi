@@ -18,13 +18,14 @@ if [ -z "$dur" ]; then
     dur=1
 fi
 echo "Running cyclictest for $dur minute"
-cyclictest -D"$dur"m -m -Sp90 -i200 -h400 -q >output
+cyclictest -D"$dur"m -m -Sp90 -i200 -h400 -q >./raw/output
 
 # 2. Get maximum latency
 max=`grep "Max Latencies" output | tr " " "\n" | sort -n | tail -1 | sed s/^0*//`
+min=`grep "Min Latencies" output | tr " " "\n" | sort -n | head -1 | sed s/^0*//`
 
 # 3. Grep data lines, remove empty lines and create a common field separator
-grep -v -e "^#" -e "^$" output | tr " " "\t" >histogram 
+grep -v -e "^#" -e "^$" output | tr " " "\t" >./histograms/histogram 
 
 # 4. Set the number of cores
 cores=$(nproc)
@@ -32,38 +33,53 @@ cores=$(nproc)
 # 5. Create two-column data sets with latency classes and frequency values for each core, for example
 for i in `seq 1 $cores`
 do
-  column=`expr $i + 1`
-  cut -f1,$column histogram >histogram$i
+    column=`expr $i + 1`
+    cut -f1,$column ./histograms/histogram >./histograms/histogram$i
+
+    # create a new file called statistics that has a third row in addition to the histogram1 file that
+    # is just the multiplication of the first and second row of the histogram1 file
+    awk '{print $1, $2, $1*$2}' ./histograms/histogram$i > ./analysis/data$i
+    mean=$(awk '{xf+=$3; n+=$2} END {print xf/n}' ./analysis/data$i)
+    echo "Mean: $mean" > ./analysis/statistics$i
+
+    awk -v mean="$mean" '{print $1, $2, $3, $2*($1-mean)^2, $2*($1-mean)^2}' ./analysis/data$i > ./analysis/data$i.tmp
+    mv ./analysis/data$i.tmp ./analysis/data$i
+    variance=$(awk '{x+=$4; n+=$2} END {print x/(n-1)}' ./analysis/data$i)
+    echo "Variance: $variance" >> ./analysis/statistics$i
+
+    std_dev=$(awk -v variance="$variance" 'BEGIN {print sqrt(variance)}')
+    echo "Standard Deviation: $std_dev" >> ./analysis/statistics$i
+
 done
 
-# 6. Create plot command header
-echo -n -e "set title \"Latency plot\"\n\
-set terminal png\n\
-set xlabel \"Latency (us), max $max us\"\n\
-set logscale y\n\
-set xrange [0:400]\n\
-set yrange [0.8:*]\n\
-set ylabel \"Number of latency samples\"\n\
-set output \"plot.png\"\n\
-plot " >plotcmd
+# # 6. Create plot command header
+# echo -n -e "set title \"Latency plot\"\n\
+# set terminal png\n\
+# set xlabel \"Latency (us), max $max us\"\n\
+# set logscale y\n\
+# set xrange [0:400]\n\
+# set yrange [0.8:*]\n\
+# set ylabel \"Number of latency samples\"\n\
+# set output \"plot.png\"\n\
+# plot " >plotcmd
 
-# 7. Append plot command data references
-for i in `seq 1 $cores`
-do
-  if test $i != 1
-  then
-    echo -n ", " >>plotcmd
-  fi
-  cpuno=`expr $i - 1`
-  if test $cpuno -lt 10
-  then
-    title=" CPU$cpuno"
-   else
-    title="CPU$cpuno"
-  fi
-  echo -n "\"histogram$i\" using 1:2 title \"$title\" with histeps" >>plotcmd
-done
+# # 7. Append plot command data references
+# for i in `seq 1 $cores`
+# do
+#   if test $i != 1
+#   then
+#     echo -n ", " >>plotcmd
+#   fi
+#   cpuno=`expr $i - 1`
+#   if test $cpuno -lt 10
+#   then
+#     title=" CPU$cpuno"
+#    else
+#     title="CPU$cpuno"
+#   fi
+#   echo -n "\"histogram$i\" using 1:2 title \"$title\" with histeps" >>plotcmd
+# done
 
-# 8. Execute plot command
-gnuplot -persist <plotcmd
-echo "Histogram plot saved in $PWD/plot.png"
+# # 8. Execute plot command
+# gnuplot -persist <plotcmd
+# echo "Histogram plot saved in $PWD/plot.png"
