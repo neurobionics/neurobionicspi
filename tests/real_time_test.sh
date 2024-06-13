@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# TODO: Spin up a process to add stress on the CPU with stress-ng ("command > file 2>&1 &") and user defined % of CPU usage
+# TODO: Record CPU temperature and power consumption
+
 offline=1
 enable_plotting=0
 
