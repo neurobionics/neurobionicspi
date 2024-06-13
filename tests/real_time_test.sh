@@ -5,6 +5,7 @@
 
 offline=1
 enable_plotting=0
+dur=${1:-1}
 
 if [ "$offline" -eq 1 ]; then
     echo "Running offline analysis"
@@ -24,10 +25,6 @@ else
     check_command stress-ng
     check_command gnuplot
 
-    dur=$1
-    if [ -z "$dur" ]; then
-        dur=1
-    fi
     echo "Running cyclictest for $dur minute"
     cyclictest --nsecs -D"$dur"m -m -Sp90 -i200 -h350000 -q > $PWD/data/raw/output
     cores=$(nproc)
