@@ -10,7 +10,7 @@ while [ $(($(date +%s) - timestart)) -lt $dur_in_seconds ]
 do
     temp=$(vcgencmd measure_temp)
     temp=${temp:5:2}
-    echo $temp >> $PWD/data/raw/temp
-    sleep 1/$frequency
+    echo $temp
+    sleep $(bc <<< "scale=2; 1/$frequency")
 done
 
