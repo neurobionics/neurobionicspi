@@ -1,7 +1,9 @@
 #!/bin/bash
 
 offline=0
-enable_plotting=0
+enable_plotting=1
+dur=1
+load=50
 
 while [[ $# -gt 0 ]]; do
     key="$1"
@@ -15,11 +17,11 @@ while [[ $# -gt 0 ]]; do
         shift
         ;;        
         --duration)
-        dur="${2:-1}"  # Set default value of 1 if not provided
+        dur="$2"
         shift 2
         ;;
         --load)
-        load="${2:-50}"  # Set default value of 50 if not provided
+        load="$2"
         shift 2
         ;;
         *)

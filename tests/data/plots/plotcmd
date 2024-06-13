@@ -1,9 +1,9 @@
 set title "Worst Case Latency Test "
     set terminal png
-    set xlabel "Latency (ns) [Max Latencies:1160101 771473 607746 906117 ns]"
+    set xlabel "Latency (us) [Max Latencies:02047 00821 00965 00868 us]"
 
     set logscale y
-    set xrange [0:350000]
+    set xrange [0:400]
     set yrange [0.8:*]
     set ylabel "Number of latency samples"
     set output "/home/senthur/neurobionicspi/tests/data/plots/plot.png"
