@@ -1,6 +1,6 @@
 #!/bin/bash
 
-offline=1
+offline=0
 enable_plotting=1
 dur=${1:-1}
 load=${2:-50}
@@ -26,10 +26,10 @@ else
     cores=$(nproc)
 
     # Measuring cpu temperature
-    $PWD/utilities/measure_temp.sh > $PWD/data/raw/temperature 2>&1 &
+    sudo bash $PWD/utilities/measure_temp.sh > $PWD/data/raw/temperature 2>&1 &
 
     # Adding stress to the system
-    $PWD/utilities/add_stress.sh $dur $load > $PWD/data/logs/stress.log 2>&1 &
+    sudo bash $PWD/utilities/add_stress.sh $dur $load > $PWD/data/logs/stress.log 2>&1 &
 
     echo "Running cyclictest for $dur minute"
     cyclictest --nsecs -D"$dur"m -m -Sp90 -i200 -h350000 -q > $PWD/data/raw/cyclicresults
