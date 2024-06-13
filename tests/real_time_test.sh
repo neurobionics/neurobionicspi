@@ -1,9 +1,34 @@
 #!/bin/bash
 
 offline=0
-enable_plotting=1
-dur=${1:-1}
-load=${2:-50}
+enable_plotting=0
+
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --offline)
+        offline=1
+        shift
+        ;;
+        --enable_plotting)
+        enable_plotting=1
+        shift
+        ;;        
+        --duration)
+        dur="${2:-1}"  # Set default value of 1 if not provided
+        shift 2
+        ;;
+        --load)
+        load="${2:-50}"  # Set default value of 50 if not provided
+        shift 2
+        ;;
+        *)
+        echo "Unknown option: $key"
+        exit 1
+        ;;
+    esac
+done
+
 
 if [ "$offline" -eq 1 ]; then
     echo "Running offline analysis"
@@ -32,7 +57,7 @@ else
     sudo bash $PWD/utilities/add_stress.sh $dur $load > $PWD/data/logs/stress.log 2>&1 &
 
     echo "Running cyclictest for $dur minute"
-    cyclictest --nsecs -D"$dur"m -m -Sp90 -i200 -h350000 -q > $PWD/data/raw/cyclicresults
+    cyclictest -D"$dur"m -m -Sp90 -i200 -h400 -q > $PWD/data/raw/cyclicresults
 fi
 
 # 3. Grep data lines, remove empty lines and create a common field separator
@@ -70,9 +95,9 @@ if [ "$enable_plotting" -eq 1 ]; then
     # 6. Create plot command header
     echo -n -e "set title \"Worst Case Latency Test \"\n\
     set terminal png\n\
-    set xlabel \"Latency (ns) [Max Latencies:${max[@]} ns]\"\n
+    set xlabel \"Latency (us) [Max Latencies:${max[@]} us]\"\n
     set logscale y\n\
-    set xrange [0:350000]\n\
+    set xrange [0:400]\n\
     set yrange [0.8:*]\n\
     set ylabel \"Number of latency samples\"\n\
     set output \"$PWD/data/plots/plot.png\"\n\
