@@ -13,4 +13,4 @@ check_command() {
 
 check_command stress-ng
 
-stress-ng -c 1 --mq 1 --iomix 1 --vm 1 --vm-bytes 50% -l $load --cpu-method fft --metrics-brief --tz -t $dur
+stress-ng -c 1 --mq 1 --iomix 1 --vm 1 --vm-bytes 50% -l $load --cpu-method fft --metrics-brief --tz -t "$dur"m
