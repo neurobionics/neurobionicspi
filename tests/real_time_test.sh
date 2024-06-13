@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# TODO: Spin up a process to add stress on the CPU with stress-ng ("command > file 2>&1 &") and user defined % of CPU usage
-# TODO: Record CPU temperature and power consumption
-
 offline=1
-enable_plotting=0
+enable_plotting=1
 dur=${1:-1}
+load=${2:-50}
 
 if [ "$offline" -eq 1 ]; then
     echo "Running offline analysis"
@@ -25,21 +23,24 @@ else
     check_command stress-ng
     check_command gnuplot
 
-    echo "Running cyclictest for $dur minute"
-    cyclictest --nsecs -D"$dur"m -m -Sp90 -i200 -h350000 -q > $PWD/data/raw/output
     cores=$(nproc)
+
+    # Measuring cpu temperature
+    $PWD/utilities/measure_temp.sh > $PWD/data/raw/temperature 2>&1 &
+
+    # Adding stress to the system
+    $PWD/utilities/add_stress.sh $dur $load > $PWD/data/logs/stress.log 2>&1 &
+
+    echo "Running cyclictest for $dur minute"
+    cyclictest --nsecs -D"$dur"m -m -Sp90 -i200 -h350000 -q > $PWD/data/raw/cyclicresults
 fi
 
-# 2. Get maximum latency
-# max=`grep "Max Latencies" data/raw/output | tr " " "\n" | sort -n | tail -1 | sed s/^0*//`
-# min=`grep "Min Latencies" data/raw/output | tr " " "\n" | sort -n | head -1 | sed s/^0*//`
-
 # 3. Grep data lines, remove empty lines and create a common field separator
-grep -v -e "^#" -e "^$" $PWD/data/raw/output | tr " " "\t" > $PWD/data/histograms/histogram 
+grep -v -e "^#" -e "^$" $PWD/data/raw/cyclicresults | tr " " "\t" > $PWD/data/histograms/histogram 
 
 # 4. Set the number of cores
-read -r -a max <<< $(grep "Max Latencies" $PWD/data/raw/output | awk -F: '{print $2}')
-read -r -a min <<< $(grep "Min Latencies" $PWD/data/raw/output | awk -F: '{print $2}')
+read -r -a max <<< $(grep "Max Latencies" $PWD/data/raw/cyclicresults | awk -F: '{print $2}')
+read -r -a min <<< $(grep "Min Latencies" $PWD/data/raw/cyclicresults | awk -F: '{print $2}')
 
 # 5. Create two-column data sets with latency classes and frequency values for each core, for example
 for i in `seq 1 $cores`
