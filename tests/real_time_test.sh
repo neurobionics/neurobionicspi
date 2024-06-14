@@ -5,6 +5,23 @@ enable_plotting=1
 dur=1
 load=50
 
+# Get the kernel type
+kernel_type=$(uname -r)
+current_time=$(date +%H:%M:%S)
+
+# Create the folder name
+folder_name="${kernel_type}_${current_time}"
+
+# Create the new folder
+mkdir -p "$PWD/data/$folder_name"
+raw_data_path="$PWD/data/$folder_name/raw"
+histograms_path="$PWD/data/$folder_name/histograms"
+analysis_path="$PWD/data/$folder_name/analysis"
+plots_path="$PWD/data/$folder_name/plots"
+logs_path="$PWD/data/$folder_name/logs"
+
+mkdir -p "$raw_data_path" "$histograms_path" "$analysis_path" "$plots_path" "$logs_path"
+
 while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
@@ -53,44 +70,42 @@ else
     cores=$(nproc)
 
     # Measuring cpu temperature
-    sudo bash $PWD/utilities/measure_temp.sh > $PWD/data/raw/temperature 2>&1 &
+    sudo bash "$PWD/utilities/measure_temp.sh" > "$raw_data_path/temperature" 2>&1 &
 
     # Adding stress to the system
-    sudo bash $PWD/utilities/add_stress.sh $dur $load > $PWD/data/logs/stress.log 2>&1 &
+    sudo bash "$PWD/utilities/add_stress.sh" "$dur" "$load" > "$logs_path/stress.log" 2>&1 &
 
     echo "Running cyclictest for $dur minute"
-    cyclictest -D"$dur"m -m -Sp90 -i200 -h400 -q > $PWD/data/raw/cyclicresults
+    cyclictest -D"$dur"m -m -Sp90 -i200 -h400 -q > "$raw_data_path/cyclicresults"
 fi
 
 # 3. Grep data lines, remove empty lines and create a common field separator
-grep -v -e "^#" -e "^$" $PWD/data/raw/cyclicresults | tr " " "\t" > $PWD/data/histograms/histogram 
+grep -v -e "^#" -e "^$" "$raw_data_path/cyclicresults" | tr " " "\t" > "$histograms_path/histogram"
 
 # 4. Set the number of cores
-read -r -a max <<< $(grep "Max Latencies" $PWD/data/raw/cyclicresults | awk -F: '{print $2}')
-read -r -a min <<< $(grep "Min Latencies" $PWD/data/raw/cyclicresults | awk -F: '{print $2}')
+read -r -a max <<< $(grep "Max Latencies" "$raw_data_path/cyclicresults" | awk -F: '{print $2}')
+read -r -a min <<< $(grep "Min Latencies" "$raw_data_path/cyclicresults" | awk -F: '{print $2}')
 
 # 5. Create two-column data sets with latency classes and frequency values for each core, for example
 for i in `seq 1 $cores`
 do
     column=`expr $i + 1`
-    cut -f1,$column $PWD/data/histograms/histogram > $PWD/data/histograms/histogram$i
+    cut -f1,$column "$histograms_path/histogram" > "$histograms_path/histogram$i"
 
-    echo "Max: ${max[$i-1]}" > $PWD/data/analysis/statistics$i
-    echo "Min: ${min[$i-1]}" >> $PWD/data/analysis/statistics$i
+    echo "Max: ${max[$i-1]}" > "$analysis_path/statistics$i"
+    echo "Min: ${min[$i-1]}" >> "$analysis_path/statistics$i"
 
-    # create a new file called statistics that has a third row in addition to the histogram1 file that
-    # is just the multiplication of the first and second row of the histogram1 file
-    awk '{print $1, $2, $1*$2}' $PWD/data/histograms/histogram$i > $PWD/data/analysis/data$i
-    mean=$(awk '{xf+=$3; n+=$2} END {print xf/n}' $PWD/data/analysis/data$i)
-    echo "Mean: $mean" >> $PWD/data/analysis/statistics$i
+    awk '{print $1, $2, $1*$2}' "$histograms_path/histogram$i" > "$analysis_path/data$i"
+    mean=$(awk '{xf+=$3; n+=$2} END {print xf/n}' "$analysis_path/data$i")
+    echo "Mean: $mean" >> "$analysis_path/statistics$i"
 
-    awk -v mean="$mean" '{print $1, $2, $3, $2*($1-mean)^2, $2*($1-mean)^2}' $PWD/data/analysis/data$i > $PWD/data/analysis/data$i.tmp
-    mv $PWD/data/analysis/data$i.tmp $PWD/data/analysis/data$i
-    variance=$(awk '{x+=$4; n+=$2} END {print x/(n-1)}' $PWD/data/analysis/data$i)
-    echo "Variance: $variance" >> $PWD/data/analysis/statistics$i
+    awk -v mean="$mean" '{print $1, $2, $3, $2*($1-mean)^2, $2*($1-mean)^2}' "$analysis_path/data$i" > "$analysis_path/data$i.tmp"
+    mv "$analysis_path/data$i.tmp" "$analysis_path/data$i"
+    variance=$(awk '{x+=$4; n+=$2} END {print x/(n-1)}' "$analysis_path/data$i")
+    echo "Variance: $variance" >> "$analysis_path/statistics$i"
 
     std_dev=$(awk -v variance="$variance" 'BEGIN {print sqrt(variance)}')
-    echo "Standard Deviation: $std_dev" >> $PWD/data/analysis/statistics$i
+    echo "Standard Deviation: $std_dev" >> "$analysis_path/statistics$i"
 done
 
 if [ "$enable_plotting" -eq 1 ]; then
@@ -102,15 +117,15 @@ if [ "$enable_plotting" -eq 1 ]; then
     set xrange [0:400]\n\
     set yrange [0.8:*]\n\
     set ylabel \"Number of latency samples\"\n\
-    set output \"$PWD/data/plots/plot.png\"\n\
-    plot " >$PWD/data/plots/plotcmd
+    set output \"$plots_path/plot.png\"\n\
+    plot " >"$plots_path/plotcmd"
 
     # 7. Append plot command data references
     for i in `seq 1 $cores`
     do
     if test $i != 1
     then
-        echo -n ", " >> $PWD/data/plots/plotcmd
+        echo -n ", " >> "$plots_path/plotcmd"
     fi
     cpuno=`expr $i - 1`
     if test $cpuno -lt 10
@@ -119,10 +134,10 @@ if [ "$enable_plotting" -eq 1 ]; then
     else
         title="CPU$cpuno"
     fi
-    echo -n "\"$PWD/data/histograms/histogram$i\" using 1:2 title \"$title\" with histeps" >> $PWD/data/plots/plotcmd
+    echo -n "\"$histograms_path/histogram$i\" using 1:2 title \"$title\" with histeps" >> "$plots_path/plotcmd"
     done
 
     # 8. Execute plot command
-    gnuplot -persist < $PWD/data/plots/plotcmd
-    echo "Histogram plot saved in $PWD/data/plots/plot.png"
+    gnuplot -persist < "$plots_path/plotcmd"
+    echo "Histogram plot saved in $plots_path/plot.png"
 fi
