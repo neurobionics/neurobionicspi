@@ -2,8 +2,9 @@
 
 offline=0
 enable_plotting=1
-dur=1
-load=50
+dur=5
+load=75
+sampling_time=2000
 
 # Get the kernel type
 kernel_type=$(uname -r)
@@ -76,7 +77,7 @@ else
     sudo bash "$PWD/utilities/add_stress.sh" "$dur" "$load" > "$logs_path/stress.log" 2>&1 &
 
     echo "Running cyclictest for $dur minute"
-    cyclictest -D"$dur"m -m -Sp90 -i200 -h400 -q > "$raw_data_path/cyclicresults"
+    cyclictest -D"$dur"m -m -Sp90 -i200 -h"$sampling_time" -q > "$raw_data_path/cyclicresults"
 fi
 
 # 3. Grep data lines, remove empty lines and create a common field separator
@@ -112,9 +113,9 @@ if [ "$enable_plotting" -eq 1 ]; then
     # 6. Create plot command header
     echo -n -e "set title \"Worst Case Latency Test \"\n\
     set terminal png\n\
-    set xlabel \"Latency (us) [Max Latencies:${max[@]} us]\"\n
+    set xlabel \"Latency (us) \"\n
     set logscale y\n\
-    set xrange [0:400]\n\
+    set xrange [0:"$sampling_time"]\n\
     set yrange [0.8:*]\n\
     set ylabel \"Number of latency samples\"\n\
     set output \"$plots_path/plot.png\"\n\
