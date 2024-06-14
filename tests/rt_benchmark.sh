@@ -9,7 +9,7 @@ while [ ${#load[@]} -gt 0 ]; do
     temp=${temp:5:4}
 
     # Compare the temperature as an integer
-    if [ "$temp" -lt "$idle_temp" ]; then
+    if (( $(echo "$temp < $idle_temp" | bc -l) )); then
         sudo bash "$PWD/rt_test.sh" --duration $duration --load ${load[0]}
         
         load=("${load[@]:1}")
