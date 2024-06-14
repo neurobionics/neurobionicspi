@@ -75,7 +75,7 @@ else
 
     # Adding stress to the system
     sudo bash "$PWD/utilities/add_stress.sh" "$dur" "$load" > "$logs_path/stress.log" 2>&1 &
-    echo "$load % load added to the system" >> "$logs_path/stress.log"
+    echo "$load % load added to the system" | sudo tee -a "$logs_path/stress.log"
 
     echo "Running cyclictest for $dur minute"
     cyclictest -D"$dur"m -m -Sp90 -i200 -h"$sampling_time" -q > "$raw_data_path/cyclicresults"
