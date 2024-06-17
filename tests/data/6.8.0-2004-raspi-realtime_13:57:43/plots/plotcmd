@@ -1,0 +1,9 @@
+set title "Worst Case Latency Test "
+    set terminal png
+    set xlabel "Latency (us), max: 153 us"
+    set logscale y
+    set xrange [0:2000]
+    set yrange [0.8:*]
+    set ylabel "Number of latency samples"
+    set output "/home/senthur/neurobionicspi/tests/data/6.8.0-2004-raspi-realtime_13:57:43/plots/plot.png"
+    plot "/home/senthur/neurobionicspi/tests/data/6.8.0-2004-raspi-realtime_13:57:43/histograms/histogram1" using 1:2 title " CPU0" with histeps, "/home/senthur/neurobionicspi/tests/data/6.8.0-2004-raspi-realtime_13:57:43/histograms/histogram2" using 1:2 title " CPU1" with histeps, "/home/senthur/neurobionicspi/tests/data/6.8.0-2004-raspi-realtime_13:57:43/histograms/histogram3" using 1:2 title " CPU2" with histeps, "/home/senthur/neurobionicspi/tests/data/6.8.0-2004-raspi-realtime_13:57:43/histograms/histogram4" using 1:2 title " CPU3" with histeps
