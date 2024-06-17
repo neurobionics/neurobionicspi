@@ -10,10 +10,8 @@ sampling_time=2000
 kernel_type=$(uname -r)
 current_time=$(date +%H:%M:%S)
 
-# Create the folder name
 folder_name="${kernel_type}_${current_time}"
 
-# Create the new folder
 mkdir -p "$PWD/data/$folder_name"
 raw_data_path="$PWD/data/$folder_name/raw"
 histograms_path="$PWD/data/$folder_name/histograms"
@@ -81,14 +79,16 @@ else
     cyclictest -D"$dur"m -m -Sp90 -i200 -h"$sampling_time" -q > "$raw_data_path/cyclicresults"
 fi
 
-# 3. Grep data lines, remove empty lines and create a common field separator
+all_max=`grep "Max Latencies" "$raw_data_path/cyclicresults" | tr " " "\n" | sort -n | tail -1 | sed s/^0*//`
+
+# Grep data lines, remove empty lines and create a common field separator
 grep -v -e "^#" -e "^$" "$raw_data_path/cyclicresults" | tr " " "\t" > "$histograms_path/histogram"
 
-# 4. Set the number of cores
+# Set the number of cores
 read -r -a max <<< $(grep "Max Latencies" "$raw_data_path/cyclicresults" | awk -F: '{print $2}')
 read -r -a min <<< $(grep "Min Latencies" "$raw_data_path/cyclicresults" | awk -F: '{print $2}')
 
-# 5. Create two-column data sets with latency classes and frequency values for each core, for example
+# Create two-column data sets with latency classes and frequency values for each core, for example
 for i in `seq 1 $cores`
 do
     column=`expr $i + 1`
@@ -111,10 +111,10 @@ do
 done
 
 if [ "$enable_plotting" -eq 1 ]; then
-    # 6. Create plot command header
+    # Create plot command header
     echo -n -e "set title \"Worst Case Latency Test \"\n\
     set terminal png\n\
-    set xlabel \"Latency (us) \"\n
+    set xlabel \"Latency (us), max: $all_max us\"\n\
     set logscale y\n\
     set xrange [0:"$sampling_time"]\n\
     set yrange [0.8:*]\n\
@@ -122,7 +122,7 @@ if [ "$enable_plotting" -eq 1 ]; then
     set output \"$plots_path/plot.png\"\n\
     plot " >"$plots_path/plotcmd"
 
-    # 7. Append plot command data references
+    # Append plot command data references
     for i in `seq 1 $cores`
     do
     if test $i != 1
@@ -139,7 +139,7 @@ if [ "$enable_plotting" -eq 1 ]; then
     echo -n "\"$histograms_path/histogram$i\" using 1:2 title \"$title\" with histeps" >> "$plots_path/plotcmd"
     done
 
-    # 8. Execute plot command
+    # Execute plot command
     gnuplot -persist < "$plots_path/plotcmd"
     echo "Histogram plot saved in $plots_path/plot.png"
 fi
