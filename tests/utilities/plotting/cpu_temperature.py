@@ -25,7 +25,7 @@ else:
 if args.kernel:
     kernel_name = args.kernel
 else:
-    kernel_name = "6.8.0-2004-raspi-realtime"
+    kernel_name = "6.6.20+rpt-rpi-2712"
 
 # find all folders that start with the kernel name within the data folder
 folders = [
