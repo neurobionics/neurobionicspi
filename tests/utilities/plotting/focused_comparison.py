@@ -17,20 +17,19 @@ plt.style.use("dark_background")
 MVA_WINDOW = 16
 DT = 1 / 500
 LOAD_MAP = ["100", "25", "75", "50"]
-LOAD = "25"
+LOAD = "100"
 KERNELS = [
     "6.8.0-1005-raspi",
-    "6.6.20+rpt-rpi-2712",
     "6.8.0-2004-raspi-realtime",
 ]
-colors = ["gold", "mediumturquoise", "salmon"]
+colors = ["gold", "mediumturquoise", "salmon", "mediumspringgreen"]
 KERNEL_BETTER_NAMES = [
-    "UBU",
-    "RAS",
-    "URT",
+    "Ubuntu-Generic",
+    "Ubuntu-RealTime",
 ]
 KERNEL_LEGENDS = ["" for _ in KERNELS]
-DISTRIBUTION = 3
+CORE_LEGENDS = [f"Core {i+1}" for i in range(4)]
+THRESHOLD = 100  # us
 
 if args.data:
     data_path = args.data
@@ -38,11 +37,14 @@ else:
     script_path = os.path.dirname(os.path.realpath(__file__))
     data_path = os.path.join(script_path.split("/utilities")[0], "data")
 
-figure, axs = plt.subplots(2, 2, figsize=(10, 6))  # Create a 2x2 grid of subplots
+figure, axs = plt.subplots(
+    1, len(KERNELS), figsize=(10, 6)
+)  # Create a 2x2 grid of subplots
 axs = axs.ravel()
 
-for i in range(4):  # Loop over the 4 cores
-    for j, kernel_name in enumerate(KERNELS):
+for j, kernel_name in enumerate(KERNELS):
+    total_occurrences = 0
+    for i in range(4):  # Loop over the 4 cores
         folders = [
             folder
             for folder in os.listdir(data_path)
@@ -51,17 +53,6 @@ for i in range(4):  # Loop over the 4 cores
         ]
         folders.sort()
         folder = folders[LOAD_MAP.index(LOAD)]
-
-        latencies = pd.read_csv(
-            os.path.join(data_path, folder, "histograms/histogram"), delimiter="\t"
-        )
-        latencies.columns = [
-            "latency",
-            "core_1_count",
-            "core_2_count",
-            "core_3_count",
-            "core_4_count",
-        ]
 
         # Assuming 'text' is the selected text
         with open(os.path.join(data_path, folder, f"analysis/statistics{i+1}")) as f:
@@ -76,30 +67,40 @@ for i in range(4):  # Loop over the 4 cores
             f"{KERNEL_BETTER_NAMES[j]}: x̄={mean:.2f} us; max={max_value/1000:.2f} ms"
         )
 
-        min_val = mean - DISTRIBUTION * std_dev
-        max_val = mean + DISTRIBUTION * std_dev
-
-        temp_df = latencies[
-            (latencies["latency"] >= min_val) & (latencies["latency"] <= max_val)
+        latencies = pd.read_csv(
+            os.path.join(data_path, folder, f"histograms/histogram{i+1}"),
+            delimiter="\t",
+        )
+        latencies.columns = [
+            "latency",
+            "frequency",
         ]
 
-        axs[i].bar(
-            temp_df["latency"],
-            temp_df[f"core_{i+1}_count"],
-            label=f"Core {i+1}",
-            alpha=0.75,
-            color=colors[j],
+        latencies = latencies[latencies["latency"] > THRESHOLD]
+
+        latencies_extended = latencies.loc[
+            latencies.index.repeat(latencies["frequency"])
+        ].reset_index(drop=True)
+
+        sns.histplot(
+            latencies_extended["latency"],
+            label=CORE_LEGENDS[i] + f" [Max: {max_value} us]",
+            color=colors[i],
+            fill=True,
+            ax=axs[j],
+            bins=200,
         )
 
-    axs[i].yaxis.set_major_formatter(
-        ticker.FuncFormatter(lambda x, _: "{:,.0f}".format(x / 100000))
-    )
-    axs[i].set_title(f"Core {i+1}")  # Set the title of the subplot
-    axs[i].set_ylabel("Number of Occurrences (1e-5)")  # Set the y-label of the subplot
-    axs[i].set_xlabel("Latency (us)")
-    axs[i].legend(KERNEL_LEGENDS, loc="upper right")  # Add a legend to the subplot
+        total_occurrences += latencies_extended.shape[0]
+
+    axs[j].set_title(f"{KERNEL_BETTER_NAMES[j]}")  # Set the title of the subplot
+    axs[j].set_ylabel("Number of Occurrences")  # Set the y-label of the subplot
+    axs[j].set_xlabel(f"Latency (us) [Total Occurences: {total_occurrences}]")
+    axs[j].legend(loc="upper right")  # Add a legend to the subplot
 
 # Set the labels of the overall figure
-figure.suptitle(f"[RT-Benchmark] Latency Histogram @{LOAD} Load")
+figure.suptitle(f"[RT-Benchmark] Latency Histogram (> {THRESHOLD} us) @{LOAD}% Load")
 plt.tight_layout()  # Adjust the layout so that the subplots do not overlap
-plt.savefig(f"histogram_comparison_{LOAD}.png")  # Save the figure to a file
+plt.savefig(
+    f"{KERNEL_BETTER_NAMES[0]}_vs_{KERNEL_BETTER_NAMES[1]}_{LOAD}L_{THRESHOLD}T.png"
+)  # Save the figure to a file
