@@ -48,8 +48,8 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 
 </div>
 
-> [!Note]
-> If you are affliated with a university, please use your own username (`ENTNETWORK_IDENTITY`) and password (`ENTNETWORK_PASSWORD`) that you usually use to connect to the university's WiFi network (`ENTNETWORK_SSID`). This will allow the Raspberry Pi to connect to the university's WiFi network using your credentials.
+> [!NOTE]
+> If you are affliated with a university, please use your own username (`ENTNETWORK_IDENTITY`) and password (`ENTNETWORK_PASSWORD`) that you usually use to connect to the university's WiFi network (`ENTNETWORK_SSID`). This will allow the Raspberry Pi to connect to the university's network and access the internet using your credentials.
 
 </details>
 <details>
