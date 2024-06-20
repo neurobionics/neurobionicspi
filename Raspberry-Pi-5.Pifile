@@ -33,7 +33,7 @@ if [[ "${ARCHITECTURE}" != *"ubuntu"* ]]; then
 else
     RUN sed -i "s/ubuntu/${hostname}/g" /etc/hostname
     RUN sed -i "s/ubuntu/${hostname}/g" /etc/hosts
-    RUN sudo chpasswd <<< "${user}:${password}"
+    # RUN sudo chpasswd <<< "${user}:${password}"
 fi
 
 
