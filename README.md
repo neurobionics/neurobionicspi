@@ -47,7 +47,8 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 | `ENTNETWORK_PRIORITY` | This integer value determines the priority of the enterprise network. A higher value means higher priority. For example, if you have a home network and an enterprise network, and you want the Raspberry Pi to try connecting to the enterprise network first, you would give the enterprise network a higher priority number. If the enterprise network is not available, the Raspberry Pi will then attempt to connect to the network with the next highest priority. By default, the home network is assigned a priority of 5. If you want the Raspberry Pi to try connecting to the home network only if the enterprise network is not available, you would assign the enterprise network a priority higher than 5. |
 
 </div>
--   If you are affiliated with the University of Michigan, we have created an account specifically for Raspberry Pis. You can find the credentials for this account <a href="https://bit.ly/30zEzPCRPi" target="_blank">here</a>. If you are not affiliated with the University of Michigan and want your Raspberry Pi to connect to your university's WiFi network, please add your own enterprise network's information accordingly.
+
+**If you are affliated with a university, please use your own username (`ENTNETWORK_IDENTITY`) and password (`ENTNETWORK_PASSWORD`) that you usually use to connect to the university's WiFi network (`ENTNETWORK_SSID`). This will allow the Raspberry Pi to connect to the university's network and access the internet using your credentials.**
 
 </details>
 <details>

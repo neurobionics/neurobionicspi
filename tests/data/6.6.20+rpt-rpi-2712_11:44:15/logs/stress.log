@@ -1,0 +1,17 @@
+stress-ng: info:  [90961] setting to a 420 second (7 mins, 0.00 secs) run per stressor
+stress-ng: info:  [90961] dispatching hogs: 4 cpu, 1 mq, 1 iomix, 1 vm
+stress-ng: metrc: [90961] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: metrc: [90961]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: metrc: [90961] cpu              649130    420.01    708.57     55.31      1545.53         849.79
+stress-ng: metrc: [90961] mq             93223527    420.00     55.12    284.29    221960.61      274666.34
+stress-ng: metrc: [90961] iomix             87393    420.43     30.80     25.66       207.86        1547.94
+stress-ng: metrc: [90961] vm             10326939    420.08    275.78     31.53     24582.99       33604.34
+stress-ng: info:  [90961] cpu:
+stress-ng: info:  [90961]          cpu_thermal   85.21 C (358.36 K)
+stress-ng: info:  [90961] mq:
+stress-ng: info:  [90961]          cpu_thermal   85.35 C (358.50 K)
+stress-ng: info:  [90961] iomix:
+stress-ng: info:  [90961]          cpu_thermal   83.15 C (356.30 K)
+stress-ng: info:  [90961] vm:
+stress-ng: info:  [90961]          cpu_thermal   83.70 C (356.85 K)
+stress-ng: info:  [90961] successful run completed in 420.44s (7 mins, 0.44 secs)

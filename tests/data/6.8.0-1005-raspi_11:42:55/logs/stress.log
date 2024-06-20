@@ -1,0 +1,22 @@
+stress-ng: info:  [51142] setting to a 7 mins, 0 secs run per stressor
+stress-ng: info:  [51142] dispatching hogs: 4 cpu, 1 mq, 1 iomix, 1 vm
+stress-ng: info:  [51142] note: /proc/sys/kernel/sched_autogroup_enabled is 1 and this can impact scheduling throughput for processes not attached to a tty. Setting this to 0 may improve performance metrics
+stress-ng: metrc: [51142] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s
+stress-ng: metrc: [51142]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: metrc: [51142] cpu              580964    420.00    807.40      8.03      1383.23         712.46
+stress-ng: metrc: [51142] mq             23255950    420.00     59.38    216.14     55371.09       84407.38
+stress-ng: metrc: [51142] iomix             82078    420.22      7.89     53.46       195.32        1337.78
+stress-ng: metrc: [51142] vm              8423781    420.20    260.89     73.89     20047.29       25161.73
+stress-ng: info:  [51142] cpu:
+stress-ng: info:  [51142]          cpu_thermal   89.20 C (362.35 K)
+stress-ng: info:  [51142] mq:
+stress-ng: info:  [51142]          cpu_thermal   89.20 C (362.35 K)
+stress-ng: info:  [51142] iomix:
+stress-ng: info:  [51142]          cpu_thermal   88.10 C (361.25 K)
+stress-ng: info:  [51142] vm:
+stress-ng: info:  [51142]          cpu_thermal   87.55 C (360.70 K)
+stress-ng: info:  [51142] skipped: 0
+stress-ng: info:  [51142] passed: 7: cpu (4) mq (1) iomix (1) vm (1)
+stress-ng: info:  [51142] failed: 0
+stress-ng: info:  [51142] metrics untrustworthy: 0
+stress-ng: info:  [51142] successful run completed in 7 mins, 0.23 secs
