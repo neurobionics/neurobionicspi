@@ -31,7 +31,8 @@ if [[ "${ARCHITECTURE}" != *"ubuntu"* ]]; then
 
     source ./Raspberry-Pi-5/locale.Pifile
 else
-    RUN hostnamectl set-hostname ${hostname}
+    RUN sed -i "s/ubuntu/${hostname}/g" /etc/hostname
+    RUN sed -i "s/ubuntu/${hostname}/g" /etc/hosts
     RUN sudo chpasswd <<< "${user}:${password}"
 fi
 
