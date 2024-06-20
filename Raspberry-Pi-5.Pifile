@@ -68,25 +68,25 @@ INSTALL "neurobionicspi-cli" "/etc/neurobionicspi-cli"
 RUN sed -i "s/entnetworkssid=\"\"/entnetworkssid=\"${entssid}\"/g" /etc/neurobionicspi-cli/install.sh
 RUN sed -i "s/entnetworkssid=\"\"/entnetworkssid=\"${entssid}\"/g" /etc/neurobionicspi-cli/neurobionicspi-cli
 
-RUN sh -c "sudo chown -R ${user} /etc/neurobionicspi-cli"
+# RUN sh -c "sudo chown -R ${user} /etc/neurobionicspi-cli"
 
 ##################################
 
 # Configuring message of the day (motd)
 
-RUN bash -c "sudo rm -rf /etc/motd"
-INSTALL "./Raspberry-Pi-5/motd" "/etc/motd"
+# RUN bash -c "sudo rm -rf /etc/motd"
+# INSTALL "./Raspberry-Pi-5/motd" "/etc/motd"
 
-RUN sh -c "cp /etc/motd /home/${user}/.bash_profile"
+# RUN sh -c "cp /etc/motd /home/${user}/.bash_profile"
 
 ##################################
 
 # Enable i2c and set baud rate
-RUN bash -c "touch /etc/modules"
-RUN bash -c "echo 'i2c-dev' >> /etc/modules"
-RUN bash -c "echo 'i2c-bcm2708' >> /etc/modules"
-RUN bash -c "echo 'dtparam=i2c_arm=on,i2c_arm_baudrate=400000' >> /boot/config.txt"
-RUN bash -c "echo 'dtparam=i2c1=on' >> /boot/config.txt"
+# RUN bash -c "touch /etc/modules"
+# RUN bash -c "echo 'i2c-dev' >> /etc/modules"
+# RUN bash -c "echo 'i2c-bcm2708' >> /etc/modules"
+# RUN bash -c "echo 'dtparam=i2c_arm=on,i2c_arm_baudrate=400000' >> /boot/config.txt"
+# RUN bash -c "echo 'dtparam=i2c1=on' >> /boot/config.txt"
 
 ##################################
 
