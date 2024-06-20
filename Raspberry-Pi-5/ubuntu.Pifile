@@ -1,2 +1,2 @@
 # For 64-bit Ubuntu-Generic RPi OS
-FROM https://cdimage.ubuntu.com/releases/24.04/release/ubuntu-24.04-preinstalled-server-arm64+raspi.img.xz?_gl=1*1b7qfb9*_gcl_au*NDQyOTg1NTEuMTcxNzUzMzYxNQ..&_ga=2.78838612.1537151378.1718910729-1481487808.1718910729
+FROM https://cdimage.ubuntu.com/releases/24.04/release/ubuntu-24.04-preinstalled-server-arm64+raspi.img.xz
