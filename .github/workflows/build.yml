@@ -19,6 +19,7 @@ on:
                 options:
                     - 64-bit
                     - 32-bit
+                    - ubuntu
             host_name:
                 description: "Hostname"
                 default: neurobionicspi
