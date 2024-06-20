@@ -24,11 +24,17 @@ email="${EMAIL}"
 
 # Modifying hostname and password
 
-RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
-RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
-RUN sh -c "echo ${user}:${password} | chpasswd"
+if [[ "${ARCHITECTURE}" != *"ubuntu"* ]]; then
+    RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
+    RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
+    RUN sh -c "echo ${user}:${password} | chpasswd"
 
-source ./Raspberry-Pi-5/locale.Pifile
+    source ./Raspberry-Pi-5/locale.Pifile
+else
+    RUN hostnamectl set-hostname ${hostname}
+    RUN sudo chpasswd <<< "${user}:${password}"
+fi
+
 
 ##################################
 
