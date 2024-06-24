@@ -233,7 +233,7 @@ case "$1" in
         ;;
 
     --send-ip)
-        python /etc/startup_mailer.py
+        python3 /etc/startup_mailer.py
         exit 0
         ;;
 
@@ -269,7 +269,7 @@ case "$2" in
             attempt=1
 
             while [ $attempt -le $max_attempts ]; do
-                python /etc/startup_mailer.py
+                python3 /etc/startup_mailer.py
                 if [ $? -eq 0 ]; then
                     echo "A login ticket was emailed successfully." | tee -a /etc/neurobionicspi-cli.log
 
