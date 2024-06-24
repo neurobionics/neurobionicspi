@@ -52,8 +52,6 @@ cat > /etc/systemd/network/12-${wifi}-AP.network <<-EOF
 	Name=$wifi
 	[Network]
 	Address=$ipaddress
-	IPForward=yes
-	IPMasquerade=yes
 	DHCPServer=yes
 	MulticastDNS=yes
 	[DHCPServer]

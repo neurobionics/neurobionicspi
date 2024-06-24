@@ -1,5 +1,6 @@
 # Add bash commands to install required packages
 RUN apt-get install net-tools
+RUN apt-get install wireless-tools
 RUN apt-get install -y python3-pip --upgrade
 RUN apt-get install -y git
 RUN apt-get install -y gh
