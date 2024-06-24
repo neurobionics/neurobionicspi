@@ -4,8 +4,6 @@ source ./Raspberry-Pi-5/${ARCHITECTURE}.Pifile
 
 PUMP 600M
 
-RUN bash -c "systemctl enable ssh"
-
 hostname="${HOSTNAME}"
 user="${USER}"
 password="${USERPASSWORD}"
@@ -25,17 +23,22 @@ email="${EMAIL}"
 # Modifying hostname and password
 
 if [[ "${ARCHITECTURE}" != *"ubuntu"* ]]; then
+    RUN bash -c "systemctl enable ssh"
+
     RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
     RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
     RUN sh -c "echo ${user}:${password} | chpasswd"
 
     source ./Raspberry-Pi-5/locale.Pifile
 else
+    RUN sed -i "s/ubuntu/${hostname}/g" /etc/hostname
+    RUN sed -i "s/ubuntu/${hostname}/g" /etc/hosts
+
     RUN bash -c "adduser --gecos "" --disabled-password ${user}"
     RUN sudo chpasswd <<< "${user}:${password}"
     RUN bash -c "usermod -aG sudo ${user}"
-fi
 
+    RUN bash -c "echo 'PasswordAuthentication yes' | sudo tee /etc/ssh/sshd_config.d/50-cloud-init.conf"
 
 ##################################
 
