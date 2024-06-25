@@ -28,13 +28,12 @@ else
     SUCCESS_COUNT=0
 fi
 
-is_ap () {
-    # use wpa_cli to find if the current mode is AP
-    if [ -e $networkconf~ ]; then
-        echo "is_ap: True" | tee -a /etc/neurobionicspi-cli.log
+is_ap_conf () {
+    if [ -e $apconf ]; then
+        echo "is_ap_conf: True" | tee -a /etc/neurobionicspi-cli.log
         return 0
     else
-        echo "is_ap: False" | tee -a /etc/neurobionicspi-cli.log
+        echo "is_ap_conf: False" | tee -a /etc/neurobionicspi-cli.log
         return 1
     fi
 }
@@ -49,13 +48,12 @@ is_wpa_ap() {
     fi
 }
 
-is_client () {
-    # use wpa_cli to find if the current mode is client
+is_client_conf () {
     if [ -e $networkconf ]; then
-        echo "is_client: True" | tee -a /etc/neurobionicspi-cli.log
+        echo "is_client_conf: True" | tee -a /etc/neurobionicspi-cli.log
         return 0
     else
-        echo "is_client: False" | tee -a /etc/neurobionicspi-cli.log
+        echo "is_client_conf: False" | tee -a /etc/neurobionicspi-cli.log
         return 1
     fi
 }
@@ -74,35 +72,44 @@ is_wpa_client() {
 # Configuring Access Point (AP) mode
 
 configure_ap () {
-    # only configure AP if not already in AP mode
-    if is_client; then
-        echo "Client network configuration exists but wpa_cli is not in client mode. Removing client network configuration and restarting networkd." | tee -a /etc/neurobionicspi-cli.log
-        mv $networkconf $networkconf~
-        mv $apconf~ $apconf
-        systemctl restart systemd-networkd
-    elif is_wpa_client; then
-        echo "Client network configuration is missing but wpa_cli is in client mode. Restarting network." | tee -a /etc/neurobionicspi-cli.log
+    if is_wpa_client; then
+        if is_client_conf; then
+            echo "Both AP and client network configurations exist. Removing client configuration and restarting networkd." | tee -a /etc/neurobionicspi-cli.log
+            mv $networkconf $networkconf~
+        fi
+
+        if ! is_ap_conf; then
+            echo "AP network configuration is missing. Creating AP network configuration." | tee -a /etc/neurobionicspi-cli.log
+            mv $apconf~ $apconf
+        fi
+
+        echo "Restarting networkd." | tee -a /etc/neurobionicspi-cli.log
         systemctl restart systemd-networkd
     else
-        echo "AP mode is already active. Skipping configuration." | tee -a /etc/neurobionicspi-cli.log
+        echo "Already in AP mode. Skipping configuration." | tee -a /etc/neurobionicspi-cli.log
     fi
 }
 
 # Configuring Client (CLI) mode
 
 configure_client () {
-    # only configure client if not already in client mode
-    if is_ap; then
-        echo "Removing AP network configuration and restarting networkd" | tee -a /etc/neurobionicspi-cli.log
-        mv $apconf $apconf~
-        mv $networkconf~ $networkconf
-        systemctl restart systemd-networkd
-    elif is_wpa_ap; then
-        echo "AP network configuration is missing but wpa_cli is in AP mode. Restarting wpa_supplicant." | tee -a /etc/neurobionicspi-cli.log
+    if is_wpa_ap; then
+        if is_ap_conf; then
+            echo "Both AP and client network configurations exist. Removing AP configuration and restarting networkd." | tee -a /etc/neurobionicspi-cli.log
+            mv $apconf $apconf~
+        fi
+
+        if ! is_client_conf; then
+            echo "Client network configuration is missing. Creating client network configuration." | tee -a /etc/neurobionicspi-cli.log
+            mv $networkconf~ $networkconf
+        fi
+
+        echo "Restarting networkd." | tee -a /etc/neurobionicspi-cli.log
         systemctl restart systemd-networkd
     else
-        echo "Client mode is already active. Skipping configuration." | tee -a /etc/neurobionicspi-cli.log
+        echo "Already in client mode. Skipping configuration." | tee -a /etc/neurobionicspi-cli.log
     fi
+
 }
 
 # Searching for networks after a timeout
@@ -226,12 +233,12 @@ case "$1" in
         ;;
 
     --is-ap)
-        is_ap
+        is_ap_conf
         exit 0
         ;;
 
     --is-client)
-        is_client
+        is_client_conf
         exit 0
         ;;
 
