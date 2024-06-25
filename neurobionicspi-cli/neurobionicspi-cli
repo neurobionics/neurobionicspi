@@ -327,7 +327,7 @@ case "$2" in
         ;;
 
     CONNECTED)
-        echo "Client mode is connected." | tee -a /etc/neurobionicspi-cli.log
+        echo "Connected: Client mode is connected." | tee -a /etc/neurobionicspi-cli.log
         configure_client
         update_bssid
 
@@ -368,7 +368,10 @@ case "$2" in
         fi
         ;;
 
-    AP-STA-DISCONNECTED)
-        reconfigure_wpa_supplicant 0
+    DISCONNECTED)
+        echo "Disconnected: Configure client mode." | tee -a /etc/neurobionicspi-cli.log
+        configure_client
+        reconfigure_wpa_supplicant 1
         ;;
+
 esac
