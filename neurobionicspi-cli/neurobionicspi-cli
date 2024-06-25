@@ -15,8 +15,8 @@ entnetworkssid=""
 
 client_conf="/etc/systemd/network/08-${wifi}-CLI.network"
 ap_conf="/etc/systemd/network/12-${wifi}-AP.network"
-client_wifi_conf="/etc/wpa_supplicant/wpa_supplicant-wlan0-client.conf"
-ap_wifi_conf="/etc/wpa_supplicant/wpa_supplicant-wlan0-ap.conf"
+client_wifi_conf="/etc/wpa_supplicant/config/wpa_supplicant-wlan0-client.conf"
+ap_wifi_conf="/etc/wpa_supplicant/config/wpa_supplicant-wlan0-ap.conf"
 wifi_conf="/etc/wpa_supplicant/wpa_supplicant-wlan0.conf"
 
 temp_file="${client_wifi_conf}.tmp"
@@ -88,8 +88,7 @@ configure_ap () {
             sudo mv $ap_conf~ $ap_conf
         fi
 
-        echo "Stopping wpa_supplicant and restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
-        sudo systemctl stop wpa_supplicant
+        echo "Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
         sudo systemctl restart systemd-networkd
 
     elif is_wpa_ap; then
@@ -107,7 +106,6 @@ configure_ap () {
         fi
 
         echo "In AP mode but not configured as such. Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
-        sudo systemctl stop wpa_supplicant
         sudo systemctl restart systemd-networkd
 
     else
@@ -132,8 +130,7 @@ configure_client () {
             sudo mv $client_conf~ $client_conf
         fi
 
-        echo "Stopping wpa_supplicant and restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
-        sudo systemctl stop wpa_supplicant
+        echo "Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
         sudo systemctl restart systemd-networkd
 
     elif is_wpa_client; then
@@ -151,7 +148,6 @@ configure_client () {
         fi
 
         echo "In client mode but not configured as such. Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
-        sudo systemctl stop wpa_supplicant
         sudo systemctl restart systemd-networkd
 
     else
@@ -181,22 +177,23 @@ update_bssid() {
         # Find the BSSID with the strongest signal
         best_bssid=$(wpa_cli -i wlan0 scan_results | awk "/$entnetworkssid/ {print \$1; exit}")
         # Find the line number of the first occurrence of the $entnetworkssid network block
-        start_line=$(grep -n "ssid=\"$entnetworkssid\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F ":" 'NR==1{print $1}')
+        start_line=$(grep -n "ssid=\"$entnetworkssid\"" $client_wifi_conf | awk -F ":" 'NR==1{print $1}')
 
         # Find the line number of the end of the $entnetworkssid network block
-        end_line=$(awk "/ssid=\"$entnetworkssid\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -n "}" | awk -F ":" 'NR==1{print $1}')
+        end_line=$(awk "/ssid=\"$entnetworkssid\"/,/}/" $client_wifi_conf | grep -n "}" | awk -F ":" 'NR==1{print $1}')
 
         # Check if the BSSID tag already exists in the configuration file
-        if awk "/ssid=\"$entnetworkssid\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -q "bssid="; then
+        if awk "/ssid=\"$entnetworkssid\"/,/}/" $client_wifi_conf | grep -q "bssid="; then
             # Extract the first BSSID line from the $entnetworkssid network block
-            bssid_line=$(awk "/ssid=\"$entnetworkssid\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -m1 "bssid=")
+            bssid_line=$(awk "/ssid=\"$entnetworkssid\"/,/}/" $client_wifi_conf | grep -m1 "bssid=")
             # Split the line on the equal sign and print the second field to get the BSSID value
             original_bssid=$(echo $bssid_line | awk -F "=" '{print $2}' | tr -d ' ')
 
             # Checking if a network restart is required because we want the best bssid network block to be active
             if [ "$original_bssid" != "$best_bssid" ]; then
                 # Replace the existing BSSID tag with the new one
-                sed -i "/ssid=\"$entnetworkssid\"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1$best_bssid/}" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+                sed -i "/ssid=\"$entnetworkssid\"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1$best_bssid/}" $client_wifi_conf
+                # sudo cp $client_wifi_conf $wifi_conf
                 echo "Updated BSSID differs from the original. Network restart required." | tee -a /etc/neurobionicspi-cli.log
                 reconfigure_wpa_supplicant 1
                 exit 0
@@ -206,7 +203,8 @@ update_bssid() {
 
         else
             # Add the BSSID tag to the configuration file
-            sed -i "${start_line}s/$/\n	bssid=$best_bssid/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+            sed -i "${start_line}s/$/\n	bssid=$best_bssid/" $client_wifi_conf
+            # sudo cp $client_wifi_conf $wifi_conf
             echo "Added BSSID tag to the configuration file." | tee -a /etc/neurobionicspi-cli.log
 
             echo "Restarting the networking now!" | tee -a /etc/neurobionicspi-cli.log
@@ -243,6 +241,7 @@ case "$1" in
 
     --start-ap)
         configure_ap
+        reconfigure_wpa_supplicant 1
         exit 0
         ;;
 
@@ -265,13 +264,13 @@ case "$1" in
         ssid=$2
         psk=$3
         priority=$4
-        echo -e "\nnetwork={\n\tpriority=${priority}\n\tscan_ssid=1\n\tssid=\"${ssid}\"\n\tpsk=\"${psk}\"\n}" >> /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+        echo -e "\nnetwork={\n\tpriority=${priority}\n\tscan_ssid=1\n\tssid=\"${ssid}\"\n\tpsk=\"${psk}\"\n}" >> $client_wifi_conf
         echo "Network added successfully."
         exit 0
         ;;
     
     --show-networks)
-        awk -F= '/^[ \t]*ssid=/ {if (!seen[$2]++) print count++ " " $2}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+        awk -F= '/^[ \t]*ssid=/ {if (!seen[$2]++) print count++ " " $2}' $client_wifi_conf
         exit 0
         ;;
 
