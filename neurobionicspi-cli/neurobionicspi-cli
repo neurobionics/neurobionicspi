@@ -89,7 +89,7 @@ configure_ap () {
         fi
 
         echo "Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
-        wpa_cli -i $wifi reconfigure
+        sudo systemctl restart systemd-networkd
 
     elif is_wpa_ap; then
 
@@ -106,7 +106,7 @@ configure_ap () {
         fi
 
         echo "In AP mode but not configured as such. Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
-        wpa_cli -i $wifi reconfigure
+        sudo systemctl restart systemd-networkd
 
     else
         echo "Something went wrong. Neither AP nor client mode is active." | sudo tee -a /etc/neurobionicspi-cli.log
@@ -131,7 +131,7 @@ configure_client () {
         fi
 
         echo "Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
-        wpa_cli -i $wifi reconfigure
+        sudo systemctl restart systemd-networkd
 
     elif is_wpa_client; then
 
@@ -148,7 +148,7 @@ configure_client () {
         fi
 
         echo "In client mode but not configured as such. Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
-        wpa_cli -i $wifi reconfigure
+        sudo systemctl restart systemd-networkd
 
     else
         echo "Something went wrong. Neither AP nor client mode is active." | sudo tee -a /etc/neurobionicspi-cli.log
@@ -371,6 +371,7 @@ case "$2" in
     DISCONNECTED)
         echo "Disconnected: Configure client mode." | tee -a /etc/neurobionicspi-cli.log
         configure_client
+        reconfigure_wpa_supplicant 1
         ;;
 
 esac
