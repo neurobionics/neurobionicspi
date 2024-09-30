@@ -2,7 +2,7 @@ source .env
 
 source ./Raspberry-Pi-5/${ARCHITECTURE}.Pifile
 
-PUMP 600M
+PUMP 800M
 
 RUN bash -c "systemctl enable ssh"
 

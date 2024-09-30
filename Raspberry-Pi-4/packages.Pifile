@@ -1,5 +1,6 @@
 # Add bash commands to install required packages
 RUN apt-get install -y python3-pip --upgrade
+RUN apt-get install -y python3-virtualenv
 RUN apt-get install -y git
 RUN apt install -y libnss-resolve
 
