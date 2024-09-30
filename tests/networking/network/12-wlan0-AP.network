@@ -1,0 +1,10 @@
+[Match]
+Name=wlan0
+[Network]
+Address=10.0.0.200/24
+IPForward=yes
+IPMasquerade=yes
+DHCPServer=yes
+MulticastDNS=yes
+[DHCPServer]
+DNS=1.1.1.1

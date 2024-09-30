@@ -1,0 +1,152 @@
+#!/bin/bash
+
+if [ "$(id -u)" != "0" ]; then
+   echo "This tool must be run as root. Please use sudo." >&2
+   exit 1
+fi
+
+# Variables for connectivity routine
+wifi="wlan0"
+entnetworkssid="MWireless"
+networkconf="./network/08-wlan0-CLI.network"
+conf_file="./wpa_supplicant-wlan0.conf"
+emailer_script="./startup_mailer.py"
+log_file="./neurobionicspi-cli.log"
+count_file="./neurobionicspi-cli.count"
+
+# Initialize log
+log_message() {
+    echo "$1" | tee -a "$log_file"
+}
+
+log_message "================================================="
+log_message "neurobionicspi-cli: $(date)"
+
+# Read email success count or initialize
+if [ -f "$count_file" ]; then
+    SUCCESS_COUNT=$(cat "$count_file")
+else
+    SUCCESS_COUNT=0
+fi
+
+# Determine if system is in AP or Client mode using wpa_cli and network files
+is_mode() {
+    local mode="$1"
+    local file="$2"
+    if [ -e "$file" ]; then
+        log_message "is_$mode: True"
+        return 0
+    else
+        log_message "is_$mode: False"
+        return 1
+    fi
+}
+
+# AP/Client mode check wrappers
+is_ap() { is_mode "ap" "${networkconf}~"; }
+is_client() { is_mode "client" "$networkconf"; }
+is_wpa_ap() { wpa_cli -i "$wifi" status | grep -q "mode=AP"; }
+is_wpa_client() { wpa_cli -i "$wifi" status | grep -q "mode=station"; }
+
+# Configure modes
+configure_mode() {
+    local mode="$1"
+    local mode_func="$2"
+    local opposite_mode_func="$3"
+    if "$opposite_mode_func"; then
+        log_message "$mode: Switching from opposite mode."
+        mv "$networkconf" "$networkconf~"
+ 		echo "systemctl restart systemd-networkd" >> ./neurobionicspi-cli.log
+    elif "$mode_func"; then
+        log_message "$mode: Already active. Skipping configuration."
+    else
+        log_message "$mode: Restarting network."
+ 		echo "systemctl restart systemd-networkd" >> ./neurobionicspi-cli.log
+    fi
+}
+
+# Configure AP/Client mode functions
+configure_ap() { configure_mode "AP" is_ap is_client; }
+configure_client() { configure_mode "Client" is_client is_ap; }
+
+# Reconfigure wpa_supplicant with sleep interval
+reconfigure_wpa_supplicant() {
+    sleep "$1"
+    wpa_cli -i "$wifi" reconfigure
+}
+
+# Email IP address
+send_ip() {
+    max_attempts=10
+    attempt=1
+    while [ $attempt -le $max_attempts ]; do
+        python "$emailer_script"
+        if [ $? -eq 0 ]; then
+            log_message "Email sent successfully after $attempt attempt(s)."
+            echo $((SUCCESS_COUNT+1)) > "$count_file"
+            break
+        fi
+        log_message "Email failed. Retrying..."
+        sleep 1
+        ((attempt++))
+    done
+
+    # Switch to AP if email fails
+    if [ $attempt -gt $max_attempts ]; then
+        log_message "Email attempts failed. Switching to AP mode."
+        configure_ap
+    fi
+}
+
+# Command-line interface
+case "$1" in
+    --help)
+    cat <<EOF
+Usage: neurobionicspi-cli [OPTION]
+
+Options:
+  --start-ap          Enable AP mode
+  --stop-ap           Disable AP mode
+  --show-networks     Show defined networks
+  --add-network       Add a network (SSID, PSK, priority)
+  --select-network    Select a network by index
+  --send-ip           Send the IP address via email
+  --add-email         Add an email to notification list
+EOF
+        exit 0
+        ;;
+    --start-ap) configure_ap ;;
+    --stop-ap) configure_client; reconfigure_wpa_supplicant 1 ;;
+    --add-network)
+        [[ -z "$2" || -z "$3" || -z "$4" ]] && { echo "Usage: --add-network <SSID> <PSK> <Priority>"; exit 1; }
+        echo -e "\nnetwork={\n\tpriority=$4\n\tscan_ssid=1\n\tssid=\"$2\"\n\tpsk=\"$3\"\n}" >> "$conf_file"
+        echo "Network added successfully."
+        ;;
+    --select-network) configure_client; wpa_cli -i "$wifi" select_network "$2" ;;
+    --show-networks) awk -F= '/^[ \t]*ssid=/ {print NR-1, $2}' "$conf_file" ;;
+    --send-ip) send_ip ;;
+    --add-email)
+        [[ -z "$2" ]] && { echo "Please provide an email address."; exit 1; }
+        sed -i "s/\(recipient_str = \"\)\([^\"]*\)\"/\1\2, $2\"/" "$emailer_script"
+        echo "Email added successfully."
+        ;;
+esac
+
+# Automated execution based on wpa_supplicant activity
+case "$2" in
+    AP-ENABLED)
+        configure_ap
+        ;;
+    CONNECTED)
+        configure_client
+
+        if is_wpa_client; then
+            send_ip
+        else
+            log_message "Client mode is not active; skipping emailing routine."
+        fi
+        ;;
+    AP-STA-DISCONNECTED)
+        reconfigure_wpa_supplicant 0
+        ;;
+esac
