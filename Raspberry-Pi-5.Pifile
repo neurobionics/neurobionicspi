@@ -2,7 +2,7 @@ source .env
 
 source ./Raspberry-Pi-5/${ARCHITECTURE}.Pifile
 
-PUMP 600M
+PUMP 800M
 
 RUN bash -c "systemctl enable ssh"
 
@@ -26,7 +26,9 @@ email="${EMAIL}"
 
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
-RUN sh -c "echo ${user}:${password} | chpasswd"
+
+RUN bash -c "id -u ${user} &>/dev/null || useradd -m ${user}"
+RUN bash -c "echo ${user}:${password} | chpasswd"
 
 source ./Raspberry-Pi-5/locale.Pifile
 
