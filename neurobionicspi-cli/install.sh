@@ -119,5 +119,5 @@ fi
 
 systemctl daemon-reload
 systemctl enable wpa_cli@${wifi}.service
-echo "Reboot now!"
+echo "Please reboot your device now by running this command: sudo reboot"
 exit 0
