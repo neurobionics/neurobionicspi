@@ -23,4 +23,4 @@ sed -i "/systemctl restart systemd-networkd/c\ \t\techo \"systemctl restart syst
 sed -i '/reconfigure_wpa_supplicant () {/,/}/c\reconfigure_wpa_supplicant () {\n    echo "reconfigure_wpa_supplicant function called" >> $log_file\n}' ./neurobionicspi-cli
 
 
-bash ./neurobionicspi-cli  --help
+bash ./neurobionicspi-cli  --test

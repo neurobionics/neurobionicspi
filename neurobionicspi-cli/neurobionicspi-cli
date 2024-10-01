@@ -34,6 +34,46 @@ log_message() {
 log_message "================================================="
 log_message "neurobionicspi-cli: $(date)"
 
+move_to_temp() {
+    if [ -f "$1" ]; then
+        mv "$1" "$1.temp"
+        if [ $? -eq 0 ]; then
+            echo "Successfully moved $1 to $1.temp"
+        else
+            echo "Error: Failed to move $1 to $1.temp"
+            return 1
+        fi
+    else
+        echo "Error: File $1 does not exist"
+        return 1
+    fi
+}
+
+move_from_temp() {
+    if [ -f "$1.temp" ]; then
+        mv "$1.temp" "$1"
+        if [ $? -eq 0 ]; then
+            echo "Successfully moved $1.temp to $1"
+        else
+            echo "Error: Failed to move $1.temp to $1"
+            return 1
+        fi
+    else
+        echo "Error: File $1.temp does not exist"
+        return 1
+    fi
+}
+
+restart_networkd() {
+    sleep "$1"
+    systemctl restart systemd-networkd
+}
+
+reconfigure_wpa_supplicant () {
+    sleep "$1"
+    wpa_cli -i $wifi reconfigure
+}
+
 is_ap () {
     # use wpa_cli to find if the current mode is AP
     if [ -e $networkconf~ ]; then
@@ -83,11 +123,13 @@ configure_ap () {
     # only configure AP if not already in AP mode
     if is_client; then
         log_message "Client network configuration exists but wpa_cli is not in client mode. Removing client network configuration and restarting networkd."
-        mv $networkconf $networkconf~
-        systemctl restart systemd-networkd
+        move_to_temp $networkconf
+        
+        restart_networkd 1
+
     elif is_wpa_client; then
         log_message "Client network configuration is missing but wpa_cli is in client mode. Restarting network."
-        systemctl restart systemd-networkd
+        restart_networkd 1
     else
         log_message "AP mode is already active. Skipping configuration."
     fi
@@ -99,26 +141,24 @@ configure_client () {
     # only configure client if not already in client mode
     if is_ap; then
         log_message "Removing AP network configuration and restarting networkd"
-        mv $networkconf~ $networkconf
-        systemctl restart systemd-networkd
+        move_from_temp $networkconf
+        restart_networkd 1
     elif is_wpa_ap; then
         log_message "AP network configuration is missing but wpa_cli is in AP mode. Restarting wpa_supplicant."
-        systemctl restart systemd-networkd
+        restart_networkd 1
     else
         log_message "Client mode is already active. Skipping configuration."
     fi
 }
 
-# Searching for networks after a timeout
-
-reconfigure_wpa_supplicant () {
-    sleep "$1"
-    wpa_cli -i $wifi reconfigure
-}
-
 # Manual execution via command line arguments
 
 case "$1" in
+
+    --test)
+        move_from_temp $networkconf
+        exit 0
+        ;;
 
     --help)
         echo -e ""

@@ -4,7 +4,6 @@
 # Variables for systemd-networkd setup
 
 wifi=wlan0
-ethernet=eth0
 
 ############################################
 
@@ -18,7 +17,6 @@ apt install -y ifupdown dhcpcd5 isc-dhcp-client isc-dhcp-common rsyslog
 
 # Removing systemd-networkd configuration files
 
-rm -f /etc/systemd/network/04-${ethernet}.network
 rm -f /etc/systemd/network/08-${wifi}-CLI.network
 rm -f /etc/systemd/network/12-${wifi}-AP.network
 

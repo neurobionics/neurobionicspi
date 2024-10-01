@@ -4,7 +4,6 @@
 # Variables for systemd-networkd setup
 
 wifi=wlan0
-ethernet=eth0
 ipaddress=10.0.0.200/24
 
 entnetworkssid=""
@@ -31,20 +30,12 @@ systemctl enable systemd-networkd.service systemd-resolved.service
 
 # Writing configuration files for systemd-networkd
 
-cat > /etc/systemd/network/04-${ethernet}.network <<-EOF
-	[Match]
-	Name=$ethernet
-	[Network]
-	DHCP=yes
-	MulticastDNS=yes
-EOF
-
 cat > /etc/systemd/network/08-${wifi}-CLI.network <<-EOF
 	[Match]
 	Name=$wifi
 	[Network]
 	DHCP=yes
-	MulticastDNS=yes
+	MulticastDNS=no
 EOF
 		
 cat > /etc/systemd/network/12-${wifi}-AP.network <<-EOF
@@ -52,10 +43,8 @@ cat > /etc/systemd/network/12-${wifi}-AP.network <<-EOF
 	Name=$wifi
 	[Network]
 	Address=$ipaddress
-	IPForward=yes
-	IPMasquerade=yes
 	DHCPServer=yes
-	MulticastDNS=yes
+	MulticastDNS=no
 	[DHCPServer]
 	DNS=1.1.1.1
 EOF
