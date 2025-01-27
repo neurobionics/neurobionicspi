@@ -97,5 +97,3 @@ source ./Raspberry-Pi-4/startup_mailer.Pifile
 source ./Raspberry-Pi-4/rc_local.Pifile
 
 ##################################
-
-echo "DONE!"
