@@ -26,6 +26,8 @@ email="${EMAIL}"
 
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
 RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
+
+RUN bash -c "id -u ${user} &>/dev/null || useradd -m ${user}"
 RUN bash -c "echo ${user}:${password} | chpasswd"
 
 ##################################

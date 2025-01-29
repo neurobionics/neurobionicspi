@@ -4,7 +4,7 @@
   <a href="https://umich.edu/"><img src="https://img.shields.io/badge/-University%20of%20Michigan-ffcb05" alt="U-M"></a>
   <a href="https://neurobionics.robotics.umich.edu/"><img src="https://img.shields.io/badge/-Neurobionics-00274c" alt="Neurobionics"></a>
   <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/"><img src="https://img.shields.io/badge/Tested%20on-Raspberry%20Pi%204B-c51a4a" alt="RPi4"></a>
-  <img src="https://github.com/neurobionics/neurobionicspi/workflows/Build/badge.svg" alt="Build">
+  <img src="https://github.com/neurobionics/neurobionicspi/actions/workflows/build.yml/badge.svg" alt="Build">
 </p>
 
 The purpose of this tool is to build an up-to-date operating system/image for a Raspberry Pi that can be used headless/GUI-less to control autonomous / remote robotic systems. It was built by the Neurobionics Lab at the University of Michigan to solve two major challenges:
@@ -12,7 +12,7 @@ The purpose of this tool is to build an up-to-date operating system/image for a 
 -   Maintaining a stable, consistent, working image for Raspberry Pis that fosters robotics research
 -   Ease connectivity with local and enterprise networks to prevent use of internal lab networks
 
-It is meant for developers or roboticists who wish to use a Raspberry Pi to control an intelligent / robotic system, where development is done remotely on a PC, and execution is run from the Raspberry Pi. In other words, this setup uses the Raspberry Pi like a microprocessor, and makes use of its networking, communications, and GPIO abilities. To access and program on the Raspberry Pi remotely, we use [VSCode](https://code.visualstudio.com) or [WinSCP](https://winscp.net/eng); these programs also enable shared file transfer.
+It is meant for developers or roboticists who wish to use a Raspberry Pi to control an intelligent / robotic system, where development is done remotely on a PC, and execution is run from the Raspberry Pi that controls a robot. In other words, this setup uses the Raspberry Pi like a microprocessor, and makes use of its networking, communications, and GPIO abilities. When the Raspberry Pi boots, it will automatically connect to enterprise wifi and login with secure credentials, then email its IP address to a specified recipient(s). If no known wifi networks are in range, it will automatically create an access point with a static IP address that can be used for remote login. In either case, we connect to the Raspberry Pi remotely using SSH. To access / code on the Raspberry Pi remotely, we use [VSCode](https://code.visualstudio.com) or [WinSCP](https://winscp.net/eng); these programs also enable shared file transfer. Overall, this is a turnkey solution that builds an up-to-date image for a Raspberry Pi that enables automatic wireless access for remote development. To use this tool, you will need to fork the repository and follow the steps outlined below. The image is developed using the Actions tab (above); when the workflow is run, it will open a dialog box where information can be added to customize the image. The image is then built in the cloud and can be downloaded as an artifact (.zip). Forking the repository will create your own copy of the tool which can then be customized to your individual or group preferences, if desired. 
 
 <p align="center">
   <img src="/assets/neurobionicspi.PNG" width="800">

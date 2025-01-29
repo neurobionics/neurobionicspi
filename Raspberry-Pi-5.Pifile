@@ -2,7 +2,7 @@ source .env
 
 source ./Raspberry-Pi-5/${ARCHITECTURE}.Pifile
 
-PUMP 600M
+PUMP 800M
 
 hostname="${HOSTNAME}"
 user="${USER}"
@@ -27,6 +27,7 @@ if [[ "${ARCHITECTURE}" != *"ubuntu"* ]]; then
 
     RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
     RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
+    RUN bash -c "id -u ${user} &>/dev/null || useradd -m ${user}"
     RUN sh -c "echo ${user}:${password} | chpasswd"
 
     source ./Raspberry-Pi-5/locale.Pifile
@@ -37,7 +38,6 @@ else
     RUN bash -c "adduser --gecos "" --disabled-password ${user}"
     RUN sudo chpasswd <<< "${user}:${password}"
     RUN bash -c "usermod -aG sudo ${user}"
-
     RUN bash -c "echo 'PasswordAuthentication yes' | sudo tee /etc/ssh/sshd_config.d/50-cloud-init.conf"
 
 ##################################
