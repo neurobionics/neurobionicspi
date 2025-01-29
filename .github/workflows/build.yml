@@ -6,11 +6,11 @@ on:
             device:
                 description: "Device"
                 required: true
-                default: Rpi-5
+                default: Raspberry-Pi-5
                 type: choice
                 options:
-                    - Rpi-5
-                    - Rpi-4
+                    - Raspberry-Pi-5
+                    - Raspberry-Pi-4
             architecture:
                 description: "Architecture"
                 required: true
