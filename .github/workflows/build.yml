@@ -158,10 +158,27 @@ jobs:
                   echo "AP_SSID=${{ github.event.inputs.wpa_ssid }}" >> $GITHUB_ENV
                   echo "AP_PASSWORD=${{ github.event.inputs.wpa_password }}" >> $GITHUB_ENV
                   echo "EMAIL=${{ secrets.EMAIL_ADDRESS }}" >> $GITHUB_ENV
+
             - name: Build image
               uses: Nature40/pimod@master
               with:
                   pifile: main.Pifile
+              env:
+                  DEVICE: ${{ env.DEVICE }}
+                  ARCHITECTURE: ${{ env.ARCHITECTURE }}
+                  HOSTNAME: ${{ env.HOSTNAME }}
+                  USER: ${{ env.USER }}
+                  USERPASSWORD: ${{ env.USERPASSWORD }}
+                  ENTNETWORK_SSID: ${{ env.ENTNETWORK_SSID }}
+                  ENTNETWORK_PRIORITY: ${{ env.ENTNETWORK_PRIORITY }}
+                  ENTNETWORK_IDENTITY: ${{ env.ENTNETWORK_IDENTITY }}
+                  ENTNETWORK_PASSWORD: ${{ env.ENTNETWORK_PASSWORD }}
+                  WIFI_CC: ${{ env.WIFI_CC }}
+                  HOMENETWORK_SSID: ${{ env.HOMENETWORK_SSID }}
+                  HOMENETWORK_PASSWORD: ${{ env.HOMENETWORK_PASSWORD }}
+                  AP_SSID: ${{ env.AP_SSID }}
+                  AP_PASSWORD: ${{ env.AP_PASSWORD }}
+                  EMAIL: ${{ env.EMAIL }}
 
             - name: Make tarball
               run: |
