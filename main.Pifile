@@ -2,6 +2,9 @@ source .env
 
 PUMP 800M
 
+echo "----------------------------------------"
+echo "---------Environment variables----------"
+echo "----------------------------------------"
 echo "DEVICE: ${DEVICE}"
 echo "ARCHITECTURE: ${ARCHITECTURE}"
 echo "HOSTNAME: ${HOSTNAME}"
@@ -17,3 +20,18 @@ echo "HOMENETWORK_PASSWORD: ${HOMENETWORK_PASSWORD}"
 echo "AP_SSID: ${AP_SSID}"
 echo "AP_PASSWORD: ${AP_PASSWORD}"
 echo "EMAIL: ${EMAIL}"
+echo "----------------------------------------"
+
+source source.Pifile
+
+RUN bash -c "systemctl enable ssh"
+
+# Add the user and make it sudoer
+RUN bash -c "useradd -m -s /bin/bash ${USER}"
+RUN bash -c "usermod -aG sudo ${USER}"
+
+# Set the password for the user
+RUN bash -c "echo ${USER}:${USERPASSWORD} | chpasswd"
+
+# Set the hostname
+RUN bash -c "hostnamectl set-hostname ${HOSTNAME}"
