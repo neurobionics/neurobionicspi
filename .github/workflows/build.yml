@@ -1,4 +1,4 @@
-name: Build now!
+name: Build Raspberry Pi Image
 
 on:
     workflow_dispatch:
@@ -105,7 +105,7 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Check secrets
+            - name: Check secrets and inputs
               run: |
                   if [[ -z "${{ secrets.EMAIL_ADDRESS }}" ]]; then
                       echo "EMAIL_ADDRESS secret is not set, please refer to the README.md for more information. Exiting."
@@ -113,6 +113,15 @@ jobs:
                   fi
                   if [[ (-z "${{ github.event.inputs.wifi_ssid }}" || -z "${{ github.event.inputs.wifi_password }}") && ( -z "${{ secrets.ENTNETWORK_SSID }}" || -z "${{ secrets.ENTNETWORK_IDENTITY }}" || -z "${{ secrets.ENTNETWORK_PASSWORD }}" ) ]]; then
                       echo "Please ensure that all required secrets (ENTNETWORK_SSID, ENTNETWORK_IDENTITY, and ENTNETWORK_PASSWORD) are set for the enterprise network. If you do not want to connect to an enterprise network, please provide information for the home network. Exiting."
+                      exit 1
+                  fi
+                  # Validate password length and complexity
+                  if [[ ${#${{ github.event.inputs.password }}} -lt 8 ]]; then
+                      echo "Password must be at least 8 characters long. Exiting."
+                      exit 1
+                  fi
+                  if [[ ${#${{ github.event.inputs.wpa_password }}} -lt 8 ]]; then
+                      echo "Access Point password must be at least 8 characters long. Exiting."
                       exit 1
                   fi
             - uses: actions/checkout@v4
@@ -141,9 +150,14 @@ jobs:
 
             - name: Make tarball
               run: |
-                  tar -czvf ${{ github.event.inputs.device }}.tar.gz ${{ github.event.inputs.device }}.img
+                  if ! tar -czvf ${{ github.event.inputs.device }}.tar.gz ${{ github.event.inputs.device }}.img; then
+                      echo "Failed to create tarball"
+                      exit 1
+                  fi
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: ${{ github.workflow }}-${{ github.sha }}.zip
+                  name: raspberry-pi-image-${{ github.event.inputs.device }}-${{ github.event.inputs.architecture }}-${{ github.sha }}
                   path: ${{ github.event.inputs.device }}.img
+                  compression-level: 9
+                  retention-days: 5
