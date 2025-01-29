@@ -6,11 +6,11 @@ on:
             device:
                 description: "Device"
                 required: true
-                default: Raspberry-Pi-5
+                default: Rpi-5
                 type: choice
                 options:
-                    - Raspberry-Pi-5
-                    - Raspberry-Pi-4
+                    - Rpi-5
+                    - Rpi-4
             architecture:
                 description: "Architecture"
                 required: true
@@ -19,10 +19,9 @@ on:
                 options:
                     - 64-bit
                     - 32-bit
-                    - ubuntu
             host_name:
                 description: "Hostname"
-                default: neurobionicspi
+                default: raspberrypi
                 required: true
             user:
                 description: "Username"
@@ -31,7 +30,7 @@ on:
             password:
                 description: "Password"
                 required: true
-                default: neurobionics
+                default: raspberrypi
             wifi_cc:
                 description: "WiFi Country Code"
                 required: true
@@ -94,11 +93,11 @@ on:
             wpa_ssid:
                 description: "Access Point SSID"
                 required: true
-                default: NeurobionicsRPi
+                default: RPiAccessPoint
             wpa_password:
                 description: "Access Point Password"
                 required: true
-                default: neurobionics
+                default: raspberrypi
 
 jobs:
     build:
@@ -144,24 +143,25 @@ jobs:
                   submodules: recursive
             - name: Write env variables
               run: |
-                  echo ARCHITECTURE="${{ github.event.inputs.architecture }}" > $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo HOSTNAME="${{ github.event.inputs.host_name }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo USER="${{ github.event.inputs.user }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo USERPASSWORD="${{ github.event.inputs.password }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo ENTNETWORK_SSID="${{ secrets.ENTNETWORK_SSID }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo ENTNETWORK_PRIORITY="${{ secrets.ENTNETWORK_PRIORITY }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo ENTNETWORK_IDENTITY="${{ secrets.ENTNETWORK_IDENTITY }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo ENTNETWORK_PASSWORD="${{ secrets.ENTNETWORK_PASSWORD }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo WIFI_CC="${{ github.event.inputs.wifi_cc }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo HOMENETWORK_SSID="${{ github.event.inputs.wifi_ssid }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo HOMENETWORK_PASSWORD="${{ github.event.inputs.wifi_password }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo AP_PASSWORD="${{ github.event.inputs.wpa_password }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo EMAIL=\"${{ secrets.EMAIL_ADDRESS }}\" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  echo "DEVICE=${{ github.event.inputs.device }}" >> $GITHUB_ENV
+                  echo "ARCHITECTURE=${{ github.event.inputs.architecture }}" >> $GITHUB_ENV
+                  echo "HOSTNAME=${{ github.event.inputs.host_name }}" >> $GITHUB_ENV
+                  echo "USER=${{ github.event.inputs.user }}" >> $GITHUB_ENV
+                  echo "USERPASSWORD=${{ github.event.inputs.password }}" >> $GITHUB_ENV
+                  echo "ENTNETWORK_SSID=${{ secrets.ENTNETWORK_SSID }}" >> $GITHUB_ENV
+                  echo "ENTNETWORK_PRIORITY=${{ secrets.ENTNETWORK_PRIORITY }}" >> $GITHUB_ENV
+                  echo "ENTNETWORK_IDENTITY=${{ secrets.ENTNETWORK_IDENTITY }}" >> $GITHUB_ENV
+                  echo "ENTNETWORK_PASSWORD=${{ secrets.ENTNETWORK_PASSWORD }}" >> $GITHUB_ENV
+                  echo "WIFI_CC=${{ github.event.inputs.wifi_cc }}" >> $GITHUB_ENV
+                  echo "HOMENETWORK_SSID=${{ github.event.inputs.wifi_ssid }}" >> $GITHUB_ENV
+                  echo "HOMENETWORK_PASSWORD=${{ github.event.inputs.wifi_password }}" >> $GITHUB_ENV
+                  echo "AP_SSID=${{ github.event.inputs.wpa_ssid }}" >> $GITHUB_ENV
+                  echo "AP_PASSWORD=${{ github.event.inputs.wpa_password }}" >> $GITHUB_ENV
+                  echo "EMAIL=${{ secrets.EMAIL_ADDRESS }}" >> $GITHUB_ENV
             - name: Build image
               uses: Nature40/pimod@master
               with:
-                  pifile: ${{ github.event.inputs.device }}.Pifile
+                  pifile: main.Pifile
 
             - name: Make tarball
               run: |
@@ -176,3 +176,4 @@ jobs:
                   path: ${{ github.event.inputs.device }}.img
                   compression-level: 9
                   retention-days: 5
+

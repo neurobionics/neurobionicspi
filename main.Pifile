@@ -1,22 +1,22 @@
-source .env
-
-source ./Raspberry-Pi-5/${ARCHITECTURE}.Pifile
+source $GITHUB_ENV
 
 PUMP 800M
 
-hostname="${HOSTNAME}"
-user="${USER}"
-password="${USERPASSWORD}"
-entssid="${ENTNETWORK_SSID}"
-entpriority="${ENTNETWORK_PRIORITY:-10}"
-entidentity="${ENTNETWORK_IDENTITY}"
-entpassword=$(echo -n "${ENTNETWORK_PASSWORD}" | iconv -t utf16le | openssl dgst -md4 -provider legacy | awk '{print $2}')
-countrycode="${WIFI_CC}"
-wifissid="${HOMENETWORK_SSID}"
-wifipsk="${HOMENETWORK_PASSWORD}"
-apssid="${AP_SSID}"
-appsk="${AP_PASSWORD}"
-email="${EMAIL}"
+echo "DEVICE: ${DEVICE}"
+echo "ARCHITECTURE: ${ARCHITECTURE}"
+echo "HOSTNAME: ${HOSTNAME}"
+echo "USER: ${USER}"
+echo "USERPASSWORD: ${USERPASSWORD}"
+echo "ENTNETWORK_SSID: ${ENTNETWORK_SSID}"
+echo "ENTNETWORK_PRIORITY: ${ENTNETWORK_PRIORITY}"
+echo "ENTNETWORK_IDENTITY: ${ENTNETWORK_IDENTITY}"
+echo "ENTNETWORK_PASSWORD: ${ENTNETWORK_PASSWORD}"
+echo "WIFI_CC: ${WIFI_CC}"
+echo "HOMENETWORK_SSID: ${HOMENETWORK_SSID}"
+echo "HOMENETWORK_PASSWORD: ${HOMENETWORK_PASSWORD}"
+echo "AP_SSID: ${AP_SSID}"
+echo "AP_PASSWORD: ${AP_PASSWORD}"
+echo "EMAIL: ${EMAIL}"
 
 ##################################
 
