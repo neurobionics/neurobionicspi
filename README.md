@@ -156,14 +156,15 @@ We evaluated the networking capabilities of our Raspberry Pi image by conducting
 
 <div align="center">
 
-| File Path                                       | Description                                |
-| ----------------------------------------------- | ------------------------------------------ |
-| `/etc/wpa_supplicant/wpa_supplicant-wlan0.conf` | WiFi network configuration file            |
-| `/etc/startup_mailer.py`                        | IP address emailer script                  |
-| `/home/pi/.bash_profile`                        | Welcome screen/ASCII banner                |
-| `/etc/neurobionicspi-cli.log`                   | Networking log file                        |
-| `/etc/neurobionicspi-cli.count`                 | Total number of emails sent                |
-| `/etc/neurobionicspi-cli`                       | Setup files for neurobionicspi-cli service |
+| File Path                                                     | Description                                |
+| ------------------------------------------------------------- | ------------------------------------------ |
+| `/etc/wpa_supplicant/config/wpa_supplicant-wlan0-client.conf` | WiFi client networks configuration file    |
+| `/etc/wpa_supplicant/config/wpa_supplicant-wlan0-ap.conf`     | WiFi access point configuration file       |
+| `/etc/startup_mailer.py`                                      | IP address emailer script                  |
+| `/home/pi/.bash_profile`                                      | Welcome screen/ASCII banner                |
+| `/etc/neurobionicspi-cli.log`                                 | Networking log file                        |
+| `/etc/neurobionicspi-cli.count`                               | Total number of emails sent                |
+| `/etc/neurobionicspi-cli`                                     | Setup files for neurobionicspi-cli service |
 
 </div>
 

@@ -13,9 +13,13 @@ echo "neurobionicspi-cli: $(date)" | tee -a /etc/neurobionicspi-cli.log
 wifi=wlan0
 entnetworkssid=""
 
-networkconf="/etc/systemd/network/08-${wifi}-CLI.network"
-conf_file="/etc/wpa_supplicant/wpa_supplicant-wlan0.conf"
-temp_file="${conf_file}.tmp"
+client_conf="/etc/systemd/network/08-${wifi}-CLI.network"
+ap_conf="/etc/systemd/network/12-${wifi}-AP.network"
+client_wifi_conf="/etc/wpa_supplicant/config/wpa_supplicant-wlan0-client.conf"
+ap_wifi_conf="/etc/wpa_supplicant/config/wpa_supplicant-wlan0-ap.conf"
+wifi_conf="/etc/wpa_supplicant/wpa_supplicant-wlan0.conf"
+
+temp_file="${client_wifi_conf}.tmp"
 
 # Email count file
 COUNT_FILE="/etc/neurobionicspi-cli.count"
@@ -27,13 +31,12 @@ else
     SUCCESS_COUNT=0
 fi
 
-is_ap () {
-    # use wpa_cli to find if the current mode is AP
-    if [ -e $networkconf~ ]; then
-        echo "is_ap: True" | tee -a /etc/neurobionicspi-cli.log
+is_ap_conf () {
+    if [ -e $ap_conf ]; then
+        echo "is_ap_conf: True" | tee -a /etc/neurobionicspi-cli.log
         return 0
     else
-        echo "is_ap: False" | tee -a /etc/neurobionicspi-cli.log
+        echo "is_ap_conf: False" | tee -a /etc/neurobionicspi-cli.log
         return 1
     fi
 }
@@ -48,13 +51,12 @@ is_wpa_ap() {
     fi
 }
 
-is_client () {
-    # use wpa_cli to find if the current mode is client
-    if [ -e $networkconf ]; then
-        echo "is_client: True" | tee -a /etc/neurobionicspi-cli.log
+is_client_conf () {
+    if [ -e $client_conf ]; then
+        echo "is_client_conf: True" | tee -a /etc/neurobionicspi-cli.log
         return 0
     else
-        echo "is_client: False" | tee -a /etc/neurobionicspi-cli.log
+        echo "is_client_conf: False" | tee -a /etc/neurobionicspi-cli.log
         return 1
     fi
 }
@@ -71,34 +73,85 @@ is_wpa_client() {
 
 # Functions for connectivity routine, read more at https://raspberrypi.stackexchange.com/questions/100195
 # Configuring Access Point (AP) mode
-
 configure_ap () {
-    # only configure AP if not already in AP mode
-    if is_client; then
-        echo "Client network configuration exists but wpa_cli is not in client mode. Removing client network configuration and restarting networkd." | tee -a /etc/neurobionicspi-cli.log
-        mv $networkconf $networkconf~
-        systemctl restart systemd-networkd
-    elif is_wpa_client; then
-        echo "Client network configuration is missing but wpa_cli is in client mode. Restarting network." | tee -a /etc/neurobionicspi-cli.log
-        systemctl restart systemd-networkd
+    if is_wpa_client; then
+
+        sudo cp $ap_wifi_conf $wifi_conf
+
+        if is_client_conf; then
+            echo "Client network configurations exists. Removing client configuration." | sudo tee -a /etc/neurobionicspi-cli.log
+            sudo mv $client_conf $client_conf~
+        fi
+
+        if ! is_ap_conf; then
+            echo "AP network configuration is missing. Creating AP network configuration." | sudo tee -a /etc/neurobionicspi-cli.log
+            sudo mv $ap_conf~ $ap_conf
+        fi
+
+        echo "Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
+        sudo systemctl restart systemd-networkd
+
+    elif is_wpa_ap; then
+
+        sudo cp $ap_wifi_conf $wifi_conf
+
+        if ! is_ap_conf; then
+            echo "AP network configuration is missing. Creating AP network configuration." | sudo tee -a /etc/neurobionicspi-cli.log
+            sudo mv $ap_conf~ $ap_conf
+        fi
+
+        if is_client_conf; then
+            echo "Both AP and client network configurations exist. Removing client configuration and restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
+            sudo mv $client_conf $client_conf~
+        fi
+
+        echo "In AP mode but not configured as such. Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
+        sudo systemctl restart systemd-networkd
+
     else
-        echo "AP mode is already active. Skipping configuration." | tee -a /etc/neurobionicspi-cli.log
+        echo "Something went wrong. Neither AP nor client mode is active." | sudo tee -a /etc/neurobionicspi-cli.log
     fi
 }
 
 # Configuring Client (CLI) mode
 
 configure_client () {
-    # only configure client if not already in client mode
-    if is_ap; then
-        echo "Removing AP network configuration and restarting networkd" | tee -a /etc/neurobionicspi-cli.log
-        mv $networkconf~ $networkconf
-        systemctl restart systemd-networkd
-    elif is_wpa_ap; then
-        echo "AP network configuration is missing but wpa_cli is in AP mode. Restarting wpa_supplicant." | tee -a /etc/neurobionicspi-cli.log
-        systemctl restart systemd-networkd
+    if is_wpa_ap; then
+
+        sudo cp $client_wifi_conf $wifi_conf
+
+        if is_ap_conf; then
+            echo "AP network configurations exists. Removing AP configuration." | sudo tee -a /etc/neurobionicspi-cli.log
+            sudo mv $ap_conf $ap_conf~
+        fi
+
+        if ! is_client_conf; then
+            echo "Client network configuration is missing. Creating client network configuration." | sudo tee -a /etc/neurobionicspi-cli.log
+            sudo mv $client_conf~ $client_conf
+        fi
+
+        echo "Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
+        sudo systemctl restart systemd-networkd
+
+    elif is_wpa_client; then
+
+        sudo cp $client_wifi_conf $wifi_conf
+
+        if ! is_client_conf; then
+            echo "Client network configuration is missing. Creating client network configuration." | sudo tee -a /etc/neurobionicspi-cli.log
+            sudo mv $client_conf~ $client_conf
+        fi
+
+        if is_ap_conf; then
+            echo "Both AP and client network configurations exist. Removing AP configuration and restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
+            sudo mv $ap_conf $ap_conf~
+        fi
+
+        echo "In client mode but not configured as such. Restarting networkd." | sudo tee -a /etc/neurobionicspi-cli.log
+        sudo systemctl restart systemd-networkd
+
     else
-        echo "Client mode is already active. Skipping configuration." | tee -a /etc/neurobionicspi-cli.log
+        echo "Something went wrong. Neither AP nor client mode is active." | sudo tee -a /etc/neurobionicspi-cli.log
     fi
 }
 
@@ -113,7 +166,7 @@ reconfigure_wpa_supplicant () {
 
 update_bssid() {
     # Check if the SSID exists in the configuration
-    if grep -q "ssid=\"$entnetworkssid\"" "$conf_file"; then
+    if grep -q "ssid=\"$entnetworkssid\"" "$client_wifi_conf"; then
         echo "$entnetworkssid network block found in the configuration file." | tee -a /etc/neurobionicspi-cli.log
 
         # Perform a fresh scan to get all available BSSIDs
@@ -124,22 +177,23 @@ update_bssid() {
         # Find the BSSID with the strongest signal
         best_bssid=$(wpa_cli -i wlan0 scan_results | awk "/$entnetworkssid/ {print \$1; exit}")
         # Find the line number of the first occurrence of the $entnetworkssid network block
-        start_line=$(grep -n "ssid=\"$entnetworkssid\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F ":" 'NR==1{print $1}')
+        start_line=$(grep -n "ssid=\"$entnetworkssid\"" $client_wifi_conf | awk -F ":" 'NR==1{print $1}')
 
         # Find the line number of the end of the $entnetworkssid network block
-        end_line=$(awk "/ssid=\"$entnetworkssid\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -n "}" | awk -F ":" 'NR==1{print $1}')
+        end_line=$(awk "/ssid=\"$entnetworkssid\"/,/}/" $client_wifi_conf | grep -n "}" | awk -F ":" 'NR==1{print $1}')
 
         # Check if the BSSID tag already exists in the configuration file
-        if awk "/ssid=\"$entnetworkssid\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -q "bssid="; then
+        if awk "/ssid=\"$entnetworkssid\"/,/}/" $client_wifi_conf | grep -q "bssid="; then
             # Extract the first BSSID line from the $entnetworkssid network block
-            bssid_line=$(awk "/ssid=\"$entnetworkssid\"/,/}/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | grep -m1 "bssid=")
+            bssid_line=$(awk "/ssid=\"$entnetworkssid\"/,/}/" $client_wifi_conf | grep -m1 "bssid=")
             # Split the line on the equal sign and print the second field to get the BSSID value
             original_bssid=$(echo $bssid_line | awk -F "=" '{print $2}' | tr -d ' ')
 
             # Checking if a network restart is required because we want the best bssid network block to be active
             if [ "$original_bssid" != "$best_bssid" ]; then
                 # Replace the existing BSSID tag with the new one
-                sed -i "/ssid=\"$entnetworkssid\"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1$best_bssid/}" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+                sed -i "/ssid=\"$entnetworkssid\"/{n;s/^\(\s*bssid\s*=\s*\).*$/\1$best_bssid/}" $client_wifi_conf
+                # sudo cp $client_wifi_conf $wifi_conf
                 echo "Updated BSSID differs from the original. Network restart required." | tee -a /etc/neurobionicspi-cli.log
                 reconfigure_wpa_supplicant 1
                 exit 0
@@ -149,7 +203,8 @@ update_bssid() {
 
         else
             # Add the BSSID tag to the configuration file
-            sed -i "${start_line}s/$/\n	bssid=$best_bssid/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+            sed -i "${start_line}s/$/\n	bssid=$best_bssid/" $client_wifi_conf
+            # sudo cp $client_wifi_conf $wifi_conf
             echo "Added BSSID tag to the configuration file." | tee -a /etc/neurobionicspi-cli.log
 
             echo "Restarting the networking now!" | tee -a /etc/neurobionicspi-cli.log
@@ -186,6 +241,7 @@ case "$1" in
 
     --start-ap)
         configure_ap
+        reconfigure_wpa_supplicant 1
         exit 0
         ;;
 
@@ -208,13 +264,13 @@ case "$1" in
         ssid=$2
         psk=$3
         priority=$4
-        echo -e "\nnetwork={\n\tpriority=${priority}\n\tscan_ssid=1\n\tssid=\"${ssid}\"\n\tpsk=\"${psk}\"\n}" >> /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+        echo -e "\nnetwork={\n\tpriority=${priority}\n\tscan_ssid=1\n\tssid=\"${ssid}\"\n\tpsk=\"${psk}\"\n}" >> $client_wifi_conf
         echo "Network added successfully."
         exit 0
         ;;
     
     --show-networks)
-        awk -F= '/^[ \t]*ssid=/ {if (!seen[$2]++) print count++ " " $2}' /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+        awk -F= '/^[ \t]*ssid=/ {if (!seen[$2]++) print count++ " " $2}' $client_wifi_conf
         exit 0
         ;;
 
@@ -223,17 +279,17 @@ case "$1" in
         ;;
 
     --is-ap)
-        is_ap
+        is_ap_conf
         exit 0
         ;;
 
     --is-client)
-        is_client
+        is_client_conf
         exit 0
         ;;
 
     --send-ip)
-        python /etc/startup_mailer.py
+        python3 /etc/startup_mailer.py
         exit 0
         ;;
 
@@ -261,6 +317,7 @@ case "$1" in
             exit 1
         fi
         email=$2
+        
         if grep -q "${email}" /etc/startup_mailer.py; then
             echo "Email address is present, proceeding to remove it."
             sed -i "s/\(recipient_str = \".*\)\(${email}, \|, ${email}\)\(.*\"\)/\1\3/" /etc/startup_mailer.py
@@ -278,10 +335,12 @@ esac
 case "$2" in
 
     AP-ENABLED)
+        echo "AP mode is enabled." | tee -a /etc/neurobionicspi-cli.log
         configure_ap
         ;;
 
     CONNECTED)
+        echo "Connected: Client mode is connected." | tee -a /etc/neurobionicspi-cli.log
         configure_client
         update_bssid
 
@@ -292,7 +351,7 @@ case "$2" in
             attempt=1
 
             while [ $attempt -le $max_attempts ]; do
-                python /etc/startup_mailer.py
+                python3 /etc/startup_mailer.py
                 if [ $? -eq 0 ]; then
                     echo "A login ticket was emailed successfully." | tee -a /etc/neurobionicspi-cli.log
 
@@ -316,11 +375,16 @@ case "$2" in
                 echo "Completed emailing routine in $attempt attempt(s)." | tee -a /etc/neurobionicspi-cli.log
             fi
         else
-            echo "Client mode is not active; skipping emailing routine" | tee -a /etc/neurobionicspi-cli.log         
+            echo "Client mode is not active; skipping emailing routine" | tee -a /etc/neurobionicspi-cli.log
+            echo "FAIL: AP MODE ON" | tee -a /etc/neurobionicspi-cli.log
+            configure_ap
         fi
         ;;
 
-    AP-STA-DISCONNECTED)
-        reconfigure_wpa_supplicant 0
+    DISCONNECTED)
+        echo "Disconnected: Configure client mode." | tee -a /etc/neurobionicspi-cli.log
+        configure_client
+        reconfigure_wpa_supplicant 1
         ;;
+
 esac

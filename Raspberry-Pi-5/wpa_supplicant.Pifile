@@ -1,20 +1,29 @@
 # Configures wpa_supplicant for systemd-networkd networking
-RUN touch /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+RUN touch /etc/wpa_supplicant/config/wpa_supplicant-wlan0-ap.conf
+RUN touch /etc/wpa_supplicant/config/wpa_supplicant-wlan0-client.conf
 
-RUN tee -a /etc/wpa_supplicant/wpa_supplicant-wlan0.conf <<EOF
+# AP configuration
+RUN tee -a /etc/wpa_supplicant/config/wpa_supplicant-wlan0-ap.conf <<EOF
 country=${countrycode}
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 ap_scan=1
 
-### neurobionicspi-cli ###
 network={
-	priority=0
-	ssid="${apssid}"
-	mode=2
-	key_mgmt=WPA-PSK
-	psk="${appsk}"
+    priority=0
+    ssid="${apssid}"
+    mode=2
+    key_mgmt=WPA-PSK
+    psk="${appsk}"
 }
+EOF
+
+# Client configuration
+RUN tee -a /etc/wpa_supplicant/config/wpa_supplicant-wlan0-client.conf <<EOF
+country=${countrycode}
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+ap_scan=1
 
 ### your network(s) ###
 
@@ -22,27 +31,28 @@ EOF
 
 # Add enterprise network configuration if provided
 RUN bash -c "if [[ -n \"${entssid}\" ]]; then
-tee -a /etc/wpa_supplicant/wpa_supplicant-wlan0.conf <<EOF
+tee -a /etc/wpa_supplicant/config/wpa_supplicant-wlan0-client.conf <<EOF
 network={
-	priority=${entpriority}
-	ssid=\"${entssid}\"
-	key_mgmt=WPA-EAP
-	eap=PEAP
-	identity=\"${entidentity}\"
-	password=hash:${entpassword}
+    priority=${entpriority}
+    ssid=\"${entssid}\"
+    key_mgmt=WPA-EAP
+    eap=PEAP
+    identity=\"${entidentity}\"
+    password=hash:${entpassword}
 }
-
 EOF
 fi"
 
 # Add additional networks if provided
 RUN bash -c "if [[ -n \"${wifissid}\" ]]; then
-tee -a /etc/wpa_supplicant/wpa_supplicant-wlan0.conf <<EOF
+tee -a /etc/wpa_supplicant/config/wpa_supplicant-wlan0-client.conf <<EOF
 network={
-	priority=5
-	ssid=\"${wifissid}\"
-	psk=\"${wifipsk}\"
+    priority=5
+    ssid=\"${wifissid}\"
+    psk=\"${wifipsk}\"
 }
-
 EOF
 fi"
+
+# by default use client configuration
+RUN cp /etc/wpa_supplicant/config/wpa_supplicant-wlan0-client.conf /etc/wpa_supplicant/wpa_supplicant-wlan0.conf

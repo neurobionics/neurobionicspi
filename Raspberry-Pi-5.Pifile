@@ -4,8 +4,6 @@ source ./Raspberry-Pi-5/${ARCHITECTURE}.Pifile
 
 PUMP 800M
 
-RUN bash -c "systemctl enable ssh"
-
 hostname="${HOSTNAME}"
 user="${USER}"
 password="${USERPASSWORD}"
@@ -24,17 +22,27 @@ email="${EMAIL}"
 
 # Modifying hostname and password
 
-RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
-RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
+if [[ "${ARCHITECTURE}" != *"ubuntu"* ]]; then
+    RUN bash -c "systemctl enable ssh"
 
-RUN bash -c "id -u ${user} &>/dev/null || useradd -m ${user}"
-RUN bash -c "echo ${user}:${password} | chpasswd"
+    RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hostname
+    RUN sed -i "s/raspberrypi/${hostname}/g" /etc/hosts
+    RUN bash -c "id -u ${user} &>/dev/null || useradd -m ${user}"
+    RUN sh -c "echo ${user}:${password} | chpasswd"
 
-source ./Raspberry-Pi-5/locale.Pifile
+    source ./Raspberry-Pi-5/locale.Pifile
+else
+    RUN sed -i "s/ubuntu/${hostname}/g" /etc/hostname
+    RUN sed -i "s/ubuntu/${hostname}/g" /etc/hosts
+
+    RUN bash -c "adduser --gecos "" --disabled-password ${user}"
+    RUN sudo chpasswd <<< "${user}:${password}"
+    RUN bash -c "usermod -aG sudo ${user}"
+    RUN bash -c "echo 'PasswordAuthentication yes' | sudo tee /etc/ssh/sshd_config.d/50-cloud-init.conf"
 
 ##################################
 
-RUN apt-get update
+# RUN apt-get update
 
 # Upgrade takes considerably more memory and time to build the image.
 # RUN apt-get upgrade -y
@@ -77,11 +85,11 @@ RUN sh -c "cp /etc/motd /home/${user}/.bash_profile"
 ##################################
 
 # Enable i2c and set baud rate
-RUN bash -c "touch /etc/modules"
-RUN bash -c "echo 'i2c-dev' >> /etc/modules"
-RUN bash -c "echo 'i2c-bcm2708' >> /etc/modules"
-RUN bash -c "echo 'dtparam=i2c_arm=on,i2c_arm_baudrate=400000' >> /boot/config.txt"
-RUN bash -c "echo 'dtparam=i2c1=on' >> /boot/config.txt"
+# RUN bash -c "touch /etc/modules"
+# RUN bash -c "echo 'i2c-dev' >> /etc/modules"
+# RUN bash -c "echo 'i2c-bcm2708' >> /etc/modules"
+# RUN bash -c "echo 'dtparam=i2c_arm=on,i2c_arm_baudrate=400000' >> /boot/config.txt"
+# RUN bash -c "echo 'dtparam=i2c1=on' >> /boot/config.txt"
 
 ##################################
 

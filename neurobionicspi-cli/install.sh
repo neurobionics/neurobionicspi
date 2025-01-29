@@ -8,6 +8,7 @@ ethernet=eth0
 ipaddress=10.0.0.200/24
 
 entnetworkssid=""
+client_wifi_conf="/etc/wpa_supplicant/config/wpa_supplicant-wlan0-client.conf"
 
 ############################################
 
@@ -52,8 +53,6 @@ cat > /etc/systemd/network/12-${wifi}-AP.network <<-EOF
 	Name=$wifi
 	[Network]
 	Address=$ipaddress
-	IPForward=yes
-	IPMasquerade=yes
 	DHCPServer=yes
 	MulticastDNS=yes
 	[DHCPServer]
@@ -87,27 +86,27 @@ fi
 ############################################
 
 # Check if the $entnetworkssid network block exists in the configuration file
-if grep -q "ssid=\"$entnetworkssid\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf; then
+if grep -q "ssid=\"$entnetworkssid\"" $client_wifi_conf; then
     # Check if a duplicate $entnetworkssid block already exists
-    if [ $(grep -c "ssid=\"$entnetworkssid\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf) -gt 1 ]; then
+    if [ $(grep -c "ssid=\"$entnetworkssid\"" $client_wifi_conf) -gt 1 ]; then
         echo "A duplicate $entnetworkssid network block already exists. Skipping duplication."
     else
 		# Find the line number of the $entnetworkssid network block start
-		start_line=$(grep -n "ssid=\"$entnetworkssid\"" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | cut -d ":" -f 1)
+		start_line=$(grep -n "ssid=\"$entnetworkssid\"" $client_wifi_conf | cut -d ":" -f 1)
 
 		# Find the line number of the $entnetworkssid network block end
-		end_line=$(grep -n "}" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -v start=$start_line '$1 > start {print $1; exit}' | awk -F ":" '{print $1}')
+		end_line=$(grep -n "}" $client_wifi_conf | awk -v start=$start_line '$1 > start {print $1; exit}' | awk -F ":" '{print $1}')
 		duplicate_start_line=$((start_line - 2))
 		priority_line=$((start_line - 1))
 
 		# Add a newline at the beginning and end of the duplicated network block
-		sed -n "${duplicate_start_line},${end_line}p" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | sed '1s/^/\n/;$s/$/\n/' >> /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+		sed -n "${duplicate_start_line},${end_line}p" $client_wifi_conf | sed '1s/^/\n/;$s/$/\n/' >> $client_wifi_conf
 
-		original_priority=$(sed -n "${priority_line}p" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf | awk -F "=" '{print $2}' | tr -d ' ')
+		original_priority=$(sed -n "${priority_line}p" $client_wifi_conf | awk -F "=" '{print $2}' | tr -d ' ')
 
 		new_priority=$((original_priority + 1))
 		# Update the priority in the duplicated network block
-		sed -i "${duplicate_start_line},${end_line}s/priority=$original_priority/priority=$new_priority/" /etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+		sed -i "${duplicate_start_line},${end_line}s/priority=$original_priority/priority=$new_priority/" $client_wifi_conf
 
 		echo "Duplicated $entnetworkssid network block and appended it to the end of your network configuration."
 	fi
