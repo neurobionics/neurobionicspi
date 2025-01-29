@@ -144,6 +144,7 @@ jobs:
             - name: Write env variables
               run: |
                   cat <<EOF > $(dirname main.Pifile)/.env
+                  DEVICE="${{ github.event.inputs.device }}"
                   ARCHITECTURE="${{ github.event.inputs.architecture }}"
                   HOSTNAME="${{ github.event.inputs.host_name }}"
                   USER="${{ github.event.inputs.user }}"
