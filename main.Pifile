@@ -24,13 +24,14 @@ echo "----------------------------------------"
 
 source source.Pifile
 
+# Enable SSH service
 RUN bash -c "systemctl enable ssh"
 
-# Add the user and make it sudoer
-RUN bash -c "useradd -m -s /bin/bash ${USER}"
+# Add the user and make it sudoer only if it doesn't exist
+RUN bash -c "id -u ${USER} &>/dev/null || useradd -m -s /bin/bash ${USER}"
 RUN bash -c "usermod -aG sudo ${USER}"
 
-# Set the password for the user
+# Set/Update the password for the user
 RUN bash -c "echo ${USER}:${USERPASSWORD} | chpasswd"
 
 # Set the hostname
