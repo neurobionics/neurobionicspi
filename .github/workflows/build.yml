@@ -115,8 +115,10 @@ jobs:
                       echo "Please ensure that all required secrets (ENTNETWORK_SSID, ENTNETWORK_IDENTITY, and ENTNETWORK_PASSWORD) are set for the enterprise network. If you do not want to connect to an enterprise network, please provide information for the home network. Exiting."
                       exit 1
                   fi
-                  # Validate password length and complexity
-                  if [[ ${#${{ github.event.inputs.password }}} -lt 8 ]]; then
+                  # Correctly validate password length
+                  if [[ ${#"{{
+                      github.event.inputs.password
+                  }}" } -lt 8 ]]; then
                       echo "Password must be at least 8 characters long. Exiting."
                       exit 1
                   fi
