@@ -1,4 +1,4 @@
-source $GITHUB_ENV
+source ${GITHUB_ENV}
 
 PUMP 800M
 
