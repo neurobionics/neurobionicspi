@@ -1,5 +1,3 @@
-source ${GITHUB_ENV}
-
 PUMP 800M
 
 echo "DEVICE: ${DEVICE}"
