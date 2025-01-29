@@ -1,3 +1,5 @@
+source .env
+
 PUMP 800M
 
 echo "DEVICE: ${DEVICE}"
