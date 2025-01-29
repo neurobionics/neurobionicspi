@@ -35,7 +35,7 @@ else
     RUN sed -i "s/ubuntu/${hostname}/g" /etc/hostname
     RUN sed -i "s/ubuntu/${hostname}/g" /etc/hosts
 
-    RUN bash -c "adduser --gecos "" --disabled-password ${user}"
+    RUN bash -c "adduser --gecos '' --disabled-password ${user}"
     RUN sudo chpasswd <<< "${user}:${password}"
     RUN bash -c "usermod -aG sudo ${user}"
     RUN bash -c "echo 'PasswordAuthentication yes' | sudo tee /etc/ssh/sshd_config.d/50-cloud-init.conf"
@@ -102,4 +102,3 @@ source ./Raspberry-Pi-5/rc_local.Pifile
 ##################################
 
 echo "DONE!"
-
