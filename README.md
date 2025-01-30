@@ -68,8 +68,8 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 
 | Field                         | Description                                                                 | Required |
 | ----------------------------- | --------------------------------------------------------------------------- | -------- |
-| `Device`                      | The type of Raspberry Pi device you are using.                              | Yes      |
-| `Architecture`                | The architecture of your Raspberry Pi device.                               | Yes      |
+| `Device`                      | The type of Raspberry Pi device you are using and the architecture.         | Yes      |
+| `Distribution`                | The distribution of your Raspberry Pi device.                               | Yes      |
 | `Hostname`                    | The hostname for your Raspberry Pi.                                         | Yes      |
 | `Username`                    | The username for your Raspberry Pi.                                         | Yes      |
 | `Password`                    | The password for your Raspberry Pi.                                         | Yes      |

@@ -6,19 +6,21 @@ on:
             device:
                 description: "Device"
                 required: true
-                default: Raspberry-Pi-5
+                default: Raspberry-Pi-5:64-bit
                 type: choice
                 options:
-                    - Raspberry-Pi-5
-                    - Raspberry-Pi-4
-            architecture:
-                description: "Architecture"
+                    - Raspberry-Pi-5:64-bit
+                    - Raspberry-Pi-5:32-bit
+                    - Raspberry-Pi-4:64-bit
+                    - Raspberry-Pi-4:32-bit
+            distribution:
+                description: "Distribution"
                 required: true
-                default: 32-bit
+                default: raspbian
                 type: choice
                 options:
-                    - 64-bit
-                    - 32-bit
+                    - raspbian
+                    - ubuntu
             host_name:
                 description: "Hostname"
                 default: raspberrypi
@@ -145,7 +147,7 @@ jobs:
               run: |
                   cat <<EOF > $(dirname main.Pifile)/.env
                   DEVICE="${{ github.event.inputs.device }}"
-                  ARCHITECTURE="${{ github.event.inputs.architecture }}"
+                  DISTRIBUTION="${{ github.event.inputs.distribution }}"
                   HOSTNAME="${{ github.event.inputs.host_name }}"
                   USER="${{ github.event.inputs.user }}"
                   USERPASSWORD="${{ github.event.inputs.password }}"
