@@ -20,8 +20,15 @@ fi
 # Create the lookup key from distribution and device
 KEY="${DISTRIBUTION}:${DEVICE}"
 
-# Look up the URL directly
-URL="${RASPIOS_IMAGES[$KEY]}"
+# Debug information
+echo "Debug: Looking up key '${KEY}'" >&2
+echo "Debug: Available keys:" >&2
+for k in "${!RASPIOS_IMAGES[@]}"; do
+    echo "  $k" >&2
+done
+
+# Look up the URL with a default empty value to prevent unbound variable error
+URL="${RASPIOS_IMAGES[$KEY]:-}"
 
 # Validate that we found a valid URL
 if [[ -z "${URL}" ]]; then
