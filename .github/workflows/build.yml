@@ -175,7 +175,7 @@ jobs:
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: ${{ github.event.inputs.device }}-${{ github.event.inputs.architecture }}-${{ format('{0:.7}', github.sha) }}
+                  name: ${{ github.event.inputs.device }}-${{ github.event.inputs.architecture }}-${{ github.sha }}
                   path: main.tar.gz
                   compression-level: 9
                   retention-days: 5
