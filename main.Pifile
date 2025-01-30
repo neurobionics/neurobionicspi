@@ -29,18 +29,22 @@ RUN bash -c "systemctl enable ssh"
 
 # Add the user and make it sudoer only if it doesn't exist
 RUN bash -c "id -u ${USER} &>/dev/null || useradd -m -s /bin/bash ${USER}"
-RUN bash -c "usermod -aG sudo ${USER}"
+RUN bash -c "groups ${USER} | grep -q sudo || usermod -aG sudo ${USER}"
 
 # Set/Update the password for the user
 RUN bash -c "echo ${USER}:${USERPASSWORD} | chpasswd"
 
 # Set the hostname
-RUN bash -c "hostnamectl set-hostname ${HOSTNAME}"
+RUN bash -c "echo ${HOSTNAME} > /etc/hostname"
+
+# Update /etc/hosts to avoid warnings
+RUN bash -c "sed -i 's/127.0.1.1.*/127.0.1.1\t${HOSTNAME}/g' /etc/hosts"
 
 # Install custom MOTD
 INSTALL "./motd" "/etc/motd"
-RUN bash -c "sudo rm -rf /etc/motd"
-RUN bash -c "cp /etc/motd /home/${USER}/.bash_profile"
+RUN bash -c "[ -f /etc/motd ] && cp /etc/motd /etc/motd.backup"
+RUN bash -c "[ -f /etc/motd ] && ln -sf /etc/motd /home/${USER}/.motd"
+RUN bash -c "[ -f /home/${USER}/.motd ] && echo 'source /home/${USER}/.motd' >> /home/${USER}/.bash_profile"
 
 # Update the system
 RUN apt-get update && apt-get upgrade -y
