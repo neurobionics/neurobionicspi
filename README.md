@@ -50,6 +50,8 @@ The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/
 
 **If you are affliated with a university, please use your own username (`ENTNETWORK_IDENTITY`) and password (`ENTNETWORK_PASSWORD`) that you usually use to connect to the university's WiFi network (`ENTNETWORK_SSID`). This will allow the Raspberry Pi to connect to the university's network and access the internet using your credentials.**
 
+**If any of your Secrets contain special (non-alphanumeric) characters, put a backslash before them to ensure they are properly interpretted as a character within the variable. Example: for a password of "ABC$123#", you would enter the `ENTNETWORK_PASSWORD` field as "ABC\\$123\\#". Failure to include the backslashes may result in errors in the build process (see below).**
+
 </details>
 <details>
 <summary><span style="font-size:1.25rem;font-weight:200;">Step 2: Building Your Raspberry Pi Image</span></summary>
