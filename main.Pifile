@@ -36,3 +36,26 @@ RUN bash -c "echo ${USER}:${USERPASSWORD} | chpasswd"
 
 # Set the hostname
 RUN bash -c "hostnamectl set-hostname ${HOSTNAME}"
+
+# Install custom MOTD
+INSTALL "./motd" "/etc/motd"
+RUN bash -c "sudo rm -rf /etc/motd"
+RUN bash -c "cp /etc/motd /home/${USER}/.bash_profile"
+
+# Update the system
+RUN apt-get update && apt-get upgrade -y
+
+echo "----------------------------------------"
+echo "---------System updated-----------------"
+echo "----------------------------------------"
+
+# Install the necessary packages
+RUN apt-get install -y python3-pip --upgrade
+RUN apt-get install -y python3-virtualenv
+RUN apt-get install -y git
+RUN apt-get install -y gh
+
+echo "----------------------------------------"
+echo "---------Packages installed-------------"
+echo "----------------------------------------"
+
