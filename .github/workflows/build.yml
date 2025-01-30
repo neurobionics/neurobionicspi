@@ -168,15 +168,15 @@ jobs:
 
             - name: Make tarball
               run: |
-                  if ! tar -czvf ${{ github.event.inputs.device }}.tar.gz ${{ github.event.inputs.device }}.img; then
+                  if ! tar -czvf main.tar.gz main.img; then
                       echo "Failed to create tarball"
                       exit 1
                   fi
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: raspberry-pi-image-${{ github.event.inputs.device }}-${{ github.event.inputs.architecture }}-${{ github.sha }}
-                  path: ${{ github.event.inputs.device }}.img
+                  name: ${{ github.event.inputs.device }}-${{ github.event.inputs.architecture }}-${{ format('{0:.7}', github.sha) }}
+                  path: main.tar.gz
                   compression-level: 9
                   retention-days: 5
 
