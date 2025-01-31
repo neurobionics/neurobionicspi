@@ -40,6 +40,10 @@ RUN bash -c "echo ${HOSTNAME} > /etc/hostname"
 # Update /etc/hosts to avoid warnings
 RUN bash -c "sed -i 's/127.0.1.1.*/127.0.1.1\t${HOSTNAME}/g' /etc/hosts"
 
+# Disables interactive login especially on raspberry pi 5
+RUN bash -c "systemctl disable userconfig"
+RUN bash -c "systemctl enable getty@tty1"
+
 # Install custom MOTD
 INSTALL "./motd" "/etc/motd"
 RUN bash -c "[ -f /etc/motd ] && cp /etc/motd /etc/motd.backup"
