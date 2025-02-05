@@ -42,7 +42,7 @@ else
 
 ##################################
 
-# RUN apt-get update
+RUN apt-get update
 
 # Upgrade takes considerably more memory and time to build the image.
 # RUN apt-get upgrade -y
