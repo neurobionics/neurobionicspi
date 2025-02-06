@@ -11,9 +11,3 @@ RUN apt-get install -y libnss-resolve
 
 RUN apt-get install -y libatlas-base-dev
 RUN apt-get install -y libopenblas-dev
-
-# Python3-smbus (I2C Tools package is already installed)
-RUN apt-get install -y python3-smbus
-
-# opensourceleg
-RUN bash -c "python3 -m pip install opensourceleg"
