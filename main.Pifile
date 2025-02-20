@@ -61,7 +61,7 @@ echo "----------------------------------------"
 
 # Install robonet
 RUN bash -c "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobionics/robonet/releases/download/0.3.1/robonet-installer.sh | sh"
-RUN bash -c "source $HOME/.cargo/env"
+RUN bash -c "source $HOME/.cargo/bin"
 RUN bash -c "robonet --version"
 
 # Add network definitions with robonet
