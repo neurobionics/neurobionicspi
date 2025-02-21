@@ -188,7 +188,7 @@ jobs:
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: ${{ github.event.inputs.device }}-${{ steps.timestamp.outputs.timestamp }}
+                  name: ${{ github.event.inputs.device }}-${{ steps.timestamp.outputs.timestamp }} | sed 's/[:"<>|*?\r\n\\\/]/-/g'
                   path: main.img
                   compression-level: 9
                   retention-days: 5
