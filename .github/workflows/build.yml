@@ -184,11 +184,16 @@ jobs:
             - name: Set Timestamp
               id: timestamp
               run: echo "timestamp=$(date +%Y-%m-%d-%H-%M-%S)" >> $GITHUB_OUTPUT
-                  
+
+            - name: Set Artifact Name
+              id: artifact_name
+              run: |
+                echo "name=$(echo '${{ github.event.inputs.device }}-${{ steps.timestamp.outputs.timestamp }}' | sed 's/[:"<>|*?\r\n\\\/]/-/g')" >> $GITHUB_OUTPUT
+
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: ${{ github.event.inputs.device }}-${{ steps.timestamp.outputs.timestamp }} | sed 's/[:"<>|*?\r\n\\\/]/-/g'
+                  name: ${{ steps.artifact_name.outputs.name }}
                   path: main.img
                   compression-level: 9
                   retention-days: 5
