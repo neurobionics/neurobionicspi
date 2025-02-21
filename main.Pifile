@@ -55,12 +55,12 @@ RUN bash -c "[ -f /etc/motd ] && cp /etc/motd /etc/motd.backup"
 RUN bash -c "[ -f /etc/motd ] && ln -sf /etc/motd /home/${USER}/.motd"
 RUN bash -c "[ -f /home/${USER}/.motd ] && echo 'source /home/${USER}/.motd' >> /home/${USER}/.bash_profile"
 
-# TODO: Update the system
-# RUN apt-get update && apt-get upgrade -y
+# Update the system
+RUN apt-get update && apt-get upgrade -y
 
-# echo "----------------------------------------"
-# echo "---------System updated-----------------"
-# echo "----------------------------------------"
+echo "----------------------------------------"
+echo "---------System updated-----------------"
+echo "----------------------------------------"
 
 # Install robonet
 RUN bash -c "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobionics/robonet/releases/download/0.3.2/robonet-installer.sh | sh"
