@@ -116,11 +116,21 @@ jobs:
                   EMAIL_ADDRESS="${{ secrets.EMAIL_ADDRESS }}"
                   ENTNETWORK_SSID="${{ secrets.ENTNETWORK_SSID }}"
                   ENTNETWORK_IDENTITY="${{ secrets.ENTNETWORK_IDENTITY }}"
+                  ENTNETWORK_PRIORITY="${{ secrets.ENTNETWORK_PRIORITY }}"
                   ENTNETWORK_PASSWORD="${{ secrets.ENTNETWORK_PASSWORD }}"
+                  SMTP_SERVER="${{ secrets.SMTP_SERVER }}"
+                  SMTP_USERNAME="${{ secrets.SMTP_USERNAME }}"
+                  SMTP_PASSWORD="${{ secrets.SMTP_PASSWORD }}"
                   
                   # Check if EMAIL_ADDRESS secret is set
                   if [[ -z "$EMAIL_ADDRESS" ]]; then
                       echo "EMAIL_ADDRESS secret is not set, please refer to the README.md for more information. Exiting."
+                      exit 1
+                  fi
+                  
+                  # Check if SMTP_SERVER, SMTP_USERNAME, and SMTP_PASSWORD secrets are set
+                  if [[ -z "$SMTP_SERVER" || -z "$SMTP_USERNAME" || -z "$SMTP_PASSWORD" ]]; then
+                      echo "SMTP_SERVER, SMTP_USERNAME, and SMTP_PASSWORD secrets are not set, please refer to the README.md for more information. Exiting."
                       exit 1
                   fi
                   
@@ -160,7 +170,10 @@ jobs:
                   HOMENETWORK_PASSWORD="${{ github.event.inputs.wifi_password }}"
                   AP_SSID="${{ github.event.inputs.wpa_ssid }}"
                   AP_PASSWORD="${{ github.event.inputs.wpa_password }}"
-                  EMAIL="${{ secrets.EMAIL_ADDRESS }}"
+                  EMAIL_ADDRESS="${{ secrets.EMAIL_ADDRESS }}"
+                  SMTP_SERVER="${{ secrets.SMTP_SERVER }}"
+                  SMTP_USERNAME="${{ secrets.SMTP_USERNAME }}"
+                  SMTP_PASSWORD="${{ secrets.SMTP_PASSWORD }}"
                   EOF
 
             - name: Build image

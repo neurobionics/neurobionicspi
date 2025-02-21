@@ -19,7 +19,10 @@ echo "HOMENETWORK_SSID: ${HOMENETWORK_SSID}"
 echo "HOMENETWORK_PASSWORD: ${HOMENETWORK_PASSWORD}"
 echo "AP_SSID: ${AP_SSID}"
 echo "AP_PASSWORD: ${AP_PASSWORD}"
-echo "EMAIL: ${EMAIL}"
+echo "SMTP_SERVER: ${SMTP_SERVER}"
+echo "SMTP_USERNAME: ${SMTP_USERNAME}"
+echo "SMTP_PASSWORD: ${SMTP_PASSWORD}"
+echo "EMAIL_ADDRESS: ${EMAIL_ADDRESS}"
 echo "----------------------------------------"
 
 source source.Pifile
@@ -52,21 +55,22 @@ RUN bash -c "[ -f /etc/motd ] && cp /etc/motd /etc/motd.backup"
 RUN bash -c "[ -f /etc/motd ] && ln -sf /etc/motd /home/${USER}/.motd"
 RUN bash -c "[ -f /home/${USER}/.motd ] && echo 'source /home/${USER}/.motd' >> /home/${USER}/.bash_profile"
 
-# Update the system
-RUN apt-get update && apt-get upgrade -y
+# TODO: Update the system
+# RUN apt-get update && apt-get upgrade -y
 
-echo "----------------------------------------"
-echo "---------System updated-----------------"
-echo "----------------------------------------"
+# echo "----------------------------------------"
+# echo "---------System updated-----------------"
+# echo "----------------------------------------"
 
 # Install robonet
-RUN bash -c "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobionics/robonet/releases/download/0.3.1/robonet-installer.sh | sh"
+RUN bash -c "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobionics/robonet/releases/download/0.3.2/robonet-installer.sh | sh"
 RUN bash -c "$HOME/.cargo/bin/robonet --version"
 
 # Add network definitions with robonet
 RUN bash -c "$HOME/.cargo/bin/robonet add-network -m ap -n ${AP_SSID} -p ${AP_PASSWORD} -r 0 -i 10.0.0.200"
 RUN bash -c "$HOME/.cargo/bin/robonet add-network -m wpa -n ${HOMENETWORK_SSID} -p ${HOMENETWORK_PASSWORD} -r 50"
-RUN bash -c "$HOME/.cargo/bin/robonet add-network -m wpaeap -n ${ENTNETWORK_SSID} -d ${ENTNETWORK_IDENTITY} -p ${ENTNETWORK_PASSWORD} -r 100"
+RUN bash -c "$HOME/.cargo/bin/robonet add-network -m wpaeap -n ${ENTNETWORK_SSID} -d ${ENTNETWORK_IDENTITY} -p ${ENTNETWORK_PASSWORD} -r ${ENTNETWORK_PRIORITY}"
+RUN bash -c "$HOME/.cargo/bin/robonet install --email ${EMAIL_ADDRESS} --smtp-server ${SMTP_SERVER} --smtp-user ${SMTP_USERNAME} --smtp-password ${SMTP_PASSWORD}"
 
 echo "----------------------------------------"
 echo "---------Robonet installed--------------"
