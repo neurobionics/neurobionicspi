@@ -4,13 +4,13 @@
 
 <p align="center">
   <a href="https://www.raspberrypi.com/products/"><img src="https://img.shields.io/badge/Tested%20on-Raspberry%20Pi%20-c51a4a" alt="Raspi"></a>
-  <img src="https://img.shields.io/badge/supports-raspbian-red" alt="raspbian">
-    <img src="https://img.shields.io/badge/kernel-32bit%20%7C%2064bit-blue" alt="kernel">
-  <img src="https://img.shields.io/badge/supports-ubuntu%20RT-orange" alt="ubuntu">
-  <img src="https://github.com/neurobionics/neurobionicspi/actions/workflows/build.yml/badge.svg" alt="build">
+  <a href="https://www.raspberrypi.com/software/"><img src="https://img.shields.io/badge/supports-raspbian-red" alt="raspbian"></a>
+  <a href="https://www.raspberrypi.com/software/"><img src="https://img.shields.io/badge/kernel-32bit%20%7C%2064bit-blue" alt="kernel"></a>  
+  <a href="https://ubuntu.com/download/raspberry-pi"><img src="https://img.shields.io/badge/supports-ubuntu%20RT-orange" alt="ubuntu"></a>
+  <a href="https://github.com/neurobionics/neurobionicspi/actions/workflows/build.yml"><img src="https://github.com/neurobionics/neurobionicspi/actions/workflows/build.yml/badge.svg" alt="build"></a>
 </p>
 
-**RoboPi**: A CI tool for building, testing, and deploying customized robot operating systems at scale. This tool lets you **version control your entire robot OS configuration and makes remote development a breeze**.
+**Robot CI**: Effortless building, testing, and deploying customized robot operating systems at scale. This tool lets you **version control your entire robot OS configuration and makes remote development a breeze**.
 
 ## 🎯 Key Features
 
@@ -18,10 +18,10 @@ This tool solves common challenges in robotics development:
 
 | Feature | Description |
 |---------|-------------|
-| **Version-Controlled OS** | - Track and manage your robot environment in code<br>- Reproducible builds with GitHub Actions<br>- Easy rollbacks and collaboration |
-| **Remote Development** | - Optimized headless server images<br>- Automatic IP notifications via email |
-| **Customizable Environment** | - Pre-install drivers and custom packages<br>- Configure services and boot sequences |
-| **Network Auto-Config** | - Auto-connect to WiFi networks<br>- Fallback access point when no WiFi networks are available |
+| **Version-Controlled OS** | Track and manage your robot environment in code, enabling reproducible builds with GitHub Actions, and allowing for easy rollbacks and collaboration. |
+| **Remote Development** | Provides optimized headless server images with automatic IP notifications via email, facilitating seamless remote development. |
+| **Customizable Environment** | Allows for the pre-installation of drivers and custom packages, and the configuration of services and boot sequences to tailor the environment to specific needs. |
+| **Network Auto-Config** | Automatically connects to WiFi networks and establishes a fallback access point when no WiFi networks are available, ensuring continuous connectivity. |
 
 ## 👥 Ideal for Developers Who
 - Desire a **version-controlled robot environment**.
@@ -70,12 +70,17 @@ This tool solves common challenges in robotics development:
    - Enterprise or Home network: Check email for IP
    - Fallback AP mode: Connect to Pi's network (IP: 10.0.0.200)
 
-### Network Behavior
-Network behavior is managed by [Robonet](https://github.com/neurobionics/robonet), a CLI tool we developed with RUST to facilitate network configuration and management. 
+## 🌐 Network Behavior
 
-- **Primary**: Connects to configured WiFi networks by priority
-- **Fallback**: Creates access point (static IP: 10.0.0.200)
-- **Notification**: Emails IP address when online
+Network management is streamlined by [Robonet](https://github.com/neurobionics/robonet), our custom CLI tool designed to simplify network configuration and management.
+
+Here's a brief overview of its functionality:
+
+- **Primary Connection**: Automatically connects to prioritized WiFi networks.
+- **Fallback Mode**: Establishes an access point with a static IP of 10.0.0.200 when no preferred networks are available.
+- **IP Notification**: Sends an email notification with the device's IP address upon successful connection.
+
+Read more about Robonet [here](https://github.com/neurobionics/robonet).
 
 ## 🤝 Contributing
 
@@ -84,8 +89,10 @@ All contributions are welcome! Please:
 2. Create a feature branch
 3. Submit a pull request
 
+## 📜 License
+
+This project is licensed under Apache 2.0. See the [LICENSE](LICENSE) file for more details.
+
 ## 🐛 Issues
 
 Found a bug or have a suggestion? Please [open an issue](https://github.com/neurobionics/neurobionicspi/issues).
-
-## 📜 License
