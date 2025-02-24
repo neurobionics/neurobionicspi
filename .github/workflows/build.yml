@@ -1,4 +1,4 @@
-name: Build Raspberry Pi Image
+name: Build a Robot Operating System
 
 on:
     workflow_dispatch:
