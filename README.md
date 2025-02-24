@@ -32,7 +32,7 @@ This tool solves common challenges in robotics development:
 ## 🛠️ Example Use Cases
 - **Research labs** managing multiple test platforms or robots
 - Robotics companies **deploying a fleet of robots**
-- Educational institutions maintaining s**tudent robots for course projects**
+- Educational institutions maintaining student robots for course projects**
 - Development teams needing **consistent robot environments** across multiple robots
 
 > [!NOTE]
