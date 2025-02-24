@@ -1,182 +1,126 @@
-<h2 align="center"><strong>neurobionicspi: A CI Tool to Configure Embedded Hardware for Robotics</strong></h2>
+<p align="center">
+  <img src="/assets/banner.png" width="800">
+</p>
 
 <p align="center">
-  <a href="https://umich.edu/"><img src="https://img.shields.io/badge/-University%20of%20Michigan-ffcb05" alt="U-M"></a>
-  <a href="https://neurobionics.robotics.umich.edu/"><img src="https://img.shields.io/badge/-Neurobionics-00274c" alt="Neurobionics"></a>
-  <a href="https://www.raspberrypi.com/products/raspberry-pi-4-model-b/"><img src="https://img.shields.io/badge/Tested%20on-Raspberry%20Pi%204B-c51a4a" alt="RPi4"></a>
+  <a href="https://www.raspberrypi.com/products/"><img src="https://img.shields.io/badge/Tested%20on-Raspberry%20Pi%20-c51a4a" alt="Raspi"></a>
   <img src="https://github.com/neurobionics/neurobionicspi/actions/workflows/build.yml/badge.svg" alt="Build">
 </p>
 
-The purpose of this tool is to build an up-to-date operating system/image for a Raspberry Pi that can be used headless/GUI-less to control autonomous / remote robotic systems. It was built by the Neurobionics Lab at the University of Michigan to solve two major challenges:
+# RoboPi: A CI Tool for Building and Deploying Robot Operating Systems At Scale
 
--   Maintaining a stable, consistent, working image for Raspberry Pis that fosters robotics research
--   Ease connectivity with local and enterprise networks to prevent use of internal lab networks
+A powerful tool for building, maintaining, and deploying customized robot operating systems at scale. RoboPi lets you version control your entire robot OS configuration and makes remote development a breeze.
 
-It is meant for developers or roboticists who wish to use a Raspberry Pi to control an intelligent / robotic system, where development is done remotely on a PC, and execution is run from the Raspberry Pi that controls a robot. In other words, this setup uses the Raspberry Pi like a microprocessor, and makes use of its networking, communications, and GPIO abilities. When the Raspberry Pi boots, it will automatically connect to enterprise wifi and login with secure credentials, then email its IP address to a specified recipient(s). If no known wifi networks are in range, it will automatically create an access point with a static IP address that can be used for remote login. In either case, we connect to the Raspberry Pi remotely using SSH. To access / code on the Raspberry Pi remotely, we use [VSCode](https://code.visualstudio.com) or [WinSCP](https://winscp.net/eng); these programs also enable shared file transfer. Overall, this is a turnkey solution that builds an up-to-date image for a Raspberry Pi that enables automatic wireless access for remote development. To use this tool, you will need to fork the repository and follow the steps outlined below. The image is developed using the Actions tab (above); when the workflow is run, it will open a dialog box where information can be added to customize the image. The image is then built in the cloud and can be downloaded as an artifact (.zip). Forking the repository will create your own copy of the tool which can then be customized to your individual or group preferences, if desired. 
+## 🎯 Key Features
 
-<p align="center">
-  <img src="/assets/neurobionicspi.PNG" width="800">
-</p>
+- **Version-Controlled Robot OS**:
+  - Define and track your entire robot environment in code
+  - Reproducible builds through GitHub Actions
+  - Easy rollback to previous configurations
+  - Share and collaborate on robot setups
 
-The tool reconfigures an official [Raspbian distro](https://www.raspberrypi.com/software/operating-systems/) to include custom packages for robotics and automation, wireless connectivity to a known and configurable WiFi network, and it will create a fallback access point when the known wireless networks are not in range (static IP: 10.0.0.200). This enables usage of the same process and hardware when not in known Wifi network range (e.g. demos and conferences). The process also installs libraries for communication, drivers for common sensors and ICs, APIs for working with [Dephy actuators](dephy.com/faster/) and other motors.
+- **Remote Development Ready**:
+  - Headless server images optimized for remote development
+  - Pre-configured for robotics development
+  - Automatic IP address notifications
+
+- **Customizable Environment**:
+  - Define exact package requirements
+  - Pre-install robot-specific drivers and custom installation steps
+  - Configure system services and boot sequences
+
+- **Network Auto-configuration**: 
+  - Automatic connection to enterprise/home WiFi networks
+  - Fallback access point for direct connection
+  - Email notifications with IP address upon boot
+
+## 🤔 Why Use RoboPi?
+
+This tool solves common challenges in robotics development:
+
+1. **Version Control**: Track your entire robot OS configuration in Git
+2. **Remote Development Straight Out of the Box**: Pre-configured for remote development
+3. **Reproducibility**: Rebuild your exact environment anytime
+4. **Easy Deployment**: Deploy the same configuration to multiple robots
+
+Perfect for developers who:
+- Want a version-controlled robot environment
+- Need reproducible development environments
+- Want to avoid manual Pi configuration and prefer remote development
+- Manage multiple robots with similar setups
 
 > [!NOTE]
-> This image has only been tested on the Raspberry Pi 5 and 4. It may not work on the Raspberry Pi Zero.
+> Currently tested on Raspberry Pi 4 and 5. May not be compatible with Raspberry Pi Zero.
 
-# How to use this tool
+## 📝 Quick Start Guide
 
-<details>
-<summary><span style="font-size:1.25rem;font-weight:200;">Step 1: Creating Secrets for Your Raspberry Pi Image</span></summary>
+### 1. Fork & Configure
+1. Fork this repository to your GitHub account
+2. Set up required secrets in your fork:
 
-<p align="center">
-  <img src="/assets/secrets.gif" width="800">
-</p>
+| Secret | Purpose |
+|--------|---------|
+| `EMAIL_ADDRESS` | Where to send Pi's IP address |
+| `ENTNETWORK_SSID` | Enterprise network name |
+| `ENTNETWORK_IDENTITY` | Network username |
+| `ENTNETWORK_PASSWORD` | Network password |
+| `ENTNETWORK_PRIORITY` | Connection priority (>5 for enterprise) |
 
--   Start by creating your own copy of this repository. You can do this by clicking the `Fork` button. This will create a private repository in your GitHub account with the same default source code, which you can then customize to suit your needs.
--   Next, you need to create a few secrets in your repository. These secrets will be used to configure your Raspberry Pi image. To do this, navigate to the `Settings` tab in your repository, click on the `Secrets and Variables` dropdown link in the left sidebar, and then click on the `Actions` link.
--   Click on the `New repository secret` button and create the following secrets:
+### 2. Build Your Image
+1. Go to Actions tab → "Build Now!"
+2. Configure your build:
+   - Choose device model
+   - Set hostname & credentials
+   - Configure WiFi settings
+3. Download the generated image
 
-<div align="center">
+### 3. Deploy & Connect
+1. Flash image to SD card using [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
+2. Boot your Pi
+3. Connect via:
+   - Enterprise/Home network: Check email for IP
+   - Fallback AP mode: Connect to Pi's network (IP: 10.0.0.200)
 
-| Secret Variable       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `EMAIL_ADDRESS`       | Your email address or a comma-separated list of email addresses to receive the IP address of your Raspberry Pi                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `ENTNETWORK_SSID`     | The SSID/Name for your enterprise network.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| `ENTNETWORK_IDENTITY` | The identity/username that can be used to connect to your enterprise network.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| `ENTNETWORK_PASSWORD` | The password associated with the identity/username for your enterprise network.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| `ENTNETWORK_PRIORITY` | This integer value determines the priority of the enterprise network. A higher value means higher priority. For example, if you have a home network and an enterprise network, and you want the Raspberry Pi to try connecting to the enterprise network first, you would give the enterprise network a higher priority number. If the enterprise network is not available, the Raspberry Pi will then attempt to connect to the network with the next highest priority. By default, the home network is assigned a priority of 5. If you want the Raspberry Pi to try connecting to the home network only if the enterprise network is not available, you would assign the enterprise network a priority higher than 5. |
+## 🛠️ Technical Details
 
-</div>
+### Customization Options
+- **Package Management**: 
+  - Define exact versions of required packages
+  - Add custom repositories
+  - Include robot-specific drivers and libraries
 
-**If you are affliated with a university, please use your own username (`ENTNETWORK_IDENTITY`) and password (`ENTNETWORK_PASSWORD`) that you usually use to connect to the university's WiFi network (`ENTNETWORK_SSID`). This will allow the Raspberry Pi to connect to the university's network and access the internet using your credentials.**
+- **Configuration Management**:
+  - Custom boot sequences
+  - Service configurations
+  - Network settings
+  - Development tools
 
-</details>
-<details>
-<summary><span style="font-size:1.25rem;font-weight:200;">Step 2: Building Your Raspberry Pi Image</span></summary>
+- **Build Process**:
+  - Based on official Raspbian distribution
+  - Automated through GitHub Actions
+  - Reproducible builds with version control
+  - Custom post-installation scripts support
 
-<p align="center">
-  <img src="/assets/build.gif" width="800">
-</p>
+### Network Behavior
+- **Primary**: Connects to configured WiFi networks by priority
+- **Fallback**: Creates access point (static IP: 10.0.0.200)
+- **Notification**: Emails IP address when online
 
--   After setting up the secrets, the next step is to build your custom Raspberry Pi image. This process is automated using a GitHub Actions workflow.
--   To start the build process, navigate to the `Actions` tab in your repository. This tab is located in the top menu of your repository page.
--   In the `Actions` tab, you'll see a single workflow named `Build Now!` in the left sidebar. This workflow is responsible for building your custom Raspbian image. Click on it to view more details.
--   On the workflow page, you'll see a `Run workflow` dropdown button on the right side of the page. Click on this button to open a form where you can enter additional configuration details for your Raspberry Pi image.
--   Fill in the following fields in the form. Fields marked with a red asterisk (\*) are required:
+### Example Use Cases
+- Research labs managing multiple test platforms or robots
+- Robotics companies deploying a fleet of robots
+- Educational institutions maintaining student robots for course projects
+- Development teams needing consistent robot environments across multiple robots
 
-<div align="center">
+## 🤝 Contributing
 
-| Field                         | Description                                                                 | Required |
-| ----------------------------- | --------------------------------------------------------------------------- | -------- |
-| `Device`                      | The type of Raspberry Pi device you are using and the architecture.         | Yes      |
-| `Distribution`                | The distribution of your Raspberry Pi device.                               | Yes      |
-| `Hostname`                    | The hostname for your Raspberry Pi.                                         | Yes      |
-| `Username`                    | The username for your Raspberry Pi.                                         | Yes      |
-| `Password`                    | The password for your Raspberry Pi.                                         | Yes      |
-| `WiFi Country Code`           | The country code for your WiFi network.                                     | Yes      |
-| `Additional Network SSID`     | The SSID of an additional network you want your Raspberry Pi to connect to. | No       |
-| `Additional Network Password` | The password for the additional network.                                    | No       |
-| `Access Point SSID`           | The SSID for the access point you want to create on your Raspberry Pi.      | No       |
-| `Access Point Password`       | The password for the access point.                                          | No       |
+All contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request
 
-</div>
+## 🐛 Issues
 
--   After filling in these fields, click on the `Run workflow` button at the bottom of the form to start the build process. The workflow will use the secrets you've set up and the information you've just entered to customize your image.
--   The build process may take some time to complete. You can monitor its progress in the `Actions` tab. Once the build is complete, the workflow will create a custom Raspbian image and attach it as an artifact to the workflow run.
--   To download the image, go back to the `Actions` tab and click on the completed workflow run. You'll see a section labeled `Artifacts` on the bottom of the page. Click on the artifact to download your custom Raspbian image.
--   Once you've downloaded the image, you'll need to flash it onto an SD card. You can use software like [Raspberry Pi Imager](https://www.raspberrypi.com/software/), [Etcher](https://www.balena.io/etcher/), or [Rufus](https://rufus.ie/en/) to do this. Follow the instructions provided by the software to flash the image onto the SD card.
+Found a bug or have a suggestion? Please [open an issue](https://github.com/neurobionics/neurobionicspi/issues).
 
-> If you're using the latest version of Raspberry Pi Imager, you'll be asked if you want to customize the OS. Please select 'No' to this option. The image you've built already contains the necessary customizations.
-
-</details>
-<details>
-<summary><span style="font-size:1.25rem;font-weight:200;">Step 3: Connecting to Your Raspberry Pi</span></summary>
-</br>
-
--   Once you've flashed the custom image onto the SD card, remove it from your computer and insert it into the SD card slot on your Raspberry Pi.
--   Power on your Raspberry Pi. It will boot up using the custom image you've just flashed. This custom image includes the network configurations you've set up using the secret variables in the GitHub Actions workflow.
--   If your Raspberry Pi is able to connect to a WiFi network with internet access, it will automatically send an email to the address(es) you specified in the `EMAIL_ADDRESS` secret variable. This email will contain the Raspberry Pi's IP address and a few other useful details.
--   If your Raspberry Pi is unable to connect to a network with internet access, it will instead create its own wireless access point. This access point will use the SSID and password you specified in the `Access Point SSID` and `Access Point Password` fields in the GitHub Actions workflow.
--   The IP address of the Raspberry Pi when it's acting as an access point is always `10.0.0.200`. To connect to the Raspberry Pi in this mode, connect your computer to the Raspberry Pi's access point using the SSID and password you specified, then use an SSH client (VSCode's Remote Explorer or Putty) to connect to the Raspberry Pi at `10.0.0.200`.
-
-</details>
-
-# Networking
-
-<p align="center">
-  <img src="/assets/neurobionicspi-network.png" width="800">
-</p>
-
-<p align="center">
-  <img src="/assets/neurobionicspi-cli.png" width="800">
-</p>
-
-## Automated Network Management
-
-Our Raspberry Pi image uses a networking structure that can operate in two modes: Access Point (AP) and Client mode.
-
--   Access Point (AP) Mode: In this mode, the Raspberry Pi acts like a mini Wi-Fi router. Other devices can connect to it directly, just like they would connect to a regular Wi-Fi network.
-
--   Client Mode: In this mode, the Raspberry Pi connects to an existing Wi-Fi network. This allows it to access the internet and interact with other devices on the same network.
-
-The Raspberry Pi tries to connect to a known Wi-Fi network first. If it can't connect, it switches to Access Point mode, so you can connect to it directly. The routine also has a feature to refresh the network settings after a certain period. This is handy for updating the network setup without needing to restart the device. Another useful feature is the ability to update the BSSID (the identifier for a Wi-Fi network). This is especially helpful when there are multiple Wi-Fi networks available, as it lets the device connect to the strongest one.
-
-## Manual Network Management
-
-We also provide a command-line interface (CLI) tool called `neurobionicspi-cli`. This tool lets you manually control the networking routine's functions. You can use it to start or stop the AP mode, display the defined networks, add a network, choose a network, update the BSSID, send the device's IP address via email, and add an email address to the recipient list. To see all the available options, use the command
-
-```
-sudo neurobionicspi-cli --help
-```
-
-<div align="center">
-
-| Command                                   | Description                                                                                                                                  |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--start-ap`                              | Enable Access Point (AP) mode. This will turn your device into a wireless access point.                                                      |
-| `--stop-ap`                               | Disable Access Point (AP) mode. This will turn off the wireless access point mode and turn on client mode.                                   |
-| `--show-networks`                         | Show defined networks. This will display a list of all networks defined in the configuration file.                                           |
-| `--add-network $ssid $password $priority` | Adds a network to the wpa_supplicant configuration file but does not connect to it. Please use `--select-network` to connect to the network. |
-| `--select-network $index`                 | Select a network by index. This allows you to choose a network from the list of defined networks.                                            |
-| `--update-bssid`                          | Update the BSSID in the configuration file. This will change the BSSID of the enterprise network.                                            |
-| `--send-ip`                               | Send the IP address via email. This will send the device's current IP address to the specified email address(es).                            |
-| `--add-email $email_address`              | Add an email address to the recipient list. This will add a new email address to the list of recipients for IP address notifications.        |
-
-</div>
-
-# Networking Tests
-
-We evaluated the networking capabilities of our Raspberry Pi image by conducting a series of tests in diverse environments. We rebooted the Raspberry Pi 100 times under different conditions - in stable environments with minimal interference such as research labs and workshops, in crowded settings like lobbies and atriums, and while roaming between networks. The Raspberry Pi consistently demonstrated its ability to connect to known networks and reliably send emails. The following plot illustrates the results of our tests:
-
-<p align="center">
-  <img src="/assets/neurobionicspi-network-test.png" width="800">
-</p>
-
-# Helpful File Locations
-
-<div align="center">
-
-| File Path                                                     | Description                                |
-| ------------------------------------------------------------- | ------------------------------------------ |
-| `/etc/wpa_supplicant/config/wpa_supplicant-wlan0-client.conf` | WiFi client networks configuration file    |
-| `/etc/wpa_supplicant/config/wpa_supplicant-wlan0-ap.conf`     | WiFi access point configuration file       |
-| `/etc/startup_mailer.py`                                      | IP address emailer script                  |
-| `/home/pi/.bash_profile`                                      | Welcome screen/ASCII banner                |
-| `/etc/neurobionicspi-cli.log`                                 | Networking log file                        |
-| `/etc/neurobionicspi-cli.count`                               | Total number of emails sent                |
-| `/etc/neurobionicspi-cli`                                     | Setup files for neurobionicspi-cli service |
-
-</div>
-
-# Helpful Tools
-
--   [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
--   [Etcher](https://www.balena.io/etcher/)
--   [VSCode](https://code.visualstudio.com)
--   [VSCode Remote Explorer](https://code.visualstudio.com/docs/remote/remote-overview)
--   [Putty](https://www.putty.org)
--   [Pimod](https://github.com/marketplace/actions/run-pimod)
-
-# Issues
-
-Kindly report any issues [here](https://github.com/neurobionics/neurobionicspi/issues).
+## 📜 License
