@@ -1,0 +1,65 @@
+source .env
+
+PUMP 800M
+
+source source.Pifile
+
+# Enable SSH service
+RUN bash -c "systemctl enable ssh"
+
+# Add the user and make it sudoer only if it doesn't exist
+RUN bash -c "id -u ${USER} &>/dev/null || useradd -m -s /bin/bash ${USER}"
+RUN bash -c "groups ${USER} | grep -q sudo || usermod -aG sudo ${USER}"
+
+# TODO: if user isn't added to sudoers, make sure he is added to AllowUsers in sshd_config
+
+# Set/Update the password for the user
+RUN bash -c "echo ${USER}:${USERPASSWORD} | chpasswd"
+
+# Set the hostname
+RUN bash -c "echo ${HOSTNAME} > /etc/hostname"
+
+# Update /etc/hosts to avoid warnings
+RUN bash -c "sed -i 's/127.0.1.1.*/127.0.1.1\t${HOSTNAME}/g' /etc/hosts"
+
+# Disables interactive login especially on raspberry pi 5
+RUN bash -c "systemctl disable userconfig"
+RUN bash -c "systemctl enable getty@tty1"
+
+# Install custom MOTD
+INSTALL "./motd" "/etc/motd"
+RUN bash -c "[ -f /etc/motd ] && cp /etc/motd /etc/motd.backup"
+RUN bash -c "[ -f /etc/motd ] && ln -sf /etc/motd /home/${USER}/.motd"
+RUN bash -c "[ -f /home/${USER}/.motd ] && echo 'source /home/${USER}/.motd' >> /home/${USER}/.bash_profile"
+
+# Update the system
+RUN apt-get update && apt-get upgrade -y
+
+echo "----------------------------------------"
+echo "---------System updated-----------------"
+echo "----------------------------------------"
+
+# Install robonet
+RUN bash -c "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobionics/robonet/releases/download/0.3.2/robonet-installer.sh | sh"
+RUN bash -c "$HOME/.cargo/bin/robonet --version"
+
+# Add network definitions with robonet
+RUN bash -c "$HOME/.cargo/bin/robonet add-network -m ap -n ${AP_SSID} -p ${AP_PASSWORD} -r 0 -i 10.0.0.200"
+RUN bash -c "$HOME/.cargo/bin/robonet add-network -m wpa -n ${HOMENETWORK_SSID} -p ${HOMENETWORK_PASSWORD} -r 50"
+RUN bash -c "$HOME/.cargo/bin/robonet add-network -m wpaeap -n ${ENTNETWORK_SSID} -d ${ENTNETWORK_IDENTITY} -p ${ENTNETWORK_PASSWORD} -r ${ENTNETWORK_PRIORITY}"
+RUN bash -c "$HOME/.cargo/bin/robonet install --email ${EMAIL_ADDRESS} --smtp-server ${SMTP_SERVER} --smtp-user ${SMTP_USERNAME} --smtp-password ${SMTP_PASSWORD}"
+
+echo "----------------------------------------"
+echo "---------Robonet installed--------------"
+echo "----------------------------------------"
+
+# Install the necessary packages
+RUN apt-get install -y python3-pip --upgrade
+RUN apt-get install -y python3-virtualenv
+RUN apt-get install -y git
+RUN apt-get install -y gh
+
+echo "----------------------------------------"
+echo "---------Packages installed-------------"
+echo "----------------------------------------"
+

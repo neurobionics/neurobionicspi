@@ -1,4 +1,4 @@
-name: Build now!
+name: Build a Robot Operating System
 
 on:
     workflow_dispatch:
@@ -6,23 +6,24 @@ on:
             device:
                 description: "Device"
                 required: true
-                default: Raspberry-Pi-5
+                default: Raspberry-Pi-5:64-bit
                 type: choice
                 options:
-                    - Raspberry-Pi-5
-                    - Raspberry-Pi-4
-            architecture:
-                description: "Architecture"
+                    - Raspberry-Pi-5:64-bit
+                    - Raspberry-Pi-5:32-bit
+                    - Raspberry-Pi-4:64-bit
+                    - Raspberry-Pi-4:32-bit
+            distribution:
+                description: "Distribution"
                 required: true
-                default: 32-bit
+                default: raspbian
                 type: choice
                 options:
-                    - 64-bit
-                    - 32-bit
+                    - raspbian
                     - ubuntu
             host_name:
                 description: "Hostname"
-                default: neurobionicspi
+                default: raspberrypi
                 required: true
             user:
                 description: "Username"
@@ -31,7 +32,7 @@ on:
             password:
                 description: "Password"
                 required: true
-                default: neurobionics
+                default: raspberrypi
             wifi_cc:
                 description: "WiFi Country Code"
                 required: true
@@ -94,25 +95,59 @@ on:
             wpa_ssid:
                 description: "Access Point SSID"
                 required: true
-                default: NeurobionicsRPi
+                default: RPiAccessPoint
             wpa_password:
                 description: "Access Point Password"
                 required: true
-                default: neurobionics
+                default: raspberrypi
 
 jobs:
     build:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Check secrets
+            - name: Check secrets and inputs
               run: |
-                  if [[ -z "${{ secrets.EMAIL_ADDRESS }}" ]]; then
+                  # Assign inputs to variables
+                  PASSWORD="${{ github.event.inputs.password }}"
+                  WPA_PASSWORD="${{ github.event.inputs.wpa_password }}"
+                  WIFI_SSID="${{ github.event.inputs.wifi_ssid }}"
+                  WIFI_PASSWORD="${{ github.event.inputs.wifi_password }}"
+                  EMAIL_ADDRESS="${{ secrets.EMAIL_ADDRESS }}"
+                  ENTNETWORK_SSID="${{ secrets.ENTNETWORK_SSID }}"
+                  ENTNETWORK_IDENTITY="${{ secrets.ENTNETWORK_IDENTITY }}"
+                  ENTNETWORK_PRIORITY="${{ secrets.ENTNETWORK_PRIORITY }}"
+                  ENTNETWORK_PASSWORD="${{ secrets.ENTNETWORK_PASSWORD }}"
+                  SMTP_SERVER="${{ secrets.SMTP_SERVER }}"
+                  SMTP_USERNAME="${{ secrets.SMTP_USERNAME }}"
+                  SMTP_PASSWORD="${{ secrets.SMTP_PASSWORD }}"
+                  
+                  # Check if EMAIL_ADDRESS secret is set
+                  if [[ -z "$EMAIL_ADDRESS" ]]; then
                       echo "EMAIL_ADDRESS secret is not set, please refer to the README.md for more information. Exiting."
                       exit 1
                   fi
-                  if [[ (-z "${{ github.event.inputs.wifi_ssid }}" || -z "${{ github.event.inputs.wifi_password }}") && ( -z "${{ secrets.ENTNETWORK_SSID }}" || -z "${{ secrets.ENTNETWORK_IDENTITY }}" || -z "${{ secrets.ENTNETWORK_PASSWORD }}" ) ]]; then
+                  
+                  # Check if SMTP_SERVER, SMTP_USERNAME, and SMTP_PASSWORD secrets are set
+                  if [[ -z "$SMTP_SERVER" || -z "$SMTP_USERNAME" || -z "$SMTP_PASSWORD" ]]; then
+                      echo "SMTP_SERVER, SMTP_USERNAME, and SMTP_PASSWORD secrets are not set, please refer to the README.md for more information. Exiting."
+                      exit 1
+                  fi
+                  
+                  # Check required inputs and secrets
+                  if [[ (-z "$WIFI_SSID" || -z "$WIFI_PASSWORD") && ( -z "$ENTNETWORK_SSID" || -z "$ENTNETWORK_IDENTITY" || -z "$ENTNETWORK_PASSWORD" ) ]]; then
                       echo "Please ensure that all required secrets (ENTNETWORK_SSID, ENTNETWORK_IDENTITY, and ENTNETWORK_PASSWORD) are set for the enterprise network. If you do not want to connect to an enterprise network, please provide information for the home network. Exiting."
+                      exit 1
+                  fi
+                  
+                  # Correctly validate password length
+                  if [[ ${#PASSWORD} -lt 8 ]]; then
+                      echo "Password must be at least 8 characters long. Exiting."
+                      exit 1
+                  fi
+                  
+                  if [[ ${#WPA_PASSWORD} -lt 8 ]]; then
+                      echo "Access Point password must be at least 8 characters long. Exiting."
                       exit 1
                   fi
             - uses: actions/checkout@v4
@@ -120,30 +155,46 @@ jobs:
                   submodules: recursive
             - name: Write env variables
               run: |
-                  echo ARCHITECTURE="${{ github.event.inputs.architecture }}" > $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo HOSTNAME="${{ github.event.inputs.host_name }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo USER="${{ github.event.inputs.user }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo USERPASSWORD="${{ github.event.inputs.password }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo ENTNETWORK_SSID="${{ secrets.ENTNETWORK_SSID }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo ENTNETWORK_PRIORITY="${{ secrets.ENTNETWORK_PRIORITY }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo ENTNETWORK_IDENTITY="${{ secrets.ENTNETWORK_IDENTITY }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo ENTNETWORK_PASSWORD="${{ secrets.ENTNETWORK_PASSWORD }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo WIFI_CC="${{ github.event.inputs.wifi_cc }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo HOMENETWORK_SSID="${{ github.event.inputs.wifi_ssid }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo HOMENETWORK_PASSWORD="${{ github.event.inputs.wifi_password }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo AP_SSID="${{ github.event.inputs.wpa_ssid }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo AP_PASSWORD="${{ github.event.inputs.wpa_password }}" >> $(dirname Raspberry-Pi-5.Pifile)/.env
-                  echo EMAIL=\"${{ secrets.EMAIL_ADDRESS }}\" >> $(dirname Raspberry-Pi-5.Pifile)/.env
+                  cat <<EOF > $(dirname main.Pifile)/.env
+                  DEVICE="${{ github.event.inputs.device }}"
+                  DISTRIBUTION="${{ github.event.inputs.distribution }}"
+                  HOSTNAME="${{ github.event.inputs.host_name }}"
+                  USER="${{ github.event.inputs.user }}"
+                  USERPASSWORD="${{ github.event.inputs.password }}"
+                  ENTNETWORK_SSID="${{ secrets.ENTNETWORK_SSID }}"
+                  ENTNETWORK_PRIORITY="${{ secrets.ENTNETWORK_PRIORITY }}"
+                  ENTNETWORK_IDENTITY="${{ secrets.ENTNETWORK_IDENTITY }}"
+                  ENTNETWORK_PASSWORD="${{ secrets.ENTNETWORK_PASSWORD }}"
+                  WIFI_CC="${{ github.event.inputs.wifi_cc }}"
+                  HOMENETWORK_SSID="${{ github.event.inputs.wifi_ssid }}"
+                  HOMENETWORK_PASSWORD="${{ github.event.inputs.wifi_password }}"
+                  AP_SSID="${{ github.event.inputs.wpa_ssid }}"
+                  AP_PASSWORD="${{ github.event.inputs.wpa_password }}"
+                  EMAIL_ADDRESS="${{ secrets.EMAIL_ADDRESS }}"
+                  SMTP_SERVER="${{ secrets.SMTP_SERVER }}"
+                  SMTP_USERNAME="${{ secrets.SMTP_USERNAME }}"
+                  SMTP_PASSWORD="${{ secrets.SMTP_PASSWORD }}"
+                  EOF
+
             - name: Build image
               uses: Nature40/pimod@master
               with:
-                  pifile: ${{ github.event.inputs.device }}.Pifile
+                  pifile: main.Pifile
 
-            - name: Make tarball
+            - name: Set Timestamp
+              id: timestamp
+              run: echo "timestamp=$(date +%Y-%m-%d-%H-%M-%S)" >> $GITHUB_OUTPUT
+
+            - name: Set Artifact Name
+              id: artifact_name
               run: |
-                  tar -czvf ${{ github.event.inputs.device }}.tar.gz ${{ github.event.inputs.device }}.img
+                echo "name=$(echo '${{ github.event.inputs.device }}-${{ steps.timestamp.outputs.timestamp }}' | sed 's/[:"<>|*?\r\n\\\/]/-/g')" >> $GITHUB_OUTPUT
+
             - name: Upload artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: ${{ github.workflow }}-${{ github.sha }}.zip
-                  path: ${{ github.event.inputs.device }}.img
+                  name: ${{ steps.artifact_name.outputs.name }}
+                  path: main.img
+                  compression-level: 9
+                  retention-days: 5
+
