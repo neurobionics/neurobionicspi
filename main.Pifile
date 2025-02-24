@@ -53,13 +53,5 @@ echo "----------------------------------------"
 echo "---------Robonet installed--------------"
 echo "----------------------------------------"
 
-# Install the necessary packages
-RUN apt-get install -y python3-pip --upgrade
-RUN apt-get install -y python3-virtualenv
-RUN apt-get install -y git
-RUN apt-get install -y gh
-
-echo "----------------------------------------"
-echo "---------Packages installed-------------"
-echo "----------------------------------------"
+source packages.Pifile
 
