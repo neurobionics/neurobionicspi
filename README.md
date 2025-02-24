@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="/assets/banner.png" width="800">
+  <img src="/assets/banner.png" width="100%">
 </p>
 
 <p align="center">
@@ -7,47 +7,34 @@
   <img src="https://github.com/neurobionics/neurobionicspi/actions/workflows/build.yml/badge.svg" alt="Build">
 </p>
 
-# RoboPi: A CI Tool for Building and Deploying Robot Operating Systems At Scale
-
-A powerful tool for building, maintaining, and deploying customized robot operating systems at scale. RoboPi lets you version control your entire robot OS configuration and makes remote development a breeze.
+RoboPi: A CI tool for building, testing, and deploying customized robot operating systems at scale. This tool lets you version control your entire robot OS configuration and makes remote development a breeze.
 
 ## 🎯 Key Features
 
-- **Version-Controlled Robot OS**:
-  - Define and track your entire robot environment in code
-  - Reproducible builds through GitHub Actions
-  - Easy rollback to previous configurations
-  - Share and collaborate on robot setups
-
-- **Remote Development Ready**:
-  - Headless server images optimized for remote development
-  - Pre-configured for robotics development
-  - Automatic IP address notifications
-
-- **Customizable Environment**:
-  - Define exact package requirements
-  - Pre-install robot-specific drivers and custom installation steps
-  - Configure system services and boot sequences
-
-- **Network Auto-configuration**: 
-  - Automatic connection to enterprise/home WiFi networks
-  - Fallback access point for direct connection
-  - Email notifications with IP address upon boot
-
-## 🤔 Why Use RoboPi?
-
 This tool solves common challenges in robotics development:
 
-1. **Version Control**: Track your entire robot OS configuration in Git
-2. **Remote Development Straight Out of the Box**: Pre-configured for remote development
-3. **Reproducibility**: Rebuild your exact environment anytime
-4. **Easy Deployment**: Deploy the same configuration to multiple robots
+- **🔗 Version-Controlled OS**:
+  - Track and manage your robot environment in code
+  - Reproducible builds with GitHub Actions
+  - Easy rollbacks and collaboration
 
-Perfect for developers who:
-- Want a version-controlled robot environment
-- Need reproducible development environments
-- Want to avoid manual Pi configuration and prefer remote development
-- Manage multiple robots with similar setups
+- **🌐 Remote Development**:
+  - Optimized headless server images
+  - Automatic IP notifications via email
+
+- **🔧 Customizable Environment**:
+  - Pre-install drivers and custom packages
+  - Configure services and boot sequences
+
+- **📡 Network Auto-Config**:
+  - Auto-connect to WiFi networks
+  - Fallback access point when no WiFi networks are available
+
+### Ideal for Developers Who:
+- Desire a version-controlled robot environment.
+- Require reproducible development setups.
+- Prefer remote development over manual Pi configuration.
+- Manage multiple robots with similar configurations.
 
 > [!NOTE]
 > Currently tested on Raspberry Pi 4 and 5. May not be compatible with Raspberry Pi Zero.
@@ -60,11 +47,14 @@ Perfect for developers who:
 
 | Secret | Purpose |
 |--------|---------|
-| `EMAIL_ADDRESS` | Where to send Pi's IP address |
+| `EMAIL_ADDRESS` | Email address(es) to send notifications to; separate multiple addresses with commas |
 | `ENTNETWORK_SSID` | Enterprise network name |
 | `ENTNETWORK_IDENTITY` | Network username |
 | `ENTNETWORK_PASSWORD` | Network password |
 | `ENTNETWORK_PRIORITY` | Connection priority (>5 for enterprise) |
+| `SMTP_SERVER` | SMTP server for email notifications |
+| `SMTP_USERNAME` | SMTP username for the email account that will send notifications |
+| `SMTP_PASSWORD` | SMTP password for the email account that will send notifications |
 
 ### 2. Build Your Image
 1. Go to Actions tab → "Build Now!"
