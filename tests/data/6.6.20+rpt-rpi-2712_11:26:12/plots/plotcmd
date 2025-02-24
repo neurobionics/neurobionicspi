@@ -1,9 +1,0 @@
-set title "Worst Case Latency Test "
-    set terminal png
-    set xlabel "Latency (us), max: 1161 us"
-    set logscale y
-    set xrange [0:2000]
-    set yrange [0.8:*]
-    set ylabel "Number of latency samples"
-    set output "/home/senthur/neurobionicspi/tests/data/6.6.20+rpt-rpi-2712_11:26:12/plots/plot.png"
-    plot "/home/senthur/neurobionicspi/tests/data/6.6.20+rpt-rpi-2712_11:26:12/histograms/histogram1" using 1:2 title " CPU0" with histeps, "/home/senthur/neurobionicspi/tests/data/6.6.20+rpt-rpi-2712_11:26:12/histograms/histogram2" using 1:2 title " CPU1" with histeps, "/home/senthur/neurobionicspi/tests/data/6.6.20+rpt-rpi-2712_11:26:12/histograms/histogram3" using 1:2 title " CPU2" with histeps, "/home/senthur/neurobionicspi/tests/data/6.6.20+rpt-rpi-2712_11:26:12/histograms/histogram4" using 1:2 title " CPU3" with histeps

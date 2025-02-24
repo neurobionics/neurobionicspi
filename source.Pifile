@@ -1,0 +1,45 @@
+# Define image URLs in a more maintainable structure
+declare -A RASPIOS_IMAGES=(
+    # Raspberry Pi OS (Raspbian)
+    ["raspbian:Raspberry-Pi-5:32-bit"]="https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-12-11/2023-12-11-raspios-bookworm-armhf-lite.img.xz"
+    ["raspbian:Raspberry-Pi-5:64-bit"]="https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-03-15/2024-03-15-raspios-bookworm-arm64-lite.img.xz"
+    ["raspbian:Raspberry-Pi-4:32-bit"]="https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2021-11-08/2021-10-30-raspios-bullseye-armhf-lite.zip"
+    ["raspbian:Raspberry-Pi-4:64-bit"]="https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2021-11-08/2021-10-30-raspios-bullseye-arm64-lite.zip"
+    
+    # Ubuntu
+    ["ubuntu:Raspberry-Pi-5:64-bit"]="https://cdimage.ubuntu.com/releases/24.04/release/ubuntu-24.04.1-preinstalled-server-arm64+raspi.img.xz"
+)
+
+# Validate required environment variables
+if [[ -z "${DEVICE}" ]] || [[ -z "${DISTRIBUTION}" ]]; then
+    echo "Error: Required environment variables not set" >&2
+    echo "Please ensure DEVICE and DISTRIBUTION are set" >&2
+    exit 1
+fi
+
+# Create the lookup key from distribution and device
+KEY="${DISTRIBUTION}:${DEVICE}"
+
+# Debug information
+echo "Debug: Looking up key '${KEY}'" >&2
+echo "Debug: Available keys:" >&2
+for k in "${!RASPIOS_IMAGES[@]}"; do
+    echo "  $k" >&2
+done
+
+# Look up the URL with a default empty value to prevent unbound variable error
+URL="${RASPIOS_IMAGES[$KEY]:-}"
+
+# Validate that we found a valid URL
+if [[ -z "${URL}" ]]; then
+    echo "Error: No image found for combination:" >&2
+    echo "  Distribution: ${DISTRIBUTION}" >&2
+    echo "  Device: ${DEVICE}" >&2
+    echo "Available combinations:" >&2
+    for key in "${!RASPIOS_IMAGES[@]}"; do
+        echo "  $key" >&2
+    done
+    exit 1
+fi
+
+FROM ${URL}
