@@ -7,7 +7,7 @@
   <a href="https://www.raspberrypi.com/software/"><img src="https://img.shields.io/badge/supports-raspbian-red" alt="raspbian"></a>
   <a href="https://www.raspberrypi.com/software/"><img src="https://img.shields.io/badge/kernel-32bit%20%7C%2064bit-blue" alt="kernel"></a>  
   <a href="https://ubuntu.com/download/raspberry-pi"><img src="https://img.shields.io/badge/supports-ubuntu%20RT-orange" alt="ubuntu"></a>
-  <a href="https://github.com/neurobionics/neurobionicspi/actions/workflows/build.yml"><img src="https://github.com/neurobionics/neurobionicspi/actions/workflows/build.yml/badge.svg" alt="build"></a>
+  <a href="https://github.com/neurobionics/robot-ci/actions/workflows/build.yml"><img src="https://github.com/neurobionics/robot-ci/actions/workflows/build.yml/badge.svg" alt="build"></a>
 </p>
 
 **Robot CI**: Effortless building, testing, and deploying customized robot operating systems at scale. This tool lets you **version control your entire robot OS configuration and makes remote development a breeze**.
@@ -32,7 +32,7 @@ This tool solves common challenges in robotics development:
 ## 🛠️ Example Use Cases
 - **Research labs** managing multiple test platforms or robots
 - Robotics companies **deploying a fleet of robots**
-- Educational institutions maintaining student robots for course projects**
+- Educational institutions maintaining **student robots for course projects**
 - Development teams needing **consistent robot environments** across multiple robots
 
 > [!NOTE]
@@ -46,7 +46,7 @@ This tool solves common challenges in robotics development:
 
 | Secret | Purpose |
 |--------|---------|
-| `EMAIL_ADDRESS` | Email address(es) to send notifications to; separate multiple addresses with commas |
+| `EMAIL_ADDRESS` | Email address(es) to send notifications to; separate multiple addresses with commas **("," and not ", ")** |
 | `ENTNETWORK_SSID` | Enterprise network name |
 | `ENTNETWORK_IDENTITY` | Network username |
 | `ENTNETWORK_PASSWORD` | Network password |
@@ -95,4 +95,4 @@ This project is licensed under [Apache 2.0](LICENSE).
 
 ## 🐛 Issues
 
-Found a bug or have a suggestion? Please [open an issue](https://github.com/neurobionics/neurobionicspi/issues).
+Found a bug or have a suggestion? Please [open an issue](https://github.com/neurobionics/robot-ci/issues).
