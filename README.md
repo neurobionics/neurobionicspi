@@ -40,9 +40,9 @@ This tool solves common challenges in robotics development:
 
 ## 📝 Quick Start Guide
 
-### 1. Fork & Configure
-1. Fork this repository to your GitHub account
-2. Set up these secrets in your fork under Actions and as repository secrets:
+### 1. Use This Template
+1. Click the "Use this template" button on the repository page to create a new repository based on this template.
+2. Set up these secrets in your new repository under Actions and as repository secrets:
 
 | Secret | Purpose |
 |--------|---------|
@@ -51,13 +51,13 @@ This tool solves common challenges in robotics development:
 | `ENTNETWORK_IDENTITY` | Network username |
 | `ENTNETWORK_PASSWORD` | Network password |
 | `ENTNETWORK_PRIORITY` | Connection priority (>5 for enterprise) |
-| `SMTP_SERVER` | SMTP server for email notifications |
-| `SMTP_USERNAME` | SMTP username for the email account that will send notifications |
-| `SMTP_PASSWORD` | SMTP password for the email account that will send notifications |
+| `SMTP_SERVER` | SMTP server for email notifications, for Gmail use `smtp.gmail.com` |
+| `SMTP_USERNAME` | Username for the email account that will send notifications |
+| `SMTP_PASSWORD` | Password for the email account that will send notifications |
 
 ### 2. Build Your Image
-1. Go to Actions tab → "Build a Robot Operating System"
-2. Configure your build:
+1. Go to Actions tab → **Build a Robot Operating System**
+2. Click **Run Workflow** and select your build options:
    - Choose device model, OS distribution, and architecture
    - Set hostname, username, and password
    - Configure WiFi settings for additional home networks
@@ -77,7 +77,7 @@ Network management is streamlined by [Robonet](https://github.com/neurobionics/r
 Here's a brief overview of its functionality:
 
 - **Primary Connection**: Automatically connects to prioritized WiFi networks.
-- **Fallback Mode**: Establishes an access point with a static IP of 10.0.0.200 when no preferred networks are available.
+- **Fallback Mode**: Establishes an access point with a static IP of `10.0.0.200` when no preferred networks are available.
 - **IP Notification**: Sends an email notification with the device's IP address upon successful connection.
 
 Read more about Robonet [here](https://github.com/neurobionics/robonet).
@@ -91,7 +91,7 @@ All contributions are welcome! Please:
 
 ## 📜 License
 
-This project is licensed under Apache 2.0. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under [Apache 2.0](LICENSE).
 
 ## 🐛 Issues
 

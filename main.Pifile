@@ -2,29 +2,6 @@ source .env
 
 PUMP 800M
 
-echo "----------------------------------------"
-echo "---------Environment variables----------"
-echo "----------------------------------------"
-echo "DEVICE: ${DEVICE}"
-echo "DISTRIBUTION: ${DISTRIBUTION}"
-echo "HOSTNAME: ${HOSTNAME}"
-echo "USER: ${USER}"
-echo "USERPASSWORD: ${USERPASSWORD}"
-echo "ENTNETWORK_SSID: ${ENTNETWORK_SSID}"
-echo "ENTNETWORK_PRIORITY: ${ENTNETWORK_PRIORITY}"
-echo "ENTNETWORK_IDENTITY: ${ENTNETWORK_IDENTITY}"
-echo "ENTNETWORK_PASSWORD: ${ENTNETWORK_PASSWORD}"
-echo "WIFI_CC: ${WIFI_CC}"
-echo "HOMENETWORK_SSID: ${HOMENETWORK_SSID}"
-echo "HOMENETWORK_PASSWORD: ${HOMENETWORK_PASSWORD}"
-echo "AP_SSID: ${AP_SSID}"
-echo "AP_PASSWORD: ${AP_PASSWORD}"
-echo "SMTP_SERVER: ${SMTP_SERVER}"
-echo "SMTP_USERNAME: ${SMTP_USERNAME}"
-echo "SMTP_PASSWORD: ${SMTP_PASSWORD}"
-echo "EMAIL_ADDRESS: ${EMAIL_ADDRESS}"
-echo "----------------------------------------"
-
 source source.Pifile
 
 # Enable SSH service
