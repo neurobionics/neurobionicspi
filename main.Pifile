@@ -26,36 +26,8 @@ RUN bash -c "sed -i 's/127.0.1.1.*/127.0.1.1\t${HOSTNAME}/g' /etc/hosts"
 RUN bash -c "systemctl disable userconfig"
 RUN bash -c "systemctl enable getty@tty1"
 
-# Changing default timezone and keyboard layout
-# Parse device type from DEVICE environment variable and set configuration accordingly
-RUN bash -c "if [[ \"${DEVICE}\" == *\"Raspberry-Pi-4\"* ]]; then \
-    # For Raspberry Pi 4 \
-    echo ${TIMEZONE:-America/New_York} > /etc/timezone && \
-    sed -i \"s/gb/us/g\" /etc/default/keyboard; \
-  else \
-    # For Raspberry Pi 5 or other devices \
-    tee /etc/locale.sh << 'EOF' \
-#!/bin/bash \
-set +e \
-\
-if [ -f /usr/lib/raspberrypi-sys-mods/imager_custom ]; then \
-   /usr/lib/raspberrypi-sys-mods/imager_custom set_keymap 'us' \
-   /usr/lib/raspberrypi-sys-mods/imager_custom set_timezone '${TIMEZONE:-America/New_York}' \
-else \
-   rm -f /etc/localtime \
-   echo \"${TIMEZONE:-America/New_York}\" >/etc/timezone \
-   dpkg-reconfigure -f noninteractive tzdata \
-   cat >/etc/default/keyboard <<'KBEOF' \
-XKBMODEL=\"pc105\" \
-XKBLAYOUT=\"us\" \
-XKBVARIANT=\"\" \
-XKBOPTIONS=\"\" \
-KBEOF \
-   dpkg-reconfigure -f noninteractive keyboard-configuration \
-fi \
-EOF \
-    && chmod +x /etc/locale.sh && bash /etc/locale.sh; \
-fi"
+# Update locale
+source locale.Pifile
 
 # Install custom MOTD
 INSTALL "./motd" "/etc/motd"

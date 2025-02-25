@@ -1,0 +1,53 @@
+# Configure timezone and keyboard layout based on device type
+RUN bash -c 'cat > /tmp/configure_locale.sh << "EOFSCRIPT"
+#!/bin/bash
+set -e
+
+TIMEZONE="${TIMEZONE:-America/New_York}"
+KEYBOARD_LAYOUT="us"
+KEYBOARD_MODEL="pc105"
+
+echo "Configuring system with timezone: $TIMEZONE and keyboard: $KEYBOARD_LAYOUT"
+
+# Function to configure using Raspberry Pi Imager custom tool if available
+configure_with_imager_custom() {
+  echo "Using raspberrypi-sys-mods imager_custom tool"
+  /usr/lib/raspberrypi-sys-mods/imager_custom set_keymap "$KEYBOARD_LAYOUT"
+  /usr/lib/raspberrypi-sys-mods/imager_custom set_timezone "$TIMEZONE"
+}
+
+# Function to configure manually
+configure_manually() {
+  echo "Configuring manually"
+  # Set timezone
+  rm -f /etc/localtime
+  echo "$TIMEZONE" > /etc/timezone
+  dpkg-reconfigure -f noninteractive tzdata
+  
+  # Set keyboard
+  cat > /etc/default/keyboard << KBEOF
+XKBMODEL="$KEYBOARD_MODEL"
+XKBLAYOUT="$KEYBOARD_LAYOUT"
+XKBVARIANT=""
+XKBOPTIONS=""
+KBEOF
+  dpkg-reconfigure -f noninteractive keyboard-configuration
+}
+
+# For Raspberry Pi 4, use simplified approach
+if [[ "$DEVICE" == *"Raspberry-Pi-4"* ]]; then
+  echo "Detected Raspberry Pi 4"
+  echo "$TIMEZONE" > /etc/timezone
+  sed -i "s/gb/$KEYBOARD_LAYOUT/g" /etc/default/keyboard
+else
+  # For Raspberry Pi 5 or other devices, try imager_custom first
+  echo "Detected Raspberry Pi 5 or other device"
+  if [ -f /usr/lib/raspberrypi-sys-mods/imager_custom ]; then
+    configure_with_imager_custom
+  else
+    configure_manually
+  fi
+fi
+EOFSCRIPT
+
+chmod +x /tmp/configure_locale.sh && /tmp/configure_locale.sh'
