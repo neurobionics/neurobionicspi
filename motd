@@ -1,6 +1,14 @@
 clear 
 echo "$(tput bold)$(tput setaf 3)"
 
+echo "$(tput setaf 6)"
+echo "________      ______       _____     ________________"
+echo "___  __ \________  /_________  /_    __  ____/___  _/"
+echo "__  /_/ /  __ \_  __ \  __ \  __/    _  /     __  /  "
+echo "_  _, _// /_/ /  /_/ / /_/ / /_      / /___  __/ /   "
+echo "/_/ |_| \____//_.___/\____/\__/      \____/  /___/   "
+echo "                                                     "
+
 let upSeconds="$(/usr/bin/cut -d. -f1 /proc/uptime)"
 let secs=$((${upSeconds}%60))
 let mins=$((${upSeconds}/60%60))
