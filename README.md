@@ -56,7 +56,7 @@ This tool solves common challenges in robotics development:
 | `SMTP_PASSWORD` | Password for the email account that will send notifications |
 
 ### 2. Build Your Image
-1. Go to Actions tab → **Build a Robot Operating System**
+1. Go to Actions tab → **Build**
 2. Click **Run Workflow** and select your build options:
    - Choose device model, OS distribution, and architecture
    - Set hostname, username, and password
