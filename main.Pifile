@@ -43,7 +43,8 @@ echo "----------------------------------------"
 # Install robonet for the user
 RUN bash -c "mkdir -p /home/${USER}/.cargo/bin"
 RUN bash -c "chown -R ${USER}:${USER} /home/${USER}/.cargo"
-RUN bash -c "CARGO_HOME=/home/${USER}/.cargo curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobionics/robonet/releases/download/0.3.2/robonet-installer.sh | sh"
+RUN bash -c "export CARGO_HOME=/home/${USER}/.cargo"
+RUN bash -c "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobionics/robonet/releases/download/0.3.2/robonet-installer.sh | sh"
 RUN bash -c "echo 'export PATH=\"\$HOME/.cargo/bin:\$PATH\"' >> /home/${USER}/.bashrc"
 RUN bash -c "/home/${USER}/.cargo/bin/robonet --version"
 
