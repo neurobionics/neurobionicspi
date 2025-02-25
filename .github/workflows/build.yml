@@ -1,4 +1,4 @@
-name: Build a Robot Operating System
+name: Build
 
 on:
     workflow_dispatch:
