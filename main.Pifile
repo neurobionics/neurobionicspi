@@ -45,12 +45,11 @@ else \
    rm -f /etc/localtime \
    echo \"${TIMEZONE:-America/New_York}\" >/etc/timezone \
    dpkg-reconfigure -f noninteractive tzdata \
-cat >/etc/default/keyboard <<'KBEOF' \
+   cat >/etc/default/keyboard <<'KBEOF' \
 XKBMODEL=\"pc105\" \
 XKBLAYOUT=\"us\" \
 XKBVARIANT=\"\" \
 XKBOPTIONS=\"\" \
-\
 KBEOF \
    dpkg-reconfigure -f noninteractive keyboard-configuration \
 fi \
