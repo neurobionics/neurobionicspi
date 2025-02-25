@@ -26,6 +26,38 @@ RUN bash -c "sed -i 's/127.0.1.1.*/127.0.1.1\t${HOSTNAME}/g' /etc/hosts"
 RUN bash -c "systemctl disable userconfig"
 RUN bash -c "systemctl enable getty@tty1"
 
+# Changing default timezone and keyboard layout
+# Parse device type from DEVICE environment variable and set configuration accordingly
+RUN bash -c "if [[ \"${DEVICE}\" == *\"Raspberry-Pi-4\"* ]]; then \
+    # For Raspberry Pi 4 \
+    echo ${TIMEZONE:-America/New_York} > /etc/timezone && \
+    sed -i \"s/gb/us/g\" /etc/default/keyboard; \
+  else \
+    # For Raspberry Pi 5 or other devices \
+    tee /etc/locale.sh << 'EOF' \
+#!/bin/bash \
+set +e \
+\
+if [ -f /usr/lib/raspberrypi-sys-mods/imager_custom ]; then \
+   /usr/lib/raspberrypi-sys-mods/imager_custom set_keymap 'us' \
+   /usr/lib/raspberrypi-sys-mods/imager_custom set_timezone '${TIMEZONE:-America/New_York}' \
+else \
+   rm -f /etc/localtime \
+   echo \"${TIMEZONE:-America/New_York}\" >/etc/timezone \
+   dpkg-reconfigure -f noninteractive tzdata \
+cat >/etc/default/keyboard <<'KBEOF' \
+XKBMODEL=\"pc105\" \
+XKBLAYOUT=\"us\" \
+XKBVARIANT=\"\" \
+XKBOPTIONS=\"\" \
+\
+KBEOF \
+   dpkg-reconfigure -f noninteractive keyboard-configuration \
+fi \
+EOF \
+    && chmod +x /etc/locale.sh && bash /etc/locale.sh; \
+fi"
+
 # Install custom MOTD
 INSTALL "./motd" "/etc/motd"
 RUN bash -c "[ -f /etc/motd ] && cp /etc/motd /etc/motd.backup"
@@ -39,19 +71,21 @@ echo "----------------------------------------"
 echo "---------System updated-----------------"
 echo "----------------------------------------"
 
-# Install robonet
-RUN bash -c "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobionics/robonet/releases/download/0.3.2/robonet-installer.sh | sh"
-RUN bash -c "$HOME/.cargo/bin/robonet --version"
+# Install robonet for the user
+RUN bash -c "mkdir -p /home/${USER}/.cargo/bin"
+RUN bash -c "chown -R ${USER}:${USER} /home/${USER}/.cargo"
+RUN bash -c "CARGO_HOME=/home/${USER}/.cargo curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobionics/robonet/releases/download/0.3.2/robonet-installer.sh | sh"
+RUN bash -c "echo 'export PATH=\"\$HOME/.cargo/bin:\$PATH\"' >> /home/${USER}/.bashrc"
+RUN bash -c "/home/${USER}/.cargo/bin/robonet --version"
 
 # Add network definitions with robonet
-RUN bash -c "$HOME/.cargo/bin/robonet add-network -m ap -n ${AP_SSID} -p ${AP_PASSWORD} -r 0 -i 10.0.0.200"
-RUN bash -c "$HOME/.cargo/bin/robonet add-network -m wpa -n ${HOMENETWORK_SSID} -p ${HOMENETWORK_PASSWORD} -r 50"
-RUN bash -c "$HOME/.cargo/bin/robonet add-network -m wpaeap -n ${ENTNETWORK_SSID} -d ${ENTNETWORK_IDENTITY} -p ${ENTNETWORK_PASSWORD} -r ${ENTNETWORK_PRIORITY}"
-RUN bash -c "$HOME/.cargo/bin/robonet install --email ${EMAIL_ADDRESS} --smtp-server ${SMTP_SERVER} --smtp-user ${SMTP_USERNAME} --smtp-password ${SMTP_PASSWORD}"
+RUN bash -c "/home/${USER}/.cargo/bin/robonet add-network -m ap -n ${AP_SSID} -p ${AP_PASSWORD} -r 0 -i 10.0.0.200"
+RUN bash -c "/home/${USER}/.cargo/bin/robonet add-network -m wpa -n ${HOMENETWORK_SSID} -p ${HOMENETWORK_PASSWORD} -r 50"
+RUN bash -c "/home/${USER}/.cargo/bin/robonet add-network -m wpaeap -n ${ENTNETWORK_SSID} -d ${ENTNETWORK_IDENTITY} -p ${ENTNETWORK_PASSWORD} -r ${ENTNETWORK_PRIORITY}"
+RUN bash -c "/home/${USER}/.cargo/bin/robonet install --email ${EMAIL_ADDRESS} --smtp-server ${SMTP_SERVER} --smtp-user ${SMTP_USERNAME} --smtp-password ${SMTP_PASSWORD}"
 
 echo "----------------------------------------"
 echo "---------Robonet installed--------------"
 echo "----------------------------------------"
 
 source packages.Pifile
-
