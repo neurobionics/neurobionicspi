@@ -52,8 +52,23 @@ RUN bash -c "/home/${USER}/.cargo/bin/robonet --version"
 
 # Add network definitions with robonet
 RUN bash -c "/home/${USER}/.cargo/bin/robonet add-network -m ap -n ${AP_SSID} -p ${AP_PASSWORD} -r 0 -i 10.0.0.200"
-RUN bash -c "/home/${USER}/.cargo/bin/robonet add-network -m wpa -n ${HOMENETWORK_SSID} -p ${HOMENETWORK_PASSWORD} -r 50"
-RUN bash -c "/home/${USER}/.cargo/bin/robonet add-network -m wpaeap -n ${ENTNETWORK_SSID} -d ${ENTNETWORK_IDENTITY} -p ${ENTNETWORK_PASSWORD} -r ${ENTNETWORK_PRIORITY}"
+
+# Only add home network if SSID and password are provided
+RUN bash -c "if [ ! -z \"${HOMENETWORK_SSID}\" ] && [ ! -z \"${HOMENETWORK_PASSWORD}\" ]; then \
+    /home/${USER}/.cargo/bin/robonet add-network -m wpa -n ${HOMENETWORK_SSID} -p ${HOMENETWORK_PASSWORD} -r 50; \
+    echo 'Home network added'; \
+  else \
+    echo 'Skipping home network configuration - credentials not provided'; \
+  fi"
+
+# Only add enterprise network if required credentials are provided
+RUN bash -c "if [ ! -z \"${ENTNETWORK_SSID}\" ] && [ ! -z \"${ENTNETWORK_IDENTITY}\" ] && [ ! -z \"${ENTNETWORK_PASSWORD}\" ]; then \
+    /home/${USER}/.cargo/bin/robonet add-network -m wpaeap -n ${ENTNETWORK_SSID} -d ${ENTNETWORK_IDENTITY} -p ${ENTNETWORK_PASSWORD} -r ${ENTNETWORK_PRIORITY}; \
+    echo 'Enterprise network added'; \
+  else \
+    echo 'Skipping enterprise network configuration - credentials not provided'; \
+  fi"
+
 RUN bash -c "/home/${USER}/.cargo/bin/robonet install --email ${EMAIL_ADDRESS} --smtp-server ${SMTP_SERVER} --smtp-user ${SMTP_USERNAME} --smtp-password ${SMTP_PASSWORD}"
 
 echo "----------------------------------------"
