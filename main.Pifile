@@ -31,9 +31,7 @@ source locale.Pifile
 
 # Install custom MOTD
 INSTALL "./motd" "/etc/motd"
-RUN bash -c "[ -f /etc/motd ] && cp /etc/motd /etc/motd.backup"
-RUN bash -c "[ -f /etc/motd ] && ln -sf /etc/motd /home/${USER}/.motd"
-RUN bash -c "[ -f /home/${USER}/.motd ] && echo 'source /home/${USER}/.motd' >> /home/${USER}/.bash_profile"
+RUN bash -c "cp /etc/motd /home/${USER}/.bash_profile"
 
 # Update the system
 RUN apt-get update && apt-get upgrade -y
