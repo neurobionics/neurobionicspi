@@ -34,7 +34,10 @@ INSTALL "./motd" "/etc/motd"
 RUN bash -c "cp /etc/motd /home/${USER}/.bash_profile"
 
 # Update the system
-RUN apt-get update && apt-get upgrade -y
+RUN apt-get update 
+
+# Ignore upgrade as it takes too long
+# RUN apt-get upgrade -y
 
 echo "----------------------------------------"
 echo "---------System updated-----------------"
@@ -45,7 +48,7 @@ RUN bash -c "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobioni
 RUN bash -c "$HOME/.cargo/bin/robonet --version"
 
 # Add network definitions with robonet
-RUN bash -c "$HOME/.cargo/bin/robonet add-network -m ap -n ${AP_SSID} -p ${AP_PASSWORD} -r 0 -i 10.0.0.200"
+RUN bash -c "$HOME/.cargo/bin/robonet add-network -m ap -n ${AP_SSID} -p ${AP_PASSWORD} -r 0 -i 10.0.0.200 || echo 'Failed to add AP network, continuing anyway'"
 
 # Only add home network if SSID and password are provided
 RUN bash -c "if [ ! -z \"${HOMENETWORK_SSID}\" ] && [ ! -z \"${HOMENETWORK_PASSWORD}\" ]; then \
