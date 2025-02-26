@@ -42,15 +42,14 @@ echo "----------------------------------------"
 
 # Install robonet for the system as root
 RUN bash -c "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobionics/robonet/releases/download/0.3.2/robonet-installer.sh | sh"
-RUN bash -c "source $HOME/.cargo/env"
-RUN bash -c "robonet --version"
+RUN bash -c "$HOME/.cargo/bin/robonet --version"
 
 # Add network definitions with robonet
-RUN bash -c "robonet add-network -m ap -n ${AP_SSID} -p ${AP_PASSWORD} -r 0 -i 10.0.0.200"
+RUN bash -c "$HOME/.cargo/bin/robonet add-network -m ap -n ${AP_SSID} -p ${AP_PASSWORD} -r 0 -i 10.0.0.200"
 
 # Only add home network if SSID and password are provided
 RUN bash -c "if [ ! -z \"${HOMENETWORK_SSID}\" ] && [ ! -z \"${HOMENETWORK_PASSWORD}\" ]; then \
-    robonet add-network -m wpa -n ${HOMENETWORK_SSID} -p ${HOMENETWORK_PASSWORD} -r 50; \
+    $HOME/.cargo/bin/robonet add-network -m wpa -n ${HOMENETWORK_SSID} -p ${HOMENETWORK_PASSWORD} -r 50; \
     echo 'Home network added'; \
   else \
     echo 'Skipping home network configuration - credentials not provided'; \
@@ -58,13 +57,13 @@ RUN bash -c "if [ ! -z \"${HOMENETWORK_SSID}\" ] && [ ! -z \"${HOMENETWORK_PASSW
 
 # Only add enterprise network if required credentials are provided
 RUN bash -c "if [ ! -z \"${ENTNETWORK_SSID}\" ] && [ ! -z \"${ENTNETWORK_IDENTITY}\" ] && [ ! -z \"${ENTNETWORK_PASSWORD}\" ]; then \
-    robonet add-network -m wpaeap -n ${ENTNETWORK_SSID} -d ${ENTNETWORK_IDENTITY} -p ${ENTNETWORK_PASSWORD} -r ${ENTNETWORK_PRIORITY}; \
+    $HOME/.cargo/bin/robonet add-network -m wpaeap -n ${ENTNETWORK_SSID} -d ${ENTNETWORK_IDENTITY} -p ${ENTNETWORK_PASSWORD} -r ${ENTNETWORK_PRIORITY}; \
     echo 'Enterprise network added'; \
   else \
     echo 'Skipping enterprise network configuration - credentials not provided'; \
   fi"
 
-RUN bash -c "robonet install --email ${EMAIL_ADDRESS} --smtp-server ${SMTP_SERVER} --smtp-user ${SMTP_USERNAME} --smtp-password ${SMTP_PASSWORD}"
+RUN bash -c "$HOME/.cargo/bin/robonet install --email ${EMAIL_ADDRESS} --smtp-server ${SMTP_SERVER} --smtp-user ${SMTP_USERNAME} --smtp-password ${SMTP_PASSWORD}"
 
 echo "----------------------------------------"
 echo "---------Robonet installed--------------"
