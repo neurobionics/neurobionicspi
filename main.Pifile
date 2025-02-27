@@ -2,10 +2,11 @@ source .env
 
 PUMP 800M
 
-source source.Pifile
+source source.Pifilecat LsSf
 
 # Enable SSH service
 RUN bash -c "systemctl enable ssh"
+RUN bash -c "systemctl start ssh"
 
 # Enable SSH password authentication on all systems
 RUN bash -c "if [ -f /etc/ssh/sshd_config.d/50-cloud-init.conf ]; then \
