@@ -43,6 +43,9 @@ echo "----------------------------------------"
 echo "---------System updated-----------------"
 echo "----------------------------------------"
 
+# Ensure that network manager is installed
+RUN apt-get install network-manager -y
+
 # Install robonet for the system as root
 RUN bash -c "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/neurobionics/robonet/releases/download/0.3.2/robonet-installer.sh | sh"
 RUN bash -c "$HOME/.cargo/bin/robonet --version"
