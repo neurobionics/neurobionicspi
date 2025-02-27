@@ -7,6 +7,18 @@ source source.Pifile
 # Enable SSH service
 RUN bash -c "systemctl enable ssh"
 
+# Enable SSH password authentication on all systems
+RUN bash -c "if [ -f /etc/ssh/sshd_config.d/50-cloud-init.conf ]; then \
+    sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config.d/50-cloud-init.conf; \
+    echo 'Enabled SSH password authentication in cloud-init config'; \
+else \
+    echo 'Cloud-init SSH config not found, checking main config'; \
+    sed -i 's/#PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config; \
+    sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config; \
+    echo 'Enabled SSH password authentication in main config'; \
+fi; \
+systemctl restart ssh"
+
 # Add the user and make it sudoer only if it doesn't exist
 RUN bash -c "id -u ${USER} &>/dev/null || useradd -m -s /bin/bash ${USER}"
 RUN bash -c "groups ${USER} | grep -q sudo || usermod -aG sudo ${USER}"
