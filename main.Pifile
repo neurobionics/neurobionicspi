@@ -2,7 +2,7 @@ source .env
 
 PUMP 800M
 
-source source.Pifilecat LsSf
+source source.Pifile
 
 # Enable SSH service
 RUN bash -c "systemctl enable ssh"
