@@ -32,8 +32,8 @@ source locale.Pifile
 INSTALL "./motd" "/etc/motd"
 RUN bash -c "cp /etc/motd /home/${USER}/.bash_profile"
 
-# Update the system
-RUN apt-get update 
+# Ignore update as it takes too long on ubuntu
+# RUN apt-get update 
 
 # Ignore upgrade as it takes too long
 # RUN apt-get upgrade -y
