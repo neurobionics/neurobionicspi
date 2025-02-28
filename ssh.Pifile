@@ -1,0 +1,10 @@
+# Enable SSH service
+RUN bash -c "systemctl enable ssh"
+
+# Configure SSH by commenting out the Include directive and enabling password authentication
+RUN bash -c "if grep -q 'Include /etc/ssh/sshd_config.d/\\*.conf' /etc/ssh/sshd_config; then \
+    sed -i 's/^Include \/etc\/ssh\/sshd_config.d\/\\*.conf/#Include \/etc\/ssh\/sshd_config.d\/*.conf/g' /etc/ssh/sshd_config; \
+    echo 'Commented out Include directive in sshd_config'; \
+fi; \
+
+systemctl restart ssh"
