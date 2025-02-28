@@ -6,5 +6,7 @@ RUN bash -c "if grep -q 'Include /etc/ssh/sshd_config.d/\\*.conf' /etc/ssh/sshd_
     sed -i 's/^Include \/etc\/ssh\/sshd_config.d\/\\*.conf/#Include \/etc\/ssh\/sshd_config.d\/*.conf/g' /etc/ssh/sshd_config; \
     echo 'Commented out Include directive in sshd_config'; \
 fi; \
-
+sed -i 's/#PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config; \
+sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config; \
+echo 'Enabled SSH password authentication in main config'; \
 systemctl restart ssh"
