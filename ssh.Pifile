@@ -1,0 +1,4 @@
+# Enable SSH service
+
+RUN bash -c "echo 'PasswordAuthentication yes' > /etc/ssh/sshd_config.d/00-allow-pwd-auth.conf"
+RUN bash -c "systemctl enable ssh"
